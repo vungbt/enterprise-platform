@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { CustomerStatus } from '../../../shared/graphql/enums';
 
 @ObjectType()
 export class CustomerEntity {
@@ -8,9 +9,24 @@ export class CustomerEntity {
   @Field()
   name!: string;
 
-  @Field()
-  owner!: string;
+  @Field({ nullable: true })
+  email?: string;
+
+  @Field({ nullable: true })
+  phone?: string;
+
+  @Field({ nullable: true })
+  company?: string;
+
+  @Field(() => CustomerStatus)
+  status!: CustomerStatus;
 
   @Field()
-  status!: string;
+  ownerId!: string;
+
+  @Field()
+  createdAt!: Date;
+
+  @Field()
+  updatedAt!: Date;
 }

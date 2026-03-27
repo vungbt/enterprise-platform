@@ -6,7 +6,11 @@ import { HrModule } from './modules/hr/hr.module';
 import { CrmModule } from './modules/crm/crm.module';
 import { FinanceModule } from './modules/finance/finance.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
+import { DepartmentModule } from './modules/department/department.module';
+import { SportsClubsModule } from './modules/sports-clubs/sports-clubs.module';
+import { ExpenseModule } from './modules/expense/expense.module';
 import { DatabaseModule } from './shared/database/database.module';
+import { AbilitiesResolver } from './shared/permissions/abilities.resolver';
 
 @Module({
   imports: [
@@ -20,7 +24,11 @@ import { DatabaseModule } from './shared/database/database.module';
     HrModule,
     CrmModule,
     FinanceModule,
-    InventoryModule
-  ]
+    InventoryModule,
+    DepartmentModule,
+    SportsClubsModule,
+    ExpenseModule
+  ],
+  providers: [AbilitiesResolver]
 })
 export class AppModule {}
