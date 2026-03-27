@@ -1,0 +1,43 @@
+# Dependencies
+node_modules
+
+# Build outputs
+dist
+out
+tmp
+.next
+
+# Nx cache & workspace data (auto-generated)
+.nx/cache
+.nx/workspace-data
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Auto-generated GraphQL schema
+apps/api/src/schema.gql
+
+# Environment variables (keep .env.example)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Test coverage
+coverage
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea
+.vscode/settings.json

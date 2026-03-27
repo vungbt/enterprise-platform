@@ -1,0 +1,86 @@
+:root {
+  /* Primary (default — matches HR theme) */
+  --color-primary: #0079f6;
+  --color-primary-bg: #e6f2ff;
+  --color-primary-hover: #1a87f7;
+  --color-primary-base: #0079f6;
+  --color-primary-clicked: #0062cc;
+  --color-primary-border: #80bcfb;
+
+  /* Secondary (violet) */
+  --color-secondary: #7c3aed;
+  --color-secondary-bg: #f5f3ff;
+  --color-secondary-hover: #8b5cf6;
+  --color-secondary-base: #7c3aed;
+  --color-secondary-clicked: #6d28d9;
+  --color-secondary-border: #c4b5fd;
+
+  /* Neutral */
+  --color-neutral: #d9d9d9;
+  --color-neutral-white: #ffffff;
+  --color-neutral-table-header: #f5f5f5;
+  --color-neutral-bg: #f8fafc;
+  --color-neutral-divider: #e2e8f0;
+  --color-neutral-disable: #bfbfbf;
+  --color-neutral-border: #e2e8f0;
+  --color-neutral-placeholder: #8c8c8c;
+  --color-neutral-text-secondary: #64748b;
+  --color-neutral-text-primary: #334155;
+  --color-neutral-black: #0f172a;
+
+  /* Pending (yellow) */
+  --color-pending: #faad14;
+  --color-pending-bg: #fffbe6;
+  --color-pending-base: #faad14;
+  --color-pending-border: #ffe58f;
+
+  /* Error (red) */
+  --color-error: #ff4d4f;
+  --color-error-bg: #fff1f0;
+  --color-error-base: #ff4d4f;
+  --color-error-border: #ffa39e;
+
+  /* Success (green) */
+  --color-success: #52c41a;
+  --color-success-bg: #f6ffed;
+  --color-success-base: #52c41a;
+  --color-success-border: #b7eb8f;
+
+  /* Info */
+  --color-info: #1677ff;
+  --color-info-bg: #e6f4ff;
+  --color-info-base: #1677ff;
+  --color-info-border: #91caff;
+
+  /* Font */
+  --font-primary: 'Inter', sans-serif;
+
+  /* Font sizes */
+  --size-48: 48px;
+  --size-40: 40px;
+  --size-36: 36px;
+  --size-32: 32px;
+  --size-28: 28px;
+  --size-24: 24px;
+  --size-20: 20px;
+  --size-18: 18px;
+  --size-17: 17px;
+  --size-16: 16px;
+  --size-15: 15px;
+  --size-14: 14px;
+  --size-13: 13px;
+  --size-12: 12px;
+  --size-10: 10px;
+  --size-8: 8px;
+
+  /* Line heights */
+  --lineHeight-64: 64px;
+  --lineHeight-56: 56px;
+  --lineHeight-48: 48px;
+  --lineHeight-40: 40px;
+  --lineHeight-32: 32px;
+  --lineHeight-24: 24px;
+  --lineHeight-20: 20px;
+  --lineHeight-16: 16px;
+  --lineHeight-12: 12px;
+}

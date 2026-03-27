@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree -L 2 -d \"/Users/vungbui/Workspaces/My project/enterprise-platform\" --ignore \"node_modules|.nx|dist|tmp|.git|.next\")"
+    ]
+  }
+}

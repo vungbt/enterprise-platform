@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "types": ["node"],
+    "paths": {
+      "@enterprise/ui/*": ["libs/ui/*"],
+      "@enterprise/api-client/*": ["libs/api-client/*"],
+      "@enterprise/auth/*": ["libs/auth/*"],
+      "@enterprise/permissions/*": ["libs/permissions/*"],
+      "@enterprise/shared-types/*": ["libs/shared-types/*"],
+      "@enterprise/modules/hr/*": ["modules/hr/*"],
+      "@enterprise/modules/crm/*": ["modules/crm/*"],
+      "@enterprise/modules/finance/*": ["modules/finance/*"],
+      "@enterprise/modules/inventory/*": ["modules/inventory/*"],
+      "@enterprise/modules/sports-clubs/*": ["modules/sports-clubs/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

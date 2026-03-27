@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import '../../../libs/ui/theme/tokens.css';
+@import '../../../libs/ui/theme/themes.css';
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--color-neutral-bg);
+  font-family: var(--font-primary);
+}
