@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import type React from 'react';
 
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: React.ReactNode;
@@ -12,7 +12,7 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   };
 }
 
-export const Radio: React.FC<RadioProps> = props => {
+export const Radio: React.FC<RadioProps> = (props) => {
   const {
     label,
     className,
@@ -34,7 +34,7 @@ export const Radio: React.FC<RadioProps> = props => {
         className,
         customClasses?.root,
         optionClass.root,
-        colorClass.root
+        colorClass.root,
       )}
     >
       <input type="radio" className="peer hidden" {...reset} />

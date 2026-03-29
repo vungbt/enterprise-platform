@@ -8,19 +8,19 @@ async function main() {
   const adminRole = await prisma.role.upsert({
     where: { name: 'admin' },
     update: {},
-    create: { name: 'admin', label: 'Admin' }
+    create: { name: 'admin', label: 'Admin' },
   });
 
   const managerRole = await prisma.role.upsert({
     where: { name: 'manager' },
     update: {},
-    create: { name: 'manager', label: 'Manager' }
+    create: { name: 'manager', label: 'Manager' },
   });
 
   const staffRole = await prisma.role.upsert({
     where: { name: 'staff' },
     update: {},
-    create: { name: 'staff', label: 'Staff' }
+    create: { name: 'staff', label: 'Staff' },
   });
 
   // ── Users ────────────────────────────────────────────────
@@ -31,8 +31,8 @@ async function main() {
     create: {
       email: 'admin@enterprise.com',
       name: 'Admin',
-      password: adminPassword
-    }
+      password: adminPassword,
+    },
   });
 
   const managerPassword = await bcrypt.hash('Manager@123', 10);
@@ -42,8 +42,8 @@ async function main() {
     create: {
       email: 'manager@enterprise.com',
       name: 'Manager',
-      password: managerPassword
-    }
+      password: managerPassword,
+    },
   });
 
   const staffPassword = await bcrypt.hash('Staff@123', 10);
@@ -53,27 +53,27 @@ async function main() {
     create: {
       email: 'staff@enterprise.com',
       name: 'Staff',
-      password: staffPassword
-    }
+      password: staffPassword,
+    },
   });
 
   // ── Assign roles ─────────────────────────────────────────
   await prisma.userRole.upsert({
     where: { userId_roleId: { userId: admin.id, roleId: adminRole.id } },
     update: {},
-    create: { userId: admin.id, roleId: adminRole.id }
+    create: { userId: admin.id, roleId: adminRole.id },
   });
 
   await prisma.userRole.upsert({
     where: { userId_roleId: { userId: manager.id, roleId: managerRole.id } },
     update: {},
-    create: { userId: manager.id, roleId: managerRole.id }
+    create: { userId: manager.id, roleId: managerRole.id },
   });
 
   await prisma.userRole.upsert({
     where: { userId_roleId: { userId: staff.id, roleId: staffRole.id } },
     update: {},
-    create: { userId: staff.id, roleId: staffRole.id }
+    create: { userId: staff.id, roleId: staffRole.id },
   });
 
   console.log('✅ Seed completed');
@@ -83,5 +83,8 @@ async function main() {
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(() => prisma.$disconnect());

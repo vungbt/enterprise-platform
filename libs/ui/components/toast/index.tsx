@@ -1,4 +1,4 @@
-import { ExternalToast, Toaster as SonnerToaster, toast, ToasterProps } from 'sonner';
+import { type ExternalToast, Toaster as SonnerToaster, type ToasterProps, toast } from 'sonner';
 import { RenderIcon } from '../icons';
 
 export const Toaster = (props: ToasterProps) => {

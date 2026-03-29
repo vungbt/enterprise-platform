@@ -1,9 +1,9 @@
 import {
+  ControlledMenu as ControlledMenuComponent,
+  MenuButton as MenuButtonComponent,
   Menu as MenuComponent,
   MenuItem as MenuItemComponent,
-  MenuButton as MenuButtonComponent,
   SubMenu as SubMenuComponent,
-  ControlledMenu as ControlledMenuComponent,
 } from '@szhsin/react-menu';
 
 export const Menu = MenuComponent;

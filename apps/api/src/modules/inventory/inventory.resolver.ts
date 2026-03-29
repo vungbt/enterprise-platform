@@ -1,16 +1,13 @@
-import { Args, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { InventoryItemEntity } from './entities/inventory-item.entity';
-import { InventoryService } from './services/inventory.service';
-import { CreateInventoryItemInput } from './dto/create-inventory-item.input';
-import { UpdateInventoryItemInput } from './dto/update-inventory-item.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
+import { Args, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { CreateInventoryItemInput } from './dto/create-inventory-item.input';
+import { UpdateInventoryItemInput } from './dto/update-inventory-item.input';
+import { InventoryItemEntity } from './entities/inventory-item.entity';
+import { InventoryService } from './services/inventory.service';
 
 @ObjectType()
 export class PaginatedInventoryItem extends Paginated(InventoryItemEntity) {}
@@ -22,9 +19,7 @@ export class InventoryResolver {
 
   @Query(() => PaginatedInventoryItem, { name: 'inventoryItems' })
   @CheckAbility({ action: 'read', subject: 'InventoryItem' })
-  inventoryItems(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  inventoryItems(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.inventoryService.getItems(pagination);
   }
 
@@ -42,10 +37,7 @@ export class InventoryResolver {
 
   @Mutation(() => InventoryItemEntity)
   @CheckAbility({ action: 'update', subject: 'InventoryItem' })
-  updateInventoryItem(
-    @Args('id') id: string,
-    @Args('input') input: UpdateInventoryItemInput,
-  ) {
+  updateInventoryItem(@Args('id') id: string, @Args('input') input: UpdateInventoryItemInput) {
     return this.inventoryService.updateItem(id, input);
   }
 

@@ -1,25 +1,14 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { InvoiceEntity } from './entities/invoice.entity';
-import { FinanceService } from './services/finance.service';
-import { CreateInvoiceInput } from './dto/create-invoice.input';
-import { UpdateInvoiceInput } from './dto/update-invoice.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { CustomerEntity } from '../crm/entities/customer.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { CustomerEntity } from '../crm/entities/customer.entity';
+import { CreateInvoiceInput } from './dto/create-invoice.input';
+import { UpdateInvoiceInput } from './dto/update-invoice.input';
+import { InvoiceEntity } from './entities/invoice.entity';
+import { FinanceService } from './services/finance.service';
 
 @ObjectType()
 export class PaginatedInvoice extends Paginated(InvoiceEntity) {}
@@ -31,9 +20,7 @@ export class FinanceResolver {
 
   @Query(() => PaginatedInvoice, { name: 'invoices' })
   @CheckAbility({ action: 'read', subject: 'Invoice' })
-  invoices(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  invoices(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.financeService.getInvoices(pagination);
   }
 
@@ -51,10 +38,7 @@ export class FinanceResolver {
 
   @Mutation(() => InvoiceEntity)
   @CheckAbility({ action: 'update', subject: 'Invoice' })
-  updateInvoice(
-    @Args('id') id: string,
-    @Args('input') input: UpdateInvoiceInput,
-  ) {
+  updateInvoice(@Args('id') id: string, @Args('input') input: UpdateInvoiceInput) {
     return this.financeService.updateInvoice(id, input);
   }
 

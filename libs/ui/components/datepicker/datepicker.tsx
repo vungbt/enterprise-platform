@@ -8,7 +8,7 @@ import './calendar.css';
 import './datepicker.css';
 import { getIconSize } from '../common';
 import { RenderIcon } from '../icons';
-import { BaseDatePickerProps, colorClasses, sizeClasses } from './common';
+import { type BaseDatePickerProps, colorClasses, sizeClasses } from './common';
 
 export type DatePickerProps = BaseDatePickerProps & {
   value?: Date | null;
@@ -48,7 +48,7 @@ export function DatePicker({
           colorClass,
           disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
           className,
-          customClasses?.input
+          customClasses?.input,
         )}
       >
         <ReactDatePicker
@@ -59,7 +59,9 @@ export function DatePicker({
           minDate={minDate}
           maxDate={maxDate}
           disabled={disabled || loading}
-          calendarProps={customClasses?.calendar ? { className: customClasses.calendar } : undefined}
+          calendarProps={
+            customClasses?.calendar ? { className: customClasses.calendar } : undefined
+          }
           clearIcon={
             isClearable ? (
               <RenderIcon
@@ -71,15 +73,18 @@ export function DatePicker({
           calendarIcon={
             <RenderIcon
               name={loading ? 'loading' : (icon ?? 'calendar-days')}
-              className={clsx(getIconSize(size),'text-neutral-placeholder', customClasses?.icon, loading && 'animate-spin')}
+              className={clsx(
+                getIconSize(size),
+                'text-neutral-placeholder',
+                customClasses?.icon,
+                loading && 'animate-spin',
+              )}
             />
           }
         />
       </div>
 
-      {error && (
-        <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>
-      )}
+      {error && <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
     </div>
   );
 }

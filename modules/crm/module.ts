@@ -1,4 +1,4 @@
-import { DashboardModule } from '@enterprise/shared-types/modules';
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { crmRoutes } from './routes';
 
 export const crmModule: DashboardModule = {
@@ -7,5 +7,5 @@ export const crmModule: DashboardModule = {
   route: '/crm',
   icon: 'handshake',
   themeKey: 'crm',
-  component: crmRoutes.index
+  component: crmRoutes.index,
 };

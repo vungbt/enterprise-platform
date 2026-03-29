@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateInventoryItemInput } from '../dto/create-inventory-item.input';
+import type { UpdateInventoryItemInput } from '../dto/update-inventory-item.input';
 import { InventoryRepository } from '../repositories/inventory.repository';
-import { CreateInventoryItemInput } from '../dto/create-inventory-item.input';
-import { UpdateInventoryItemInput } from '../dto/update-inventory-item.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class InventoryService {
@@ -31,14 +27,9 @@ export class InventoryService {
     try {
       return await this.inventoryRepository.create(input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `InventoryItem with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`InventoryItem with duplicate ${field} already exists`);
       }
       throw error;
     }
@@ -49,14 +40,9 @@ export class InventoryService {
     try {
       return await this.inventoryRepository.update(id, input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `InventoryItem with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`InventoryItem with duplicate ${field} already exists`);
       }
       throw error;
     }

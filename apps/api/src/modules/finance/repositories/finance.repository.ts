@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateInvoiceInput } from '../dto/create-invoice.input';
-import { UpdateInvoiceInput } from '../dto/update-invoice.input';
+import type { CreateInvoiceInput } from '../dto/create-invoice.input';
+import type { UpdateInvoiceInput } from '../dto/update-invoice.input';
 
 @Injectable()
 export class FinanceRepository {

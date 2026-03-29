@@ -1,9 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import React, { ButtonHTMLAttributes, forwardRef } from 'react';
-import { IconName, RenderIcon } from '../icons';
-import { getIconSize, Size } from '../common';
+import type React from 'react';
+import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { getIconSize, type Size } from '../common';
+import { type IconName, RenderIcon } from '../icons';
 
 export type ButtonProps = {
   children?: React.ReactNode;
@@ -43,7 +44,8 @@ const colorClasses = {
     subtle: 'bg-primary-background text-primary-base hover:bg-primary-hover',
     link: 'text-primary bg-transparent hover:underline',
     text: 'text-primary bg-transparent hover:text-primary-clicked',
-    ghost: 'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
+    ghost:
+      'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
   },
   secondary: {
     solid: 'bg-secondary text-white hover:bg-secondary-base',
@@ -51,7 +53,8 @@ const colorClasses = {
     subtle: 'bg-secondary-background text-secondary-base hover:bg-secondary-hover',
     link: 'text-secondary bg-transparent hover:underline',
     text: 'text-secondary bg-transparent hover:text-secondary-clicked',
-    ghost: 'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
+    ghost:
+      'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
   },
   success: {
     solid: 'bg-success text-white hover:bg-success-base',
@@ -104,7 +107,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       customClasses,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const colorClass = danger ? colorClasses.error[variant] : colorClasses[color][variant];
     const iconSizeClass = getIconSize(size);
@@ -119,7 +122,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           colorClass,
           disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
           className,
-          customClasses?.root
+          customClasses?.root,
         )}
         disabled={disabled || loading}
         {...rest}
@@ -130,7 +133,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
             iconSizeClass,
             children ? 'mr-2' : '',
             loading && 'animate-spin',
-            customClasses?.icon
+            customClasses?.icon,
           )}
         />
         {children}
@@ -140,7 +143,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         />
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = 'Button';

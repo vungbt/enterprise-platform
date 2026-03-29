@@ -1,23 +1,21 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 'use client';
 import {
-  ColumnDef,
+  type ColumnDef,
   getCoreRowModel,
-  HeaderGroup,
-  Row,
-  SortingState,
+  type HeaderGroup,
+  type Row,
+  type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { ReactNode, useState } from 'react';
+import clsx from 'clsx';
+import { type ReactNode, useState } from 'react';
+import { Checkbox } from '../checkbox';
+import { Pagination } from '../pagination';
+import { Radio } from '../radio';
 import { TableEmpty } from './table-empty';
 import { TableHeader } from './table-header';
-import { TableRow, TableRowEmpty } from './table-row';
 import { TableLoading } from './table-loading';
-import clsx from 'clsx';
-import { Checkbox } from '../checkbox';
-import { Radio } from '../radio';
-import { Pagination } from '../pagination';
+import { TableRow, TableRowEmpty } from './table-row';
 
 type TableProps<T> = {
   columns: TableColumn<T>;
@@ -56,7 +54,7 @@ type TableProps<T> = {
   };
 };
 
-export const Table = <T extends Record<string, any>>({
+export const Table = <T extends Record<string, unknown>>({
   columns = [],
   data = [],
   loading = false,
@@ -89,7 +87,7 @@ export const Table = <T extends Record<string, any>>({
       newSelected = [key];
     } else {
       if (selectedKeys.includes(key)) {
-        newSelected = selectedKeys.filter(k => k !== key);
+        newSelected = selectedKeys.filter((k) => k !== key);
       } else {
         newSelected = [...selectedKeys, key];
       }
@@ -101,7 +99,7 @@ export const Table = <T extends Record<string, any>>({
 
     rowSelection?.onChange?.(
       newSelected,
-      data.filter(d => newSelected.includes(d[rowKey]))
+      data.filter((d) => newSelected.includes(d[rowKey] as React.Key)),
     );
   };
 
@@ -114,23 +112,26 @@ export const Table = <T extends Record<string, any>>({
             rows.length > 0 && selectedKeys.length > 0 && selectedKeys.length < rows.length
           }
           checked={
-            (rows.length > 0 && rows.every(row => selectedKeys.includes(row.original[rowKey]))) ||
+            (rows.length > 0 &&
+              rows.every((row) => selectedKeys.includes(row.original[rowKey] as React.Key))) ||
             (rows.length > 0 && selectedKeys.length > 0 && selectedKeys.length < rows.length)
           }
-          onChange={e => {
-            const allKeys = (e.target as any).checked ? rows.map(r => r.original[rowKey]) : [];
+          onChange={(e) => {
+            const allKeys = (e.target as HTMLInputElement).checked
+              ? rows.map((r) => r.original[rowKey] as React.Key)
+              : [];
             if (!rowSelection?.selectedRowKeys) {
               setInternalSelectedKeys(allKeys);
             }
             rowSelection?.onChange?.(
               allKeys,
-              data.filter(d => allKeys.includes(d[rowKey]))
+              data.filter((d) => allKeys.includes(d[rowKey] as React.Key)),
             );
           }}
         />
       ) : null,
     cell: ({ row }) => {
-      const key = row.original[rowKey];
+      const key = row.original[rowKey] as React.Key;
       const isSelected = selectedKeys.includes(key);
       if (rowSelection?.type === 'checkbox')
         return (
@@ -153,7 +154,7 @@ export const Table = <T extends Record<string, any>>({
     data,
     columns: allColumns,
     state: { sorting },
-    onSortingChange: values => onSorting && onSorting(values as TableSortingType),
+    onSortingChange: (values) => onSorting?.(values as TableSortingType),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: undefined,
     manualPagination: true,

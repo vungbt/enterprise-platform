@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateClubInput } from '../dto/create-club.input';
-import { UpdateClubInput } from '../dto/update-club.input';
-import { AddClubMemberInput } from '../dto/add-club-member.input';
+import type { AddClubMemberInput } from '../dto/add-club-member.input';
+import type { CreateClubInput } from '../dto/create-club.input';
+import type { UpdateClubInput } from '../dto/update-club.input';
 
 @Injectable()
 export class SportsClubsRepository {

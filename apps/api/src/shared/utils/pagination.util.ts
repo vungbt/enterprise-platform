@@ -9,6 +9,6 @@ export function toPagination({ page = 1, limit = 20 }: PaginationQuery) {
 
   return {
     skip: (safePage - 1) * safeLimit,
-    take: safeLimit
+    take: safeLimit,
   };
 }

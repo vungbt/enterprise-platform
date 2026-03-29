@@ -1,4 +1,4 @@
-import { IconName } from '../icons';
+import type { IconName } from '../icons';
 
 export type BaseDatePickerProps = {
   className?: string;

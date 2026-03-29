@@ -1,25 +1,14 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { DepartmentService } from './services/department.service';
-import { DepartmentEntity } from './entities/department.entity';
-import { CreateDepartmentInput } from './dto/create-department.input';
-import { UpdateDepartmentInput } from './dto/update-department.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { EmployeeEntity } from '../hr/entities/employee.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { EmployeeEntity } from '../hr/entities/employee.entity';
+import { CreateDepartmentInput } from './dto/create-department.input';
+import { UpdateDepartmentInput } from './dto/update-department.input';
+import { DepartmentEntity } from './entities/department.entity';
+import { DepartmentService } from './services/department.service';
 
 @ObjectType()
 export class PaginatedDepartment extends Paginated(DepartmentEntity) {}
@@ -31,9 +20,7 @@ export class DepartmentResolver {
 
   @Query(() => PaginatedDepartment, { name: 'departments' })
   @CheckAbility({ action: 'read', subject: 'Department' })
-  departments(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  departments(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.departmentService.getDepartments(pagination);
   }
 
@@ -51,10 +38,7 @@ export class DepartmentResolver {
 
   @Mutation(() => DepartmentEntity)
   @CheckAbility({ action: 'update', subject: 'Department' })
-  updateDepartment(
-    @Args('id') id: string,
-    @Args('input') input: UpdateDepartmentInput,
-  ) {
+  updateDepartment(@Args('id') id: string, @Args('input') input: UpdateDepartmentInput) {
     return this.departmentService.updateDepartment(id, input);
   }
 

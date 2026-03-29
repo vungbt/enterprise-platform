@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { AddClubMemberInput } from '../dto/add-club-member.input';
+import type { CreateClubInput } from '../dto/create-club.input';
+import type { UpdateClubInput } from '../dto/update-club.input';
 import { SportsClubsRepository } from '../repositories/sports-clubs.repository';
-import { CreateClubInput } from '../dto/create-club.input';
-import { UpdateClubInput } from '../dto/update-club.input';
-import { AddClubMemberInput } from '../dto/add-club-member.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class SportsClubsService {

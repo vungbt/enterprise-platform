@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { DashboardLayout } from '@enterprise/ui/layout/dashboard-layout';
 import { modules } from '@dashboard/module-registry/modules';
+import { DashboardLayout } from '@enterprise/ui/layout/dashboard-layout';
+import type { ReactNode } from 'react';
 
 type PlatformLayoutProps = {
   children: ReactNode;
@@ -12,7 +12,7 @@ export default function PlatformLayout({ children }: PlatformLayoutProps) {
     name,
     route,
     icon,
-    themeKey
+    themeKey,
   }));
 
   return <DashboardLayout modules={moduleNav}>{children}</DashboardLayout>;

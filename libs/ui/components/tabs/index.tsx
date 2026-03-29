@@ -1,9 +1,10 @@
 'use client';
 
 import clsx from 'clsx';
-import React, { ReactNode } from 'react';
-import { Tab, TabList, TabPanel, Tabs as ReactTabs } from 'react-tabs';
-import { IconName, RenderIcon } from '../icons';
+import type React from 'react';
+import type { ReactNode } from 'react';
+import { Tabs as ReactTabs, Tab, TabList, TabPanel } from 'react-tabs';
+import { type IconName, RenderIcon } from '../icons';
 
 export type TabItem = {
   label: string;
@@ -17,7 +18,7 @@ export type TabsProps = {
   tabs: TabItem[];
   selectedIndex?: number;
   defaultActiveTab?: number;
-  onChange?: (index: number, lastIndex: number, event: Event) => boolean | void;
+  onChange?: (index: number, lastIndex: number, event: Event) => boolean | undefined;
   variant?: 'line' | 'card';
   size?: 'small' | 'middle' | 'large';
   color?: 'primary' | 'secondary' | 'success' | 'pending' | 'neutral';
@@ -31,7 +32,7 @@ export type TabsProps = {
   };
 };
 
-export const Tabs: React.FC<TabsProps> = props => {
+export const Tabs: React.FC<TabsProps> = (props) => {
   const {
     tabs,
     onChange,
@@ -54,10 +55,10 @@ export const Tabs: React.FC<TabsProps> = props => {
         className={clsx(
           customClasses?.tabs,
           tabListSize,
-          'flex w-full relative before:content-[""] before:absolute before:bottom-0 before:right-0 before:left-0 before:w-full before:h-[1px] before:bg-neutral'
+          'flex w-full relative before:content-[""] before:absolute before:bottom-0 before:right-0 before:left-0 before:w-full before:h-[1px] before:bg-neutral',
         )}
       >
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <Tab
             key={tab.value}
             disabled={tab.disabled}
@@ -66,9 +67,12 @@ export const Tabs: React.FC<TabsProps> = props => {
               tabItemSize,
               colorClass.tab,
               variableClass.tab,
-              'cursor-pointer relative outline-none transition-all ease-linear'
+              'cursor-pointer relative outline-none transition-all ease-linear',
             )}
-            selectedClassName={clsx(colorClass.tabActive, 'after:w-full border-b-neutral-white bg-neutral-white')}
+            selectedClassName={clsx(
+              colorClass.tabActive,
+              'after:w-full border-b-neutral-white bg-neutral-white',
+            )}
           >
             <span className="flex items-center gap-1">
               {tab.icon && (
@@ -80,7 +84,7 @@ export const Tabs: React.FC<TabsProps> = props => {
         ))}
       </TabList>
 
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <TabPanel key={tab.value} className={clsx(customClasses?.content)}>
           {tab.content}
         </TabPanel>
@@ -122,13 +126,13 @@ const colorClasses = {
 };
 
 const tabsSizeClasses = {
-  small:  { line: 'gap-8', card: 'gap-[2px]' },
+  small: { line: 'gap-8', card: 'gap-[2px]' },
   middle: { line: 'gap-8', card: 'gap-[2px]' },
-  large:  { line: 'gap-8', card: 'gap-[2px]' },
+  large: { line: 'gap-8', card: 'gap-[2px]' },
 };
 
 const tabItemSizeClasses = {
-  small:  { line: 'text-14 py-2', card: 'text-14 py-1 px-2 rounded-tl-md rounded-tr-md' },
+  small: { line: 'text-14 py-2', card: 'text-14 py-1 px-2 rounded-tl-md rounded-tr-md' },
   middle: { line: 'text-14 py-3', card: 'text-14 py-2 px-4 rounded-tl-lg rounded-tr-lg' },
-  large:  { line: 'text-16 py-4', card: 'text-16 py-3 px-4 rounded-tl-lg rounded-tr-lg' },
+  large: { line: 'text-16 py-4', card: 'text-16 py-3 px-4 rounded-tl-lg rounded-tr-lg' },
 };

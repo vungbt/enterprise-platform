@@ -1,26 +1,15 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { CustomerEntity } from './entities/customer.entity';
-import { CrmService } from './services/crm.service';
-import { CreateCustomerInput } from './dto/create-customer.input';
-import { UpdateCustomerInput } from './dto/update-customer.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { UserEntity } from '../../shared/entities/user.entity';
-import { InvoiceEntity } from '../finance/entities/invoice.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { UserEntity } from '../../shared/entities/user.entity';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { InvoiceEntity } from '../finance/entities/invoice.entity';
+import { CreateCustomerInput } from './dto/create-customer.input';
+import { UpdateCustomerInput } from './dto/update-customer.input';
+import { CustomerEntity } from './entities/customer.entity';
+import { CrmService } from './services/crm.service';
 
 @ObjectType()
 export class PaginatedCustomer extends Paginated(CustomerEntity) {}
@@ -32,9 +21,7 @@ export class CrmResolver {
 
   @Query(() => PaginatedCustomer, { name: 'customers' })
   @CheckAbility({ action: 'read', subject: 'Customer' })
-  customers(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  customers(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.crmService.getCustomers(pagination);
   }
 
@@ -52,10 +39,7 @@ export class CrmResolver {
 
   @Mutation(() => CustomerEntity)
   @CheckAbility({ action: 'update', subject: 'Customer' })
-  updateCustomer(
-    @Args('id') id: string,
-    @Args('input') input: UpdateCustomerInput,
-  ) {
+  updateCustomer(@Args('id') id: string, @Args('input') input: UpdateCustomerInput) {
     return this.crmService.updateCustomer(id, input);
   }
 

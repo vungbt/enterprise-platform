@@ -1,5 +1,5 @@
 import './globals.css';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Providers } from './providers';
 
 export const metadata = {
@@ -8,8 +8,8 @@ export const metadata = {
   icons: {
     icon: '/favicon_io/favicon.ico',
     shortcut: '/favicon_io/favicon-16x16.png',
-    apple: '/favicon_io/apple-touch-icon.png'
-  }
+    apple: '/favicon_io/apple-touch-icon.png',
+  },
 };
 
 type RootLayoutProps = {

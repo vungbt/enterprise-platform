@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateEmployeeInput } from '../dto/create-employee.input';
-import { UpdateEmployeeInput } from '../dto/update-employee.input';
+import type { CreateEmployeeInput } from '../dto/create-employee.input';
+import type { UpdateEmployeeInput } from '../dto/update-employee.input';
 
 @Injectable()
 export class HrRepository {

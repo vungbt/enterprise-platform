@@ -6,8 +6,8 @@ import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import './timepicker.css';
 import { getIconSize } from '../common';
+import { type BaseDatePickerProps, colorClasses, sizeClasses } from '../datepicker/common';
 import { RenderIcon } from '../icons';
-import { BaseDatePickerProps, colorClasses, sizeClasses } from '../datepicker/common';
 
 export type TimePickerProps = BaseDatePickerProps & {
   value?: string | null;
@@ -49,7 +49,7 @@ export function TimePicker({
           colorClass,
           disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
           className,
-          customClasses?.input
+          customClasses?.input,
         )}
       >
         <ReactTimePicker
@@ -78,9 +78,7 @@ export function TimePicker({
         />
       </div>
 
-      {error && (
-        <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>
-      )}
+      {error && <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
     </div>
   );
 }

@@ -19,10 +19,7 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthPayload)
-  loginWithOAuth(
-    @Args('email') email: string,
-    @Args('name') name: string
-  ) {
+  loginWithOAuth(@Args('email') email: string, @Args('name') name: string) {
     return this.authService.loginWithOAuth(email, name);
   }
 }

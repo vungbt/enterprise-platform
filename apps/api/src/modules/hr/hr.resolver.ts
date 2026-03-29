@@ -1,25 +1,14 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { HrService } from './services/hr.service';
-import { EmployeeEntity } from './entities/employee.entity';
-import { CreateEmployeeInput } from './dto/create-employee.input';
-import { UpdateEmployeeInput } from './dto/update-employee.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { DepartmentEntity } from '../department/entities/department.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { DepartmentEntity } from '../department/entities/department.entity';
+import { CreateEmployeeInput } from './dto/create-employee.input';
+import { UpdateEmployeeInput } from './dto/update-employee.input';
+import { EmployeeEntity } from './entities/employee.entity';
+import { HrService } from './services/hr.service';
 
 @ObjectType()
 export class PaginatedEmployee extends Paginated(EmployeeEntity) {}
@@ -31,9 +20,7 @@ export class HrResolver {
 
   @Query(() => PaginatedEmployee, { name: 'employees' })
   @CheckAbility({ action: 'read', subject: 'Employee' })
-  employees(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  employees(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.hrService.getEmployees(pagination);
   }
 
@@ -51,10 +38,7 @@ export class HrResolver {
 
   @Mutation(() => EmployeeEntity)
   @CheckAbility({ action: 'update', subject: 'Employee' })
-  updateEmployee(
-    @Args('id') id: string,
-    @Args('input') input: UpdateEmployeeInput,
-  ) {
+  updateEmployee(@Args('id') id: string, @Args('input') input: UpdateEmployeeInput) {
     return this.hrService.updateEmployee(id, input);
   }
 

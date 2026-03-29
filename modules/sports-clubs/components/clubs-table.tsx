@@ -4,7 +4,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow
+  TableRow,
 } from '@enterprise/ui/components/ui/table';
 import type { ClubDto } from '../api/sports-clubs.api';
 

@@ -8,6 +8,10 @@ declare module 'next-auth' {
       roles: string[];
     } & DefaultSession['user'];
   }
+
+  interface User {
+    backendToken?: string;
+  }
 }
 
 declare module 'next-auth/jwt' {

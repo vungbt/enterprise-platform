@@ -1,4 +1,4 @@
-import { DashboardModule } from '@enterprise/shared-types/modules';
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { hrRoutes } from './routes';
 
 export const hrModule: DashboardModule = {
@@ -7,5 +7,5 @@ export const hrModule: DashboardModule = {
   route: '/hr',
   icon: 'users',
   themeKey: 'hr',
-  component: hrRoutes.index
+  component: hrRoutes.index,
 };

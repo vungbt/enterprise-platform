@@ -1,12 +1,22 @@
 'use client';
 import clsx from 'clsx';
+import type React from 'react';
 import { forwardRef } from 'react';
+import {
+  type ClearIndicatorProps,
+  type CSSObjectWithLabel,
+  components,
+  type DropdownIndicatorProps,
+  type GroupBase,
+  type MultiValueProps,
+  type OptionProps,
+  type Props as ReactSelectProps,
+} from 'react-select';
 import AsyncCreatableSelect from 'react-select/async-creatable';
-import { GroupBase, Props as ReactSelectProps, components } from 'react-select';
-import { IconName, RenderIcon } from '../icons';
+import { getIconSize } from '../common';
+import { type IconName, RenderIcon } from '../icons';
 import { Tag } from '../tag';
 import type { SelectOption } from './select';
-import { getIconSize } from '../common';
 
 export type SelectAsyncCreatableProps = {
   className?: string;
@@ -24,8 +34,8 @@ export type SelectAsyncCreatableProps = {
   isMulti?: boolean;
   loadOptions: (
     inputValue: string,
-    callback: (options: SelectOption[]) => void
-  ) => void | Promise<SelectOption[]>;
+    callback: (options: SelectOption[]) => void,
+  ) => undefined | Promise<SelectOption[]>;
   onCreateOption: (inputValue: string) => void;
   customClasses?: {
     root?: string;
@@ -111,7 +121,7 @@ const colorClasses = {
 const getPaddingClasses = (
   size: 'small' | 'middle' | 'large',
   hasIcon: boolean,
-  hasIconRight: boolean
+  hasIconRight: boolean,
 ) => {
   const basePadding = {
     small: hasIcon ? 'pl-8' : 'pl-2',
@@ -126,19 +136,23 @@ const getPaddingClasses = (
   return `${basePadding[size]} ${rightPadding[size]}`;
 };
 
-const DropdownIndicator = (props: any) => (
+const DropdownIndicator = (
+  props: DropdownIndicatorProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) => (
   <components.DropdownIndicator {...props}>
     <RenderIcon
       name="chevron-down"
       className={clsx(
         'text-neutral-placeholder transition-transform duration-200 !w-5 !h-5',
-        props.selectProps.menuIsOpen ? 'rotate-180' : ''
+        props.selectProps.menuIsOpen ? 'rotate-180' : '',
       )}
     />
   </components.DropdownIndicator>
 );
 
-const ClearIndicator = (props: any) => (
+const ClearIndicator = (
+  props: ClearIndicatorProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) => (
   <components.ClearIndicator {...props}>
     <RenderIcon
       name="x-mark"
@@ -147,7 +161,10 @@ const ClearIndicator = (props: any) => (
   </components.ClearIndicator>
 );
 
-export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
+export const SelectAsyncCreatable = forwardRef<
+  React.ElementRef<typeof AsyncCreatableSelect>,
+  SelectAsyncCreatableProps
+>(
   (
     {
       className,
@@ -169,12 +186,12 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
       id,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
 
     const customStyles = {
-      control: (provided: any) => ({
+      control: (provided: CSSObjectWithLabel) => ({
         ...provided,
         minHeight: size === 'small' ? '32px' : size === 'large' ? '48px' : '40px',
         border: 'none',
@@ -182,18 +199,18 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
         backgroundColor: 'transparent',
         '&:hover': { border: 'none' },
       }),
-      valueContainer: (provided: any) => ({ ...provided, padding: 0 }),
-      input: (provided: any) => ({ ...provided, margin: 0, padding: 0 }),
-      indicatorSeparator: () => ({ display: 'none' }),
-      dropdownIndicator: (provided: any) => ({
+      valueContainer: (provided: CSSObjectWithLabel) => ({ ...provided, padding: 0 }),
+      input: (provided: CSSObjectWithLabel) => ({ ...provided, margin: 0, padding: 0 }),
+      indicatorSeparator: () => ({ display: 'none' }) as CSSObjectWithLabel,
+      dropdownIndicator: (provided: CSSObjectWithLabel) => ({
         ...provided,
         padding: size === 'small' ? '4px' : size === 'large' ? '12px' : '8px',
       }),
-      clearIndicator: (provided: any) => ({
+      clearIndicator: (provided: CSSObjectWithLabel) => ({
         ...provided,
         padding: size === 'small' ? '4px' : size === 'large' ? '12px' : '8px',
       }),
-      multiValue: (provided: any) => ({
+      multiValue: (provided: CSSObjectWithLabel) => ({
         ...provided,
         margin: size === 'small' ? '1px' : '2px',
         backgroundColor: 'transparent',
@@ -202,15 +219,17 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
         alignItems: 'center',
         border: 'none',
       }),
-      option: (provided: any, state: any) => ({
+      option: (
+        provided: CSSObjectWithLabel,
+        state: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>,
+      ) => ({
         ...provided,
-        backgroundColor: state.isSelected || state.isFocused
-          ? 'var(--color-primary-bg)'
-          : 'transparent',
+        backgroundColor:
+          state.isSelected || state.isFocused ? 'var(--color-primary-bg)' : 'transparent',
         color: state.isSelected ? 'var(--color-primary-hover)' : '',
         '&:hover': { backgroundColor: 'var(--color-primary-bg)' },
       }),
-      menu: (provided: any) => ({
+      menu: (provided: CSSObjectWithLabel) => ({
         ...provided,
         zIndex: 50,
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -219,15 +238,14 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
       }),
     };
 
-    const MultiValue = (props: any) => {
+    const MultiValue = (props: MultiValueProps<SelectOption, boolean, GroupBase<SelectOption>>) => {
       const { data, removeProps } = props;
       return (
         <div className="mr-1">
           <Tag
             content={data?.label}
-            onClose={(e?: any) => {
-              removeProps?.onClick?.(e);
-              removeProps?.onTouchEnd?.(e);
+            onClose={() => {
+              removeProps?.onClick?.({} as React.MouseEvent<HTMLDivElement>);
             }}
           />
         </div>
@@ -253,17 +271,17 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
             colorClass,
             disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
             className,
-            customClasses?.select
+            customClasses?.select,
           )}
         >
           <AsyncCreatableSelect
             {...rest}
-            ref={ref as any}
+            ref={ref}
             id={id}
             instanceId={id}
             defaultOptions
-            loadOptions={loadOptions as any}
-            onCreateOption={onCreateOption as any}
+            loadOptions={loadOptions}
+            onCreateOption={onCreateOption}
             placeholder={placeholder}
             isDisabled={disabled || loading}
             isLoading={loading}
@@ -286,7 +304,7 @@ export const SelectAsyncCreatable = forwardRef<any, SelectAsyncCreatableProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 SelectAsyncCreatable.displayName = 'SelectAsyncCreatable';

@@ -1,28 +1,17 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { SportsClubsService } from './services/sports-clubs.service';
-import { ClubEntity } from './entities/club.entity';
-import { ClubMemberEntity } from './entities/club-member.entity';
-import { CreateClubInput } from './dto/create-club.input';
-import { UpdateClubInput } from './dto/update-club.input';
-import { AddClubMemberInput } from './dto/add-club-member.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { ExpenseEntity } from '../expense/entities/expense.entity';
-import { UserEntity } from '../../shared/entities/user.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { UserEntity } from '../../shared/entities/user.entity';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { ExpenseEntity } from '../expense/entities/expense.entity';
+import { AddClubMemberInput } from './dto/add-club-member.input';
+import { CreateClubInput } from './dto/create-club.input';
+import { UpdateClubInput } from './dto/update-club.input';
+import { ClubEntity } from './entities/club.entity';
+import { ClubMemberEntity } from './entities/club-member.entity';
+import { SportsClubsService } from './services/sports-clubs.service';
 
 @ObjectType()
 export class PaginatedClub extends Paginated(ClubEntity) {}
@@ -34,9 +23,7 @@ export class SportsClubsResolver {
 
   @Query(() => PaginatedClub, { name: 'clubs' })
   @CheckAbility({ action: 'read', subject: 'Club' })
-  clubs(
-    @Args('pagination', { nullable: true }) pagination?: PaginationInput,
-  ) {
+  clubs(@Args('pagination', { nullable: true }) pagination?: PaginationInput) {
     return this.sportsClubsService.getClubs(pagination);
   }
 
@@ -54,10 +41,7 @@ export class SportsClubsResolver {
 
   @Mutation(() => ClubEntity)
   @CheckAbility({ action: 'update', subject: 'Club' })
-  updateClub(
-    @Args('id') id: string,
-    @Args('input') input: UpdateClubInput,
-  ) {
+  updateClub(@Args('id') id: string, @Args('input') input: UpdateClubInput) {
     return this.sportsClubsService.updateClub(id, input);
   }
 
@@ -75,10 +59,7 @@ export class SportsClubsResolver {
 
   @Mutation(() => Boolean)
   @CheckAbility({ action: 'delete', subject: 'ClubMember' })
-  removeClubMember(
-    @Args('clubId') clubId: string,
-    @Args('userId') userId: string,
-  ) {
+  removeClubMember(@Args('clubId') clubId: string, @Args('userId') userId: string) {
     return this.sportsClubsService.removeClubMember(clubId, userId);
   }
 

@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateCustomerInput } from '../dto/create-customer.input';
+import type { UpdateCustomerInput } from '../dto/update-customer.input';
 import { CrmRepository } from '../repositories/crm.repository';
-import { CreateCustomerInput } from '../dto/create-customer.input';
-import { UpdateCustomerInput } from '../dto/update-customer.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class CrmService {
@@ -31,14 +27,9 @@ export class CrmService {
     try {
       return await this.crmRepository.create(input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Customer with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Customer with duplicate ${field} already exists`);
       }
       throw error;
     }
@@ -49,14 +40,9 @@ export class CrmService {
     try {
       return await this.crmRepository.update(id, input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Customer with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Customer with duplicate ${field} already exists`);
       }
       throw error;
     }

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateExpenseInput } from '../dto/create-expense.input';
+import type { CreateExpenseCategoryInput } from '../dto/create-expense-category.input';
+import type { ExpenseFilterInput } from '../dto/expense-filter.input';
+import type { UpdateExpenseInput } from '../dto/update-expense.input';
+import type { UpdateExpenseCategoryInput } from '../dto/update-expense-category.input';
 import { ExpenseRepository } from '../repositories/expense.repository';
-import { CreateExpenseInput } from '../dto/create-expense.input';
-import { UpdateExpenseInput } from '../dto/update-expense.input';
-import { CreateExpenseCategoryInput } from '../dto/create-expense-category.input';
-import { UpdateExpenseCategoryInput } from '../dto/update-expense-category.input';
-import { ExpenseFilterInput } from '../dto/expense-filter.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class ExpenseService {

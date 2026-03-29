@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateExpenseInput } from '../dto/create-expense.input';
-import { UpdateExpenseInput } from '../dto/update-expense.input';
-import { CreateExpenseCategoryInput } from '../dto/create-expense-category.input';
-import { UpdateExpenseCategoryInput } from '../dto/update-expense-category.input';
-import { ExpenseFilterInput } from '../dto/expense-filter.input';
+import type { CreateExpenseInput } from '../dto/create-expense.input';
+import type { CreateExpenseCategoryInput } from '../dto/create-expense-category.input';
+import type { ExpenseFilterInput } from '../dto/expense-filter.input';
+import type { UpdateExpenseInput } from '../dto/update-expense.input';
+import type { UpdateExpenseCategoryInput } from '../dto/update-expense-category.input';
 
 @Injectable()
 export class ExpenseRepository {
@@ -13,10 +13,7 @@ export class ExpenseRepository {
 
   // ── Expense ──
 
-  async findAllExpenses(
-    pagination: { page: number; limit: number },
-    filter?: ExpenseFilterInput,
-  ) {
+  async findAllExpenses(pagination: { page: number; limit: number }, filter?: ExpenseFilterInput) {
     const where: Prisma.ExpenseWhereInput = {};
 
     if (filter?.clubId) where.clubId = filter.clubId;

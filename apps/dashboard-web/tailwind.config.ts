@@ -8,8 +8,8 @@ const config: Config = {
     './module-shell/**/*.{ts,tsx}',
     './module-registry/**/*.{ts,tsx}',
     '../../libs/ui/**/*.{ts,tsx}',
-    '../../modules/**/*.{ts,tsx}'
-  ]
+    '../../modules/**/*.{ts,tsx}',
+  ],
 };
 
 export default config;

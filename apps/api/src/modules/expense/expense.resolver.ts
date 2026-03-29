@@ -1,31 +1,20 @@
-import {
-  Args,
-  Mutation,
-  ObjectType,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
-import { ExpenseService } from './services/expense.service';
-import { ExpenseEntity } from './entities/expense.entity';
-import { ExpenseCategoryEntity } from './entities/expense-category.entity';
-import { CreateExpenseInput } from './dto/create-expense.input';
-import { UpdateExpenseInput } from './dto/update-expense.input';
-import { CreateExpenseCategoryInput } from './dto/create-expense-category.input';
-import { UpdateExpenseCategoryInput } from './dto/update-expense-category.input';
-import { ExpenseFilterInput } from './dto/expense-filter.input';
-import {
-  Paginated,
-  PaginationInput,
-} from '../../shared/graphql/pagination.types';
-import { UserEntity } from '../../shared/entities/user.entity';
-import { ClubEntity } from '../sports-clubs/entities/club.entity';
-import { DepartmentEntity } from '../department/entities/department.entity';
+import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
+import { UserEntity } from '../../shared/entities/user.entity';
+import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
 import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
+import { DepartmentEntity } from '../department/entities/department.entity';
+import { ClubEntity } from '../sports-clubs/entities/club.entity';
+import { CreateExpenseInput } from './dto/create-expense.input';
+import { CreateExpenseCategoryInput } from './dto/create-expense-category.input';
+import { ExpenseFilterInput } from './dto/expense-filter.input';
+import { UpdateExpenseInput } from './dto/update-expense.input';
+import { UpdateExpenseCategoryInput } from './dto/update-expense-category.input';
+import { ExpenseEntity } from './entities/expense.entity';
+import { ExpenseCategoryEntity } from './entities/expense-category.entity';
+import { ExpenseService } from './services/expense.service';
 
 @ObjectType()
 export class PaginatedExpense extends Paginated(ExpenseEntity) {}
@@ -64,10 +53,7 @@ export class ExpenseResolver {
 
   @Mutation(() => ExpenseEntity)
   @CheckAbility({ action: 'update', subject: 'Expense' })
-  updateExpense(
-    @Args('id') id: string,
-    @Args('input') input: UpdateExpenseInput,
-  ) {
+  updateExpense(@Args('id') id: string, @Args('input') input: UpdateExpenseInput) {
     return this.expenseService.updateExpense(id, input);
   }
 
@@ -85,10 +71,7 @@ export class ExpenseResolver {
 
   @Mutation(() => ExpenseCategoryEntity)
   @CheckAbility({ action: 'update', subject: 'ExpenseCategory' })
-  updateExpenseCategory(
-    @Args('id') id: string,
-    @Args('input') input: UpdateExpenseCategoryInput,
-  ) {
+  updateExpenseCategory(@Args('id') id: string, @Args('input') input: UpdateExpenseCategoryInput) {
     return this.expenseService.updateExpenseCategory(id, input);
   }
 

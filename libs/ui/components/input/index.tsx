@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import { InputHTMLAttributes, forwardRef } from 'react';
-import { IconName, RenderIcon } from '../icons';
+import { forwardRef, type InputHTMLAttributes } from 'react';
+import { getIconSize, type Size } from '../common';
 import { FormLabel } from '../form/form-label';
-import { getIconSize, Size } from '../common';
+import { type IconName, RenderIcon } from '../icons';
 
 export type InputProps = {
   className?: string;
@@ -38,14 +38,18 @@ const colorClasses = {
   primary: {
     solid: 'bg-primary-background border-primary text-primary-base focus:border-primary',
     outline: 'bg-transparent border-primary text-primary-base focus:border-primary-base',
-    subtle: 'bg-primary-background border-primary-background text-primary-base focus:border-primary',
-    ghost: 'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
+    subtle:
+      'bg-primary-background border-primary-background text-primary-base focus:border-primary',
+    ghost:
+      'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
   },
   secondary: {
     solid: 'bg-secondary-background border-secondary text-secondary-base focus:border-secondary',
     outline: 'bg-transparent border-secondary text-secondary-base focus:border-secondary-base',
-    subtle: 'bg-secondary-background border-secondary-background text-secondary-base focus:border-secondary',
-    ghost: 'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
+    subtle:
+      'bg-secondary-background border-secondary-background text-secondary-base focus:border-secondary',
+    ghost:
+      'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
   },
   success: {
     solid: 'bg-success-bg border-success text-success focus:border-success-base',
@@ -69,7 +73,8 @@ const colorClasses = {
     solid: 'bg-neutral-bg border-neutral text-neutral-text-primary focus:border-primary-border',
     outline: 'bg-transparent border-neutral text-neutral-text-primary focus:border-primary-border',
     subtle: 'bg-neutral-bg border-neutral-bg text-neutral-text-primary focus:border-primary-border',
-    ghost: 'text-neutral-text-primary bg-transparent border border-dashed border-primary-border hover:bg-neutral-bg',
+    ghost:
+      'text-neutral-text-primary bg-transparent border border-dashed border-primary-border hover:bg-neutral-bg',
   },
 };
 
@@ -92,7 +97,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       id,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
     const iconSizeClass = getIconSize(size);
@@ -129,14 +134,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               iconRight ? (size === 'small' ? 'pr-8' : size === 'large' ? 'pr-12' : 'pr-10') : '',
               disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
               className,
-              customClasses?.input
+              customClasses?.input,
             )}
             disabled={disabled || loading}
           />
 
           {iconRight && (
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <RenderIcon name={iconRight} className={clsx(iconSizeClass, customClasses?.iconRight)} />
+              <RenderIcon
+                name={iconRight}
+                className={clsx(iconSizeClass, customClasses?.iconRight)}
+              />
             </div>
           )}
         </div>
@@ -144,13 +152,19 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {error ? (
           <p className={clsx('mt-1 text-error', helperTextSize, customClasses?.error)}>{error}</p>
         ) : helperText ? (
-          <p className={clsx('mt-1 text-neutral-placeholder', helperTextSize, customClasses?.helperText)}>
+          <p
+            className={clsx(
+              'mt-1 text-neutral-placeholder',
+              helperTextSize,
+              customClasses?.helperText,
+            )}
+          >
             {helperText}
           </p>
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 Input.displayName = 'Input';

@@ -1,12 +1,12 @@
 'use client';
 
-import Link from 'next/link';
+import type { ModuleNavItem } from '@enterprise/shared-types/modules';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { signOut } from 'next-auth/react';
-import { ModuleNavItem } from '@enterprise/shared-types/modules';
-import { RenderIcon, IconName } from '../components/icons';
 import { Divider } from '../components/divider';
+import { type IconName, RenderIcon } from '../components/icons';
 import { cn } from '../lib/utils';
 
 type SidebarProps = {
@@ -18,7 +18,7 @@ const navItemClass = (isActive: boolean) =>
     'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
     isActive
       ? 'bg-primary text-white'
-      : 'text-neutral-text-primary hover:bg-primary-background hover:text-primary'
+      : 'text-neutral-text-primary hover:bg-primary-background hover:text-primary',
   );
 
 export function Sidebar({ modules }: SidebarProps) {
@@ -48,15 +48,13 @@ export function Sidebar({ modules }: SidebarProps) {
       <div className="mt-auto p-4 space-y-1">
         <Divider className="mb-3" />
 
-        <Link
-          href="/settings"
-          className={navItemClass(pathname.startsWith('/settings'))}
-        >
+        <Link href="/settings" className={navItemClass(pathname.startsWith('/settings'))}>
           <RenderIcon name="settings" className="h-4 w-4" />
           <span>Settings</span>
         </Link>
 
         <button
+          type="button"
           onClick={() => signOut({ callbackUrl: '/auth/login' })}
           className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-neutral-text-primary transition-colors hover:bg-error-bg hover:text-error"
         >

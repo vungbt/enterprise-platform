@@ -15,7 +15,7 @@ export async function getEmployeesApi() {
     return [
       { id: 'E-001', name: 'Alice Johnson', position: 'HR Manager', department: 'People Ops' },
       { id: 'E-002', name: 'Brian Lee', position: 'Recruiter', department: 'Talent' },
-      { id: 'E-003', name: 'Cindy Tran', position: 'HRBP', department: 'Business Partnering' }
+      { id: 'E-003', name: 'Cindy Tran', position: 'HRBP', department: 'Business Partnering' },
     ];
   }
 }

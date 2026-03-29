@@ -1,6 +1,6 @@
-import { ReactNode } from 'react';
-import { RenderIcon } from '../icons';
 import clsx from 'clsx';
+import type { ReactNode } from 'react';
+import { RenderIcon } from '../icons';
 
 type TableEmptyProps = {
   message?: string | ReactNode;

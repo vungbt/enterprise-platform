@@ -1,10 +1,16 @@
 'use client';
 
 import clsx from 'clsx';
-import { AnimatePresence, motion, TargetAndTransition, VariantLabels, Variants } from 'framer-motion';
-import { ReactNode, useMemo } from 'react';
+import {
+  AnimatePresence,
+  motion,
+  type TargetAndTransition,
+  type VariantLabels,
+  type Variants,
+} from 'framer-motion';
+import { type ReactNode, useMemo } from 'react';
 import { Button } from '../button';
-import { IconName, RenderIcon } from '../icons';
+import { type IconName, RenderIcon } from '../icons';
 
 // ─── Animations ─────────────────────────────────────────────────────────────
 
@@ -52,7 +58,7 @@ export const Backdrop = ({
     exit={exit}
     className={clsx(
       'modal-backdrop fixed inset-0 h-full w-full flex items-center justify-center bg-black bg-opacity-50 z-[9999]',
-      className
+      className,
     )}
   >
     {children}
@@ -69,7 +75,13 @@ export type ModalBaseProps = {
   classNameBackdrop?: string;
 };
 
-export const ModalBase = ({ onClose, isOpen, children, className, classNameBackdrop }: ModalBaseProps) => (
+export const ModalBase = ({
+  onClose,
+  isOpen,
+  children,
+  className,
+  classNameBackdrop,
+}: ModalBaseProps) => (
   <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
     <Backdrop
       className={clsx(classNameBackdrop, { hidden: !isOpen, block: isOpen })}
@@ -80,7 +92,7 @@ export const ModalBase = ({ onClose, isOpen, children, className, classNameBackd
       exit="exit"
     >
       <motion.div
-        onClick={e => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}
         className={clsx('modal bg-white shadow-2xl rounded-lg', className)}
         variants={modalAnimation}
         initial="hidden"
@@ -152,13 +164,25 @@ export const ModalConfirm = ({
         </Button>
       </div>
     );
-  }, [actions, isLoading, cancelIcon, cancelLabel, submitIcon, submitLabel, classNameCancel, classNameSubmit, onSubmit, onCancel, submitColor]);
+  }, [
+    actions,
+    isLoading,
+    cancelIcon,
+    cancelLabel,
+    submitIcon,
+    submitLabel,
+    classNameCancel,
+    classNameSubmit,
+    onSubmit,
+    onCancel,
+    submitColor,
+  ]);
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} className="max-w-[500px]">
       <div className="flex flex-col py-2 pb-4 px-4">
         <div className="w-full flex justify-end pb-1">
-          <button onClick={onClose}>
+          <button type="button" onClick={onClose}>
             <RenderIcon className="!w-5 !h-5 text-neutral-border" name="x-mark" />
           </button>
         </div>
@@ -166,7 +190,9 @@ export const ModalConfirm = ({
         <div className="w-full flex items-center flex-col justify-center">
           {iconMain && <RenderIcon name={iconMain} className="!w-14 !h-14 text-pending" />}
           {message && (
-            <p className="mt-3 font-medium text-neutral-text-secondary px-5 text-center">{message}</p>
+            <p className="mt-3 font-medium text-neutral-text-secondary px-5 text-center">
+              {message}
+            </p>
           )}
         </div>
 

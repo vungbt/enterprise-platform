@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { MouseEventHandler, ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 
 export type BreadcrumbItem = {
   key?: string | number;
@@ -81,7 +81,7 @@ const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?
         className={clsx(
           'text-neutral-placeholder transition-colors hover:text-primary',
           itemClassName,
-          item.className
+          item.className,
         )}
       >
         {item.title}
@@ -97,7 +97,7 @@ const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?
         className={clsx(
           'cursor-pointer border-none bg-transparent p-0 text-neutral-placeholder transition-colors hover:text-primary',
           itemClassName,
-          item.className
+          item.className,
         )}
       >
         {item.title}

@@ -21,5 +21,4 @@ export interface CheckAbilityMeta {
   subject: AppSubject;
 }
 
-export const CheckAbility = (meta: CheckAbilityMeta) =>
-  SetMetadata(CHECK_ABILITY_KEY, meta);
+export const CheckAbility = (meta: CheckAbilityMeta) => SetMetadata(CHECK_ABILITY_KEY, meta);

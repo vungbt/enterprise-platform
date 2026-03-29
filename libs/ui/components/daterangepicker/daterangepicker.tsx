@@ -8,8 +8,8 @@ import 'react-calendar/dist/Calendar.css';
 import '../datepicker/calendar.css';
 import './daterangepicker.css';
 import { getIconSize } from '../common';
+import { type BaseDatePickerProps, colorClasses, sizeClasses } from '../datepicker/common';
 import { RenderIcon } from '../icons';
-import { BaseDatePickerProps, colorClasses, sizeClasses } from '../datepicker/common';
 
 export type DateRange = [Date | null, Date | null];
 
@@ -88,22 +88,29 @@ export function DateRangePicker({
         disabled={disabled || loading}
         value={displayValue}
         placeholder={placeholder}
-        onClick={() => { if (!(disabled || loading)) setOpen(true); }}
-        onFocus={() => { if (!(disabled || loading)) setOpen(true); }}
+        onClick={() => {
+          if (!(disabled || loading)) setOpen(true);
+        }}
+        onFocus={() => {
+          if (!(disabled || loading)) setOpen(true);
+        }}
         className={clsx(
           'w-full border rounded-lg transition-all ease-in-out outline-none focus:shadow-border pr-10',
           sizeClasses[size],
           colorClass,
           disabled || loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
           className,
-          customClasses?.input
+          customClasses?.input,
         )}
       />
 
       {isClearable && value && (value[0] || value[1]) ? (
         <button
           type="button"
-          onClick={() => { onChange?.(null); setOpen(false); }}
+          onClick={() => {
+            onChange?.(null);
+            setOpen(false);
+          }}
           className="absolute top-1/2 right-10 transform -translate-y-1/2 text-neutral-placeholder hover:text-error transition-all ease-linear"
           aria-label="Clear date range"
         >
@@ -120,9 +127,10 @@ export function DateRangePicker({
 
       {open && !(disabled || loading) ? (
         <div
+          role="none"
           className={clsx(
             'absolute z-50 mt-2 bg-white rounded-lg shadow-lg',
-            customClasses?.calendar
+            customClasses?.calendar,
           )}
           onMouseDown={(e) => e.preventDefault()}
         >

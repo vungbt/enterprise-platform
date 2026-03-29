@@ -1,7 +1,7 @@
 'use client';
 
-import { ReactNode } from 'react';
 import { SessionProvider } from 'next-auth/react';
+import type { ReactNode } from 'react';
 import { AbilityProvider } from './ability.provider';
 
 type ProvidersProps = {

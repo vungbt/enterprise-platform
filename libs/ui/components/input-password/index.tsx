@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import { InputHTMLAttributes, forwardRef, useState } from 'react';
-import { IconName, RenderIcon } from '../icons';
+import { forwardRef, type InputHTMLAttributes, useState } from 'react';
+import { getIconSize, type Size } from '../common';
 import { FormLabel } from '../form/form-label';
-import { getIconSize, Size } from '../common';
+import { type IconName, RenderIcon } from '../icons';
 
 export type InputPasswordProps = {
   className?: string;
@@ -37,14 +37,18 @@ const colorClasses = {
   primary: {
     solid: 'bg-primary-background border-primary text-primary-base focus:border-primary',
     outline: 'bg-transparent border-primary text-primary-base focus:border-primary-base',
-    subtle: 'bg-primary-background border-primary-background text-primary-base focus:border-primary',
-    ghost: 'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
+    subtle:
+      'bg-primary-background border-primary-background text-primary-base focus:border-primary',
+    ghost:
+      'text-primary bg-transparent border border-dashed border-primary hover:bg-primary-background',
   },
   secondary: {
     solid: 'bg-secondary-background border-secondary text-secondary-base focus:border-secondary',
     outline: 'bg-transparent border-secondary text-secondary-base focus:border-secondary-base',
-    subtle: 'bg-secondary-background border-secondary-background text-secondary-base focus:border-secondary',
-    ghost: 'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
+    subtle:
+      'bg-secondary-background border-secondary-background text-secondary-base focus:border-secondary',
+    ghost:
+      'text-secondary bg-transparent border border-dashed border-secondary hover:bg-secondary-background',
   },
   success: {
     solid: 'bg-success-bg border-success text-success focus:border-success-base',
@@ -68,7 +72,8 @@ const colorClasses = {
     solid: 'bg-neutral-bg border-neutral text-neutral-text-primary focus:border-primary-border',
     outline: 'bg-transparent border-neutral text-neutral-text-primary focus:border-primary-border',
     subtle: 'bg-neutral-bg border-neutral-bg text-neutral-text-primary focus:border-neutral',
-    ghost: 'text-neutral-text-primary bg-transparent border border-dashed border-neutral hover:bg-neutral-bg',
+    ghost:
+      'text-neutral-text-primary bg-transparent border border-dashed border-neutral hover:bg-neutral-bg',
   },
 };
 
@@ -90,7 +95,7 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
       id,
       ...rest
     },
-    ref
+    ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
@@ -128,7 +133,7 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
               size === 'small' ? 'pr-8' : size === 'large' ? 'pr-12' : 'pr-10',
               disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
               className,
-              customClasses?.input
+              customClasses?.input,
             )}
             disabled={disabled || loading}
             {...rest}
@@ -137,7 +142,7 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
           <button
             type="button"
             tabIndex={-1}
-            onClick={() => setShowPassword(v => !v)}
+            onClick={() => setShowPassword((v) => !v)}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-placeholder cursor-pointer"
           >
             <RenderIcon
@@ -150,13 +155,19 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
         {error ? (
           <p className={clsx('mt-1 text-error', helperTextSize, customClasses?.error)}>{error}</p>
         ) : helperText ? (
-          <p className={clsx('mt-1 text-neutral-placeholder', helperTextSize, customClasses?.helperText)}>
+          <p
+            className={clsx(
+              'mt-1 text-neutral-placeholder',
+              helperTextSize,
+              customClasses?.helperText,
+            )}
+          >
             {helperText}
           </p>
         ) : null}
       </div>
     );
-  }
+  },
 );
 
 InputPassword.displayName = 'InputPassword';

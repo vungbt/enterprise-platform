@@ -31,7 +31,7 @@
     "lint": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "next lint apps/dashboard-web"
+        "command": "biome lint apps/dashboard-web"
       }
     }
   },

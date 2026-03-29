@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateEmployeeInput } from '../dto/create-employee.input';
+import type { UpdateEmployeeInput } from '../dto/update-employee.input';
 import { HrRepository } from '../repositories/hr.repository';
-import { CreateEmployeeInput } from '../dto/create-employee.input';
-import { UpdateEmployeeInput } from '../dto/update-employee.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class HrService {
@@ -31,14 +27,9 @@ export class HrService {
     try {
       return await this.hrRepository.create(input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Employee with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Employee with duplicate ${field} already exists`);
       }
       throw error;
     }
@@ -49,14 +40,9 @@ export class HrService {
     try {
       return await this.hrRepository.update(id, input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Employee with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Employee with duplicate ${field} already exists`);
       }
       throw error;
     }

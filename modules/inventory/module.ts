@@ -1,4 +1,4 @@
-import { DashboardModule } from '@enterprise/shared-types/modules';
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { InventoryPage } from './pages/inventory-page';
 
 export const inventoryModule: DashboardModule = {
@@ -7,5 +7,5 @@ export const inventoryModule: DashboardModule = {
   route: '/inventory',
   icon: 'package',
   themeKey: 'inventory',
-  component: InventoryPage
+  component: InventoryPage,
 };

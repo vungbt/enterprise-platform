@@ -1,6 +1,6 @@
-import React from 'react';
 import clsx from 'clsx';
-import { Radio, RadioProps } from './index';
+import type React from 'react';
+import { Radio, type RadioProps } from './index';
 
 export interface RadioOption {
   label: React.ReactNode;
@@ -48,7 +48,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
         className,
         customClasses?.root,
         error && customClasses?.error,
-        'flex items-center gap-4'
+        'flex items-center gap-4',
       )}
     >
       {options.map((option) => (

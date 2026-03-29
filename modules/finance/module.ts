@@ -1,4 +1,4 @@
-import { DashboardModule } from '@enterprise/shared-types/modules';
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { FinancePage } from './pages/finance-page';
 
 export const financeModule: DashboardModule = {
@@ -7,5 +7,5 @@ export const financeModule: DashboardModule = {
   route: '/finance',
   icon: 'landmark',
   themeKey: 'finance',
-  component: FinancePage
+  component: FinancePage,
 };

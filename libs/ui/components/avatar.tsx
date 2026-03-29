@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Image from 'next/image';
+import { useState } from 'react';
 import { cn } from '../lib/utils';
 
 type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -14,10 +14,10 @@ type AvatarProps = {
 };
 
 const sizeMap: Record<AvatarSize, { container: string; text: string; px: number }> = {
-  sm: { container: 'h-7 w-7',   text: 'text-xs',   px: 28 },
-  md: { container: 'h-9 w-9',   text: 'text-sm',   px: 36 },
-  lg: { container: 'h-12 w-12', text: 'text-base',  px: 48 },
-  xl: { container: 'h-16 w-16', text: 'text-xl',   px: 64 },
+  sm: { container: 'h-7 w-7', text: 'text-xs', px: 28 },
+  md: { container: 'h-9 w-9', text: 'text-sm', px: 36 },
+  lg: { container: 'h-12 w-12', text: 'text-base', px: 48 },
+  xl: { container: 'h-16 w-16', text: 'text-xl', px: 64 },
 };
 
 function getInitials(name?: string | null) {
@@ -37,7 +37,14 @@ export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
   const showImage = src && !imgError;
 
   return (
-    <div className={cn('relative shrink-0 rounded-full overflow-hidden ring-1 ring-neutral-border', showImage ? 'bg-transparent' : 'bg-primary', container, className)}>
+    <div
+      className={cn(
+        'relative shrink-0 rounded-full overflow-hidden ring-1 ring-neutral-border',
+        showImage ? 'bg-transparent' : 'bg-primary',
+        container,
+        className,
+      )}
+    >
       {showImage ? (
         <Image
           src={src}
@@ -48,7 +55,12 @@ export function Avatar({ name, src, size = 'md', className }: AvatarProps) {
           onError={() => setImgError(true)}
         />
       ) : (
-        <span className={cn('flex h-full w-full items-center justify-center font-semibold text-white', text)}>
+        <span
+          className={cn(
+            'flex h-full w-full items-center justify-center font-semibold text-white',
+            text,
+          )}
+        >
           {getInitials(name)}
         </span>
       )}

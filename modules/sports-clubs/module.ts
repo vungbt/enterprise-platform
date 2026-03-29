@@ -1,4 +1,4 @@
-import { DashboardModule } from '@enterprise/shared-types/modules';
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { sportsClubsRoutes } from './routes';
 
 export const sportsClubsModule: DashboardModule = {
@@ -7,5 +7,5 @@ export const sportsClubsModule: DashboardModule = {
   route: '/sports-clubs',
   icon: 'trophy',
   themeKey: 'sports-clubs',
-  component: sportsClubsRoutes.index
+  component: sportsClubsRoutes.index,
 };

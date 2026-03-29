@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { flexRender } from '@tanstack/react-table';
-import { TableRowType } from '.';
 import clsx from 'clsx';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
+import type { TableRowType } from '.';
 
 type TableRowProps<T> = {
   rows: TableRowType<T>;
@@ -10,26 +9,26 @@ type TableRowProps<T> = {
   selectedKeys?: React.Key[];
 };
 
-export const TableRow = <T extends Record<string, any>>({
+export const TableRow = <T extends Record<string, unknown>>({
   rows = [],
   rowKey,
   selectedKeys = [],
 }: TableRowProps<T>): ReactNode => {
   return (
     <>
-      {rows.map(row => {
-        const key = row.original[rowKey as string];
+      {rows.map((row) => {
+        const key = row.original[rowKey as string] as React.Key;
         const isSelected = selectedKeys.includes(key);
 
         return (
           <tr
-            key={row.original[rowKey as string]}
+            key={key}
             className={clsx('transition-all ease-linear hover:bg-primary-background', {
               'bg-primary-background': isSelected,
               'even:bg-neutral-table-header': !isSelected,
             })}
           >
-            {row.getVisibleCells().map(cell => (
+            {row.getVisibleCells().map((cell) => (
               <td
                 key={cell.id}
                 className="p-3 border-b border-neutral-divider text-14 h-14"

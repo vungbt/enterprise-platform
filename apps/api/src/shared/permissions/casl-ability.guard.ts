@@ -1,16 +1,13 @@
 import {
-  CanActivate,
-  ExecutionContext,
+  type CanActivate,
+  type ExecutionContext,
   ForbiddenException,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GqlExecutionContext } from '@nestjs/graphql';
-import {
-  CHECK_ABILITY_KEY,
-  CheckAbilityMeta,
-} from './check-ability.decorator';
 import { defineAbilityFor } from './ability.util';
+import { CHECK_ABILITY_KEY, type CheckAbilityMeta } from './check-ability.decorator';
 
 @Injectable()
 export class CaslAbilityGuard implements CanActivate {

@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateDepartmentInput } from '../dto/create-department.input';
+import type { UpdateDepartmentInput } from '../dto/update-department.input';
 import { DepartmentRepository } from '../repositories/department.repository';
-import { CreateDepartmentInput } from '../dto/create-department.input';
-import { UpdateDepartmentInput } from '../dto/update-department.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class DepartmentService {

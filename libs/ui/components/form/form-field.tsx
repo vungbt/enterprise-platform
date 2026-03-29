@@ -1,23 +1,29 @@
 'use client';
 
-import { AnyFieldApi } from '@tanstack/react-form';
-import { cloneElement, isValidElement, ReactElement, ReactNode } from 'react';
+import type { AnyFieldApi } from '@tanstack/react-form';
 import clsx from 'clsx';
-import { FormLabel } from './form-label';
-import { FormErrorMessage } from './form-error-message';
+import {
+  type ChangeEvent,
+  cloneElement,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 import { fieldContext, useFormContext, useFormValidatorsContext } from './form';
+import { FormErrorMessage } from './form-error-message';
+import { FormLabel } from './form-label';
 
 type FormFieldProps = {
   field?: AnyFieldApi;
   name?: string;
-  validators?: any;
+  validators?: AnyFieldApi['validators'];
   label?: string;
   required?: boolean;
   size?: 'small' | 'middle' | 'large';
   className?: string;
-  mapValue?: (value: any) => any;
-  mapOnChange?: (value: any) => any;
-  children: ReactNode | ReactElement<any> | ((field: AnyFieldApi) => ReactNode);
+  mapValue?: (value: AnyFieldApi['state']['value']) => AnyFieldApi['state']['value'];
+  mapOnChange?: (value: AnyFieldApi['state']['value']) => AnyFieldApi['state']['value'];
+  children: ReactNode | ReactElement<Record<string, unknown>> | ((field: AnyFieldApi) => ReactNode);
 };
 
 type FormFieldContentProps = {
@@ -26,9 +32,9 @@ type FormFieldContentProps = {
   required?: boolean;
   size?: 'small' | 'middle' | 'large';
   className?: string;
-  mapValue?: (value: any) => any;
-  mapOnChange?: (value: any) => any;
-  children: ReactNode | ReactElement<any> | ((field: AnyFieldApi) => ReactNode);
+  mapValue?: (value: AnyFieldApi['state']['value']) => AnyFieldApi['state']['value'];
+  mapOnChange?: (value: AnyFieldApi['state']['value']) => AnyFieldApi['state']['value'];
+  children: ReactNode | ReactElement<Record<string, unknown>> | ((field: AnyFieldApi) => ReactNode);
 };
 
 function FormFieldContent({
@@ -55,12 +61,20 @@ function FormFieldContent({
     const childType = children.type as { displayName?: string; name?: string };
     const childName = childType.displayName ?? childType.name;
 
-    const selfHandledErrors = ['Input', 'InputPassword', 'DatePicker', 'TimePicker', 'DateRangePicker'];
+    const selfHandledErrors = [
+      'Input',
+      'InputPassword',
+      'DatePicker',
+      'TimePicker',
+      'DateRangePicker',
+    ];
     return !selfHandledErrors.includes(childName ?? '');
   };
 
-  const resolveChangedValue = (value: any) => {
-    if (value?.target) {
+  const resolveChangedValue = (
+    value: AnyFieldApi['state']['value'] | ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (value !== null && typeof value === 'object' && 'target' in value) {
       // `checked` exists on all HTMLInputElements via the prototype; only checkboxes use it for value.
       const t = value.target as HTMLInputElement;
       if (t.type === 'checkbox') {
@@ -81,7 +95,7 @@ function FormFieldContent({
       return children;
     }
 
-    const childElement = children as ReactElement<any>;
+    const childElement = children as ReactElement<Record<string, unknown>>;
     const childProps = childElement.props ?? {};
 
     const currentValue = mapValue ? mapValue(field.state.value) : field.state.value;
@@ -93,9 +107,11 @@ function FormFieldContent({
       size,
       required,
       error,
-      onChange: (value: any) => {
-        childProps.onChange?.(value);
-        const mappedValue = mapOnChange ? mapOnChange(value) : resolveChangedValue(value);
+      onChange: (value: AnyFieldApi['state']['value'] | ChangeEvent<HTMLInputElement>) => {
+        (childProps.onChange as ((v: typeof value) => void) | undefined)?.(value);
+        const mappedValue = mapOnChange
+          ? mapOnChange(value as AnyFieldApi['state']['value'])
+          : resolveChangedValue(value);
 
         if (mappedValue === undefined) {
           field.handleChange('' as never);
@@ -104,8 +120,8 @@ function FormFieldContent({
 
         field.handleChange(mappedValue);
       },
-      onBlur: (value: any) => {
-        childProps.onBlur?.(value);
+      onBlur: (value: AnyFieldApi['state']['value']) => {
+        (childProps.onBlur as ((v: typeof value) => void) | undefined)?.(value);
         field.handleBlur();
       },
       ...(typeof currentValue === 'boolean' ? { checked: currentValue } : { value: currentValue }),
@@ -120,16 +136,18 @@ function FormFieldContent({
         </FormLabel>
       )}
 
-      <fieldContext.Provider value={field as never}>
-        {renderChildren()}
-      </fieldContext.Provider>
+      <fieldContext.Provider value={field as never}>{renderChildren()}</fieldContext.Provider>
 
       {error && shouldRenderExternalError() && <FormErrorMessage error={error} size={size} />}
     </div>
   );
 }
 
-function FormFieldByName({ name, validators, ...props }: Omit<FormFieldProps, 'field'> & { name: string }) {
+function FormFieldByName({
+  name,
+  validators,
+  ...props
+}: Omit<FormFieldProps, 'field'> & { name: string }) {
   const form = useFormContext();
   const formValidators = useFormValidatorsContext();
   const resolvedValidators = validators ?? formValidators?.[name];

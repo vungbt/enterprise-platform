@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateInventoryItemInput } from '../dto/create-inventory-item.input';
-import { UpdateInventoryItemInput } from '../dto/update-inventory-item.input';
+import type { CreateInventoryItemInput } from '../dto/create-inventory-item.input';
+import type { UpdateInventoryItemInput } from '../dto/update-inventory-item.input';
 
 @Injectable()
 export class InventoryRepository {

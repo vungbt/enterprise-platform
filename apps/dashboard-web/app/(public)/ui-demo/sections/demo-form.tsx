@@ -1,71 +1,74 @@
-"use client";
+'use client';
 
 import {
-  useAppForm,
-  Form,
-  FormSubmit,
-  FormField,
-  Input,
-  InputPassword,
-  Select,
-  DatePicker,
-  DateRangePicker,
-  TimePicker,
-  RadioGroup,
   Button,
   Checkbox,
-  z,
+  DatePicker,
   type DateRange,
-} from "@enterprise/ui/components";
+  DateRangePicker,
+  Form,
+  FormField,
+  FormSubmit,
+  Input,
+  InputPassword,
+  RadioGroup,
+  Select,
+  TimePicker,
+  useAppForm,
+  z,
+} from '@enterprise/ui/components';
 
 const schema = {
-  fullName: z.string().min(2, "Tối thiểu 2 ký tự"),
-  email: z.string().email("Email không hợp lệ"),
-  password: z.string().min(8, "Mật khẩu tối thiểu 8 ký tự"),
+  fullName: z.string().min(2, 'Tối thiểu 2 ký tự'),
+  email: z.string().email('Email không hợp lệ'),
+  password: z.string().min(8, 'Mật khẩu tối thiểu 8 ký tự'),
   role: z
     .object({ label: z.string(), value: z.string() })
     .nullable()
-    .refine((value) => value !== null, "Vui lòng chọn vai trò"),
+    .refine((value) => value !== null, 'Vui lòng chọn vai trò'),
   joinedDate: z
     .date()
     .nullable()
-    .refine((value) => value !== null, "Vui lòng chọn ngày tham gia"),
+    .refine((value) => value !== null, 'Vui lòng chọn ngày tham gia'),
   workTime: z
     .string()
     .nullable()
-    .refine((value) => value !== null, "Vui lòng chọn giờ làm việc"),
+    .refine((value) => value !== null, 'Vui lòng chọn giờ làm việc'),
   workPeriod: z
     .tuple([z.date().nullable(), z.date().nullable()])
     .nullable()
-    .refine((value) => value !== null && value[0] !== null && value[1] !== null, "Vui lòng chọn khoảng thời gian"),
+    .refine(
+      (value) => value !== null && value[0] !== null && value[1] !== null,
+      'Vui lòng chọn khoảng thời gian',
+    ),
   status: z
     .string()
-    .refine((value) => value === "active" || value === "inactive", "Vui lòng chọn trạng thái"),
-  agree: z.boolean().refine((v) => v === true, "Bạn phải đồng ý điều khoản"),
+    .refine((value) => value === 'active' || value === 'inactive', 'Vui lòng chọn trạng thái'),
+  agree: z.boolean().refine((v) => v === true, 'Bạn phải đồng ý điều khoản'),
 };
 
 const roleOptions = [
-  { label: "Admin", value: "admin" },
-  { label: "Manager", value: "manager" },
-  { label: "Staff", value: "staff" },
+  { label: 'Admin', value: 'admin' },
+  { label: 'Manager', value: 'manager' },
+  { label: 'Staff', value: 'staff' },
 ];
 
 const statusOptions = [
-  { label: "Đang hoạt động", value: "active" },
-  { label: "Tạm ngưng", value: "inactive" },
+  { label: 'Đang hoạt động', value: 'active' },
+  { label: 'Tạm ngưng', value: 'inactive' },
 ];
 
 export function DemoForm() {
   const form = useAppForm({
     defaultValues: {
-      fullName: "",
-      email: "",
-      password: "",
+      fullName: '',
+      email: '',
+      password: '',
       role: null as { label: string; value: string } | null,
       joinedDate: null as Date | null,
       workTime: null as string | null,
       workPeriod: null as DateRange | null,
-      status: "",
+      status: '',
       agree: false,
     },
     onSubmit: ({ value }) => {

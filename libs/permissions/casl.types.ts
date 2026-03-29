@@ -1,4 +1,4 @@
-import { PureAbility } from '@casl/ability';
+import type { PureAbility } from '@casl/ability';
 
 export type AppAction = 'read' | 'create' | 'update' | 'delete' | 'manage';
 

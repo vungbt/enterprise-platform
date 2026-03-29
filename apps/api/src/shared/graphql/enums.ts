@@ -1,12 +1,12 @@
 import { registerEnumType } from '@nestjs/graphql';
 import {
-  EmployeeStatus,
-  CustomerStatus,
-  InvoiceStatus,
-  InventoryItemStatus,
-  ClubStatus,
   ClubMemberRole,
+  ClubStatus,
+  CustomerStatus,
+  EmployeeStatus,
   ExpenseStatus,
+  InventoryItemStatus,
+  InvoiceStatus,
 } from '@prisma/client';
 
 registerEnumType(EmployeeStatus, { name: 'EmployeeStatus' });
@@ -18,11 +18,11 @@ registerEnumType(ClubMemberRole, { name: 'ClubMemberRole' });
 registerEnumType(ExpenseStatus, { name: 'ExpenseStatus' });
 
 export {
-  EmployeeStatus,
-  CustomerStatus,
-  InvoiceStatus,
-  InventoryItemStatus,
-  ClubStatus,
   ClubMemberRole,
+  ClubStatus,
+  CustomerStatus,
+  EmployeeStatus,
   ExpenseStatus,
+  InventoryItemStatus,
+  InvoiceStatus,
 };

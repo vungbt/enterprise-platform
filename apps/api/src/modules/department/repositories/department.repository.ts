@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../shared/database/prisma.service';
-import { CreateDepartmentInput } from '../dto/create-department.input';
-import { UpdateDepartmentInput } from '../dto/update-department.input';
+import type { CreateDepartmentInput } from '../dto/create-department.input';
+import type { UpdateDepartmentInput } from '../dto/update-department.input';
 
 @Injectable()
 export class DepartmentRepository {

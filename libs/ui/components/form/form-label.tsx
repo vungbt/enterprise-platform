@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import React from 'react';
+import type React from 'react';
 
 export const FormLabel = ({
   children,
@@ -32,7 +32,7 @@ export const FormLabel = ({
         'block font-medium mb-1 w-fit',
         getLabelSize(),
         'text-neutral-text-primary',
-        className
+        className,
       )}
     >
       {children}

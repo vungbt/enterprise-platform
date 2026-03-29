@@ -1,13 +1,9 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import type { PaginationInput } from '../../../shared/graphql/pagination.types';
+import type { CreateInvoiceInput } from '../dto/create-invoice.input';
+import type { UpdateInvoiceInput } from '../dto/update-invoice.input';
 import { FinanceRepository } from '../repositories/finance.repository';
-import { CreateInvoiceInput } from '../dto/create-invoice.input';
-import { UpdateInvoiceInput } from '../dto/update-invoice.input';
-import { PaginationInput } from '../../../shared/graphql/pagination.types';
 
 @Injectable()
 export class FinanceService {
@@ -31,14 +27,9 @@ export class FinanceService {
     try {
       return await this.financeRepository.create(input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Invoice with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Invoice with duplicate ${field} already exists`);
       }
       throw error;
     }
@@ -49,14 +40,9 @@ export class FinanceService {
     try {
       return await this.financeRepository.update(id, input);
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         const field = (error.meta?.target as string[])?.join(', ');
-        throw new ConflictException(
-          `Invoice with duplicate ${field} already exists`,
-        );
+        throw new ConflictException(`Invoice with duplicate ${field} already exists`);
       }
       throw error;
     }

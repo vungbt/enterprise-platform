@@ -1,4 +1,4 @@
-import RCDrawer, { DrawerProps as RCDrawerProps } from 'rc-drawer';
+import RCDrawer, { type DrawerProps as RCDrawerProps } from 'rc-drawer';
 
 export type DrawerProps = RCDrawerProps;
 
@@ -8,7 +8,7 @@ const maskMotion: DrawerProps['maskMotion'] = {
   onAppearEnd: console.warn,
 };
 
-const motion: DrawerProps['motion'] = placement => ({
+const motion: DrawerProps['motion'] = (placement) => ({
   motionAppear: true,
   motionName: `panel-motion-${placement}`,
 });

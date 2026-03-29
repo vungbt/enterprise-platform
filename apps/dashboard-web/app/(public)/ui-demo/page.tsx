@@ -1,32 +1,40 @@
 'use client';
 
-import { RenderIcon } from '@enterprise/ui/components';
+import { type IconName, RenderIcon } from '@enterprise/ui/components';
 import { DemoButtons } from './sections/demo-buttons';
-import { DemoInputs } from './sections/demo-inputs';
 import { DemoFeedback } from './sections/demo-feedback';
-import { DemoTable } from './sections/demo-table';
 import { DemoForm } from './sections/demo-form';
+import { DemoInputs } from './sections/demo-inputs';
+import { DemoTable } from './sections/demo-table';
 
 type Section = {
   id: string;
   title: string;
-  icon: string;
+  icon: IconName;
   component: React.ReactNode;
 };
 
 const sections: Section[] = [
-  { id: 'buttons',  title: 'Buttons',          icon: 'vuesax-element', component: <DemoButtons /> },
-  { id: 'inputs',   title: 'Inputs & Selects',  icon: 'pencil-square',  component: <DemoInputs /> },
-  { id: 'feedback', title: 'Tags, Toast, Modal, Tabs', icon: 'bell',   component: <DemoFeedback /> },
-  { id: 'table',    title: 'Table',             icon: 'adjustments-vertical', component: <DemoTable /> },
-  { id: 'form',     title: 'Form + Validation', icon: 'check-circle',   component: <DemoForm /> },
+  { id: 'buttons', title: 'Buttons', icon: 'vuesax-element', component: <DemoButtons /> },
+  { id: 'inputs', title: 'Inputs & Selects', icon: 'pencil-square', component: <DemoInputs /> },
+  { id: 'feedback', title: 'Tags, Toast, Modal, Tabs', icon: 'bell', component: <DemoFeedback /> },
+  { id: 'table', title: 'Table', icon: 'adjustments-vertical', component: <DemoTable /> },
+  { id: 'form', title: 'Form + Validation', icon: 'check-circle', component: <DemoForm /> },
 ];
 
-function DemoSection({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
+function DemoSection({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: IconName;
+  children: React.ReactNode;
+}) {
   return (
     <section className="bg-neutral-white rounded-xl border border-neutral-border overflow-hidden">
       <div className="flex items-center gap-2 px-6 py-4 border-b border-neutral-border bg-neutral-table-header">
-        <RenderIcon name={icon as any} className="w-4 h-4 text-primary" />
+        <RenderIcon name={icon} className="w-4 h-4 text-primary" />
         <h2 className="text-15 font-semibold text-neutral-black">{title}</h2>
       </div>
       <div className="p-6">{children}</div>
@@ -46,7 +54,7 @@ export default function UiDemoPage() {
       </div>
 
       <div className="max-w-5xl mx-auto px-8 py-8 space-y-6">
-        {sections.map(s => (
+        {sections.map((s) => (
           <DemoSection key={s.id} title={s.title} icon={s.icon}>
             {s.component}
           </DemoSection>

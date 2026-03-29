@@ -9,9 +9,9 @@ export function useAuth() {
       user: {
         id: 'demo-user',
         name: 'Demo User',
-        roles: ['admin'] as UserRole[]
-      }
+        roles: ['admin'] as UserRole[],
+      },
     }),
-    []
+    [],
   );
 }

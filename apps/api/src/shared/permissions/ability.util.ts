@@ -1,4 +1,4 @@
-import { AbilityBuilder, createMongoAbility, PureAbility } from '@casl/ability';
+import { AbilityBuilder, createMongoAbility, type PureAbility } from '@casl/ability';
 import type { AppAction, AppSubject } from './check-ability.decorator';
 
 export type AppAbility = PureAbility<[AppAction, AppSubject]>;

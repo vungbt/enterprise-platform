@@ -1,7 +1,7 @@
 'use client';
 
-import { Table, Button, Tag } from '@enterprise/ui/components';
-import { ColumnDef } from '@tanstack/react-table';
+import { Button, Table, Tag } from '@enterprise/ui/components';
+import type { ColumnDef } from '@tanstack/react-table';
 import { useState } from 'react';
 
 type Employee = {
@@ -21,9 +21,9 @@ const data: Employee[] = Array.from({ length: 12 }, (_, i) => ({
 }));
 
 const statusConfig = {
-  active:   { label: 'Hoạt động', color: '#52c41a' },
+  active: { label: 'Hoạt động', color: '#52c41a' },
   inactive: { label: 'Không hoạt động', color: '#ff4d4f' },
-  pending:  { label: 'Chờ duyệt', color: '#faad14' },
+  pending: { label: 'Chờ duyệt', color: '#faad14' },
 };
 
 const columns: ColumnDef<Employee>[] = [
@@ -66,7 +66,13 @@ export function DemoTable() {
           <span className="text-14 text-neutral-text-secondary">
             Đã chọn <strong>{selectedKeys.length}</strong> hàng
           </span>
-          <Button size="small" color="error" variant="outline" icon="trash" onClick={() => setSelectedKeys([])}>
+          <Button
+            size="small"
+            color="error"
+            variant="outline"
+            icon="trash"
+            onClick={() => setSelectedKeys([])}
+          >
             Xoá đã chọn
           </Button>
         </div>
@@ -85,7 +91,7 @@ export function DemoTable() {
         rowSelection={{
           type: 'checkbox',
           selectedRowKeys: selectedKeys,
-          onChange: keys => setSelectedKeys(keys),
+          onChange: (keys) => setSelectedKeys(keys),
         }}
       />
     </div>

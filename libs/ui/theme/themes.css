@@ -1,5 +1,5 @@
 /* HR — #0079f6 Blue */
-[data-module='hr'] {
+[data-module="hr"] {
   --color-primary: #0079f6;
   --color-primary-bg: #e6f2ff;
   --color-primary-hover: #1a87f7;
@@ -9,7 +9,7 @@
 }
 
 /* CRM — #00bf44 Green */
-[data-module='crm'] {
+[data-module="crm"] {
   --color-primary: #00bf44;
   --color-primary-bg: #e6fff0;
   --color-primary-hover: #1acc57;
@@ -19,7 +19,7 @@
 }
 
 /* Finance — #fe2b27 Red */
-[data-module='finance'] {
+[data-module="finance"] {
   --color-primary: #fe2b27;
   --color-primary-bg: #fff0f0;
   --color-primary-hover: #fe4f4c;
@@ -29,7 +29,7 @@
 }
 
 /* Inventory — #febe00 Yellow */
-[data-module='inventory'] {
+[data-module="inventory"] {
   --color-primary: #febe00;
   --color-primary-bg: #fffbe6;
   --color-primary-hover: #fec71a;

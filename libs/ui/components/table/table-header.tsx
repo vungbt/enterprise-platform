@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import clsx from 'clsx';
-import { TableHeaderType } from '.';
 import { flexRender } from '@tanstack/react-table';
+import clsx from 'clsx';
+import type { ReactNode } from 'react';
 import { RenderIcon } from '../icons';
-import { ReactNode } from 'react';
+import type { TableHeaderType } from '.';
 
 type TableHeaderProps<T> = {
   headers: TableHeaderType<T>;
@@ -15,7 +14,7 @@ type TableHeaderProps<T> = {
   };
 };
 
-export const TableHeader = <T extends Record<string, any>>({
+export const TableHeader = <T extends Record<string, unknown>>({
   headers,
   className,
   customClasses,
@@ -24,9 +23,9 @@ export const TableHeader = <T extends Record<string, any>>({
     <thead
       className={clsx('sticky top-0 bg-neutral-table-header z-[1]', className, customClasses?.root)}
     >
-      {headers.map(headerGroup => (
+      {headers.map((headerGroup) => (
         <tr key={headerGroup.id} className={clsx(customClasses?.tr)}>
-          {headerGroup.headers.map(header => {
+          {headerGroup.headers.map((header) => {
             const columnDef = header?.column?.columnDef;
             const sortActive = header.column.getIsSorted() as 'asc' | 'desc';
             const showSort = columnDef?.enableSorting;
@@ -39,7 +38,7 @@ export const TableHeader = <T extends Record<string, any>>({
                     'cursor-pointer': showSort,
                     'bg-primary-background': sortActive,
                   },
-                  customClasses?.th
+                  customClasses?.th,
                 )}
                 style={{
                   width: header.column.columnDef.size,

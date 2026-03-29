@@ -1,15 +1,21 @@
 'use client';
 import clsx from 'clsx';
+import type React from 'react';
 import { forwardRef, useId } from 'react';
 import ReactSelect, {
-  GroupBase,
-  PlaceholderProps,
-  Props as ReactSelectProps,
+  type ClearIndicatorProps,
+  type CSSObjectWithLabel,
   components,
+  type DropdownIndicatorProps,
+  type GroupBase,
+  type MultiValueProps,
+  type OptionProps,
+  type PlaceholderProps,
+  type Props as ReactSelectProps,
 } from 'react-select';
-import { IconName, RenderIcon } from '../icons';
-import { Tag } from '../tag';
 import { getIconSize } from '../common';
+import { type IconName, RenderIcon } from '../icons';
+import { Tag } from '../tag';
 
 export type SelectOption = {
   label: string;
@@ -116,7 +122,7 @@ const colorClasses = {
 const getPaddingClasses = (
   size: 'small' | 'middle' | 'large',
   hasIcon: boolean,
-  hasIconRight: boolean
+  hasIconRight: boolean,
 ) => {
   const basePadding = {
     small: hasIcon ? 'pl-8' : 'pl-2',
@@ -133,7 +139,11 @@ const getPaddingClasses = (
   return `${basePadding[size]} ${rightPadding[size]}`;
 };
 
-const DropdownIndicator = (props: any) => {
+const DropdownIndicator = (
+  props: DropdownIndicatorProps<SelectOption, boolean, GroupBase<SelectOption>> & {
+    indicatorClassName?: string;
+  },
+) => {
   return (
     <components.DropdownIndicator {...props}>
       <RenderIcon
@@ -141,14 +151,16 @@ const DropdownIndicator = (props: any) => {
         className={clsx(
           'text-neutral-placeholder transition-transform duration-200 !w-5 !h-5',
           props.selectProps.menuIsOpen ? 'rotate-180' : '',
-          props.indicatorClassName
+          props.indicatorClassName,
         )}
       />
     </components.DropdownIndicator>
   );
 };
 
-const ClearIndicator = (props: any) => {
+const ClearIndicator = (
+  props: ClearIndicatorProps<SelectOption, boolean, GroupBase<SelectOption>>,
+) => {
   return (
     <components.ClearIndicator {...props}>
       <RenderIcon
@@ -163,7 +175,7 @@ const Placeholder = (props: PlaceholderProps<SelectOption>) => {
   return <components.Placeholder {...props} className="!text-neutral-placeholder" />;
 };
 
-export const Select = forwardRef<any, SelectProps>(
+export const Select = forwardRef<React.ElementRef<typeof ReactSelect>, SelectProps>(
   (
     {
       className,
@@ -184,13 +196,13 @@ export const Select = forwardRef<any, SelectProps>(
       options = [],
       ...rest
     },
-    ref
+    ref,
   ) => {
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
     const reactId = useId();
 
     const customStyles = {
-      control: (provided: any) => ({
+      control: (provided: CSSObjectWithLabel) => ({
         ...provided,
         minHeight: size === 'small' ? '32px' : size === 'large' ? '48px' : '40px',
         border: 'none',
@@ -199,18 +211,18 @@ export const Select = forwardRef<any, SelectProps>(
         '&:hover': { border: 'none' },
         '&:focus-within': { boxShadow: 'none' },
       }),
-      valueContainer: (provided: any) => ({ ...provided, padding: 0 }),
-      input: (provided: any) => ({ ...provided, margin: 0, padding: 0 }),
-      indicatorSeparator: () => ({ display: 'none' }),
-      dropdownIndicator: (provided: any) => ({
+      valueContainer: (provided: CSSObjectWithLabel) => ({ ...provided, padding: 0 }),
+      input: (provided: CSSObjectWithLabel) => ({ ...provided, margin: 0, padding: 0 }),
+      indicatorSeparator: () => ({ display: 'none' }) as CSSObjectWithLabel,
+      dropdownIndicator: (provided: CSSObjectWithLabel) => ({
         ...provided,
         padding: size === 'small' ? '4px' : size === 'large' ? '12px' : '8px',
       }),
-      clearIndicator: (provided: any) => ({
+      clearIndicator: (provided: CSSObjectWithLabel) => ({
         ...provided,
         padding: size === 'small' ? '4px' : size === 'large' ? '12px' : '8px',
       }),
-      multiValue: (provided: any) => ({
+      multiValue: (provided: CSSObjectWithLabel) => ({
         ...provided,
         margin: size === 'small' ? '1px' : '2px',
         backgroundColor: 'transparent',
@@ -219,15 +231,17 @@ export const Select = forwardRef<any, SelectProps>(
         alignItems: 'center',
         border: 'none',
       }),
-      option: (provided: any, state: any) => ({
+      option: (
+        provided: CSSObjectWithLabel,
+        state: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>,
+      ) => ({
         ...provided,
-        backgroundColor: state.isSelected || state.isFocused
-          ? 'var(--color-primary-bg)'
-          : 'transparent',
+        backgroundColor:
+          state.isSelected || state.isFocused ? 'var(--color-primary-bg)' : 'transparent',
         color: state.isSelected ? 'var(--color-primary-hover)' : '',
         '&:hover': { backgroundColor: 'var(--color-primary-bg)' },
       }),
-      menu: (provided: any) => ({
+      menu: (provided: CSSObjectWithLabel) => ({
         ...provided,
         zIndex: 50,
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
@@ -236,15 +250,14 @@ export const Select = forwardRef<any, SelectProps>(
       }),
     };
 
-    const MultiValue = (props: any) => {
+    const MultiValue = (props: MultiValueProps<SelectOption, boolean, GroupBase<SelectOption>>) => {
       const { data, removeProps } = props;
       return (
         <div className="mr-1">
           <Tag
             content={data?.label}
-            onClose={(e?: any) => {
-              removeProps?.onClick?.(e);
-              removeProps?.onTouchEnd?.(e);
+            onClose={() => {
+              removeProps?.onClick?.({} as React.MouseEvent<HTMLDivElement>);
             }}
           />
         </div>
@@ -270,7 +283,7 @@ export const Select = forwardRef<any, SelectProps>(
             colorClass,
             disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
             className,
-            customClasses?.select
+            customClasses?.select,
           )}
         >
           <ReactSelect
@@ -288,7 +301,9 @@ export const Select = forwardRef<any, SelectProps>(
             className={sizeClasses[size]}
             placeholder={placeholder}
             components={{
-              DropdownIndicator: (props: any) => (
+              DropdownIndicator: (
+                props: DropdownIndicatorProps<SelectOption, boolean, GroupBase<SelectOption>>,
+              ) => (
                 <DropdownIndicator
                   {...props}
                   indicatorClassName={customClasses?.indicatorClassName}
@@ -312,7 +327,7 @@ export const Select = forwardRef<any, SelectProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 Select.displayName = 'Select';

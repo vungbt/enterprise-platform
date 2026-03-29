@@ -1,11 +1,7 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../../shared/database/prisma.service';
 import * as bcrypt from 'bcrypt';
+import { PrismaService } from '../../shared/database/prisma.service';
 import type { LoginInput } from './dto/login.input';
 import type { RegisterInput } from './dto/register.input';
 
@@ -13,13 +9,13 @@ import type { RegisterInput } from './dto/register.input';
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(input: LoginInput) {
     const user = await this.prisma.user.findUnique({
       where: { email: input.email },
-      include: { roles: { include: { role: true } } }
+      include: { roles: { include: { role: true } } },
     });
 
     if (!user) {
@@ -35,7 +31,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
-      roles
+      roles,
     });
 
     return {
@@ -47,21 +43,21 @@ export class AuthService {
         avatar: user.avatar,
         isActive: user.isActive,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }
+        updatedAt: user.updatedAt,
+      },
     };
   }
 
   async loginWithOAuth(email: string, name: string) {
     let user = await this.prisma.user.findUnique({
       where: { email },
-      include: { roles: { include: { role: true } } }
+      include: { roles: { include: { role: true } } },
     });
 
     if (!user) {
       user = await this.prisma.user.create({
         data: { email, name, password: '' },
-        include: { roles: { include: { role: true } } }
+        include: { roles: { include: { role: true } } },
       });
     }
 
@@ -69,7 +65,7 @@ export class AuthService {
     const accessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
-      roles
+      roles,
     });
 
     return {
@@ -81,14 +77,14 @@ export class AuthService {
         avatar: user.avatar,
         isActive: user.isActive,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }
+        updatedAt: user.updatedAt,
+      },
     };
   }
 
   async register(input: RegisterInput) {
     const existing = await this.prisma.user.findUnique({
-      where: { email: input.email }
+      where: { email: input.email },
     });
 
     if (existing) {
@@ -101,14 +97,14 @@ export class AuthService {
       data: {
         email: input.email,
         name: input.name,
-        password: hashed
-      }
+        password: hashed,
+      },
     });
 
     const accessToken = this.jwtService.sign({
       sub: user.id,
       email: user.email,
-      roles: []
+      roles: [],
     });
 
     return {
@@ -120,8 +116,8 @@ export class AuthService {
         avatar: user.avatar,
         isActive: user.isActive,
         createdAt: user.createdAt,
-        updatedAt: user.updatedAt
-      }
+        updatedAt: user.updatedAt,
+      },
     };
   }
 }

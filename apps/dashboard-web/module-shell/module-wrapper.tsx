@@ -1,5 +1,5 @@
+import type { DashboardModule } from '@enterprise/shared-types/modules';
 import { ThemeProvider } from '@enterprise/ui/theme/theme-provider';
-import { DashboardModule } from '@enterprise/shared-types/modules';
 
 type ModuleWrapperProps = {
   module: DashboardModule;
