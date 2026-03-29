@@ -12,7 +12,10 @@
     "api:dev": "nx run api:dev",
     "api:build": "nx run api:build",
     "api:start": "nx run api:start",
-    "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma"
+    "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
+    "prisma:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma",
+    "prisma:seed": "tsx --env-file apps/api/.env apps/api/prisma/seed.ts",
+    "prisma:studio": "prisma studio --schema apps/api/prisma/schema.prisma"
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",
@@ -23,12 +26,15 @@
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
     "@nestjs/graphql": "^13.2.0",
+    "@nestjs/jwt": "^11.0.2",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.1.6",
     "@prisma/client": "^6.4.1",
     "@szhsin/react-menu": "^4.5.1",
     "@tanstack/react-form": "^1.28.4",
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.8.4",
+    "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "class-variance-authority": "^0.7.1",
@@ -40,6 +46,9 @@
     "graphql-type-json": "^0.3.2",
     "lucide-react": "^0.511.0",
     "next": "^15.2.0",
+    "next-auth": "5.0.0-beta.30",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
     "rc-drawer": "^7.3.0",
     "react": "^19.0.0",
     "react-date-picker": "^12.0.1",
@@ -55,6 +64,9 @@
     "tailwind-merge": "^3.3.0",
     "zod": "^4.3.6"
   },
+  "prisma": {
+    "seed": "tsx --env-file apps/api/.env apps/api/prisma/seed.ts"
+  },
   "devDependencies": {
     "@nx/eslint": "22.5.4",
     "@nx/js": "22.5.4",
@@ -62,7 +74,9 @@
     "@nx/workspace": "22.5.4",
     "@swc-node/register": "^1.11.1",
     "@swc/core": "^1.15.21",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^22.13.10",
+    "@types/passport-jwt": "^4.0.1",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.20",

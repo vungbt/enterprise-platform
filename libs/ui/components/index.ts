@@ -1,4 +1,7 @@
+export * from './avatar';
 export * from './common';
+export * from './divider';
+export * from './icon-button';
 export * from './icons';
 export * from './box';
 export * from './breadcrumb';

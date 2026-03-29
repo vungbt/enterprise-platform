@@ -8,6 +8,11 @@ import {
   AlertTriangle,
   Bell,
   Bold,
+  Handshake,
+  LogOut,
+  Landmark,
+  Package,
+  Settings,
   Calendar,
   CalendarDays,
   CalendarRange,
@@ -166,6 +171,11 @@ const iconMap = {
   'vuesax-document-upload':     FileUp,
   'vuesax-document-download':   FileDown,
   'trophy':                     Trophy,
+  'handshake':                  Handshake,
+  'landmark':                   Landmark,
+  'package':                    Package,
+  'settings':                   Settings,
+  'log-out':                    LogOut,
 } satisfies Record<string, FC<LucideProps>>;
 
 export type IconName = keyof typeof iconMap;

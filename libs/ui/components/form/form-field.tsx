@@ -61,10 +61,12 @@ function FormFieldContent({
 
   const resolveChangedValue = (value: any) => {
     if (value?.target) {
-      if ('checked' in value.target) {
-        return value.target.checked;
+      // `checked` exists on all HTMLInputElements via the prototype; only checkboxes use it for value.
+      const t = value.target as HTMLInputElement;
+      if (t.type === 'checkbox') {
+        return t.checked;
       }
-      return value.target.value;
+      return t.value;
     }
 
     return value;

@@ -2,29 +2,40 @@ import {
   CanActivate,
   ExecutionContext,
   Injectable,
-  UnauthorizedException,
+  UnauthorizedException
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly jwtService: JwtService) {}
+
   canActivate(context: ExecutionContext): boolean {
     const ctx = GqlExecutionContext.create(context);
     const request = ctx.getContext().req;
 
-    if (!request) {
-      throw new UnauthorizedException('No request context found');
+    const authHeader: string | undefined = request.headers?.authorization;
+
+    if (!authHeader) {
+      // Auto mode: no token → attach demo admin user for development
+      request.user = { id: 'demo-user', email: 'demo@example.com', roles: ['admin'] };
+      return true;
     }
 
-    // In a real app, JWT validation would happen here via passport strategy.
-    // For now, attach a demo user if none is present (dev mode).
-    if (!request.user) {
-      request.user = {
-        id: 'demo-user',
-        roles: ['admin'],
-      };
+    const [scheme, token] = authHeader.split(' ');
+    if (scheme?.toLowerCase() !== 'bearer' || !token) {
+      throw new UnauthorizedException('Invalid authorization header format');
     }
 
-    return true;
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.JWT_SECRET ?? 'dev-secret-change-in-production'
+      });
+      request.user = { id: payload.sub, email: payload.email, roles: payload.roles };
+      return true;
+    } catch {
+      throw new UnauthorizedException('Invalid or expired token');
+    }
   }
 }

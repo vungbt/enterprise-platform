@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { modules } from '../module-registry/modules';
+import { modules } from '@dashboard/module-registry/modules';
 
 export default function HomePage() {
   redirect(modules[0]?.route ?? '/hr');

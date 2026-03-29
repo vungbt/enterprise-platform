@@ -1,7 +1,40 @@
 {
   "permissions": {
     "allow": [
-      "Bash(tree -L 2 -d \"/Users/vungbui/Workspaces/My project/enterprise-platform\" --ignore \"node_modules|.nx|dist|tmp|.git|.next\")"
+      "Bash(tree -L 2 -d \"/Users/vungbui/Workspaces/My project/enterprise-platform\" --ignore \"node_modules|.nx|dist|tmp|.git|.next\")",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm approve-builds:*)",
+      "Bash(node -e \"require\\(''bcrypt''\\)\")",
+      "Bash(\"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/.env.local.example\":*)",
+      "Bash(openssl rand:*)",
+      "Bash(node -e \"const z = require\\(''zod''\\); console.log\\(Object.keys\\(z\\).filter\\(k => k === ''email'' || k === ''string''\\)\\)\")",
+      "Bash(pnpm --filter api exec prisma migrate status)",
+      "Bash(npx prisma:*)",
+      "Bash(dotenv -e apps/api/.env -- npx prisma migrate dev --schema apps/api/prisma/schema.prisma --name init)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/enterprise_platform?schema=public\" npx prisma migrate dev --schema apps/api/prisma/schema.prisma --name init)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/enterprise_platform?schema=public\" npx prisma migrate reset --schema apps/api/prisma/schema.prisma --force)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/enterprise_platform?schema=public\" PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"okey\" npx prisma migrate reset --schema apps/api/prisma/schema.prisma --force)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:postgres@localhost:5432/enterprise_platform?schema=public\" npx tsx apps/api/prisma/seed.ts)",
+      "Bash(pnpm prisma:seed)",
+      "Bash(mkdir -p \"\\(platform\\)\" \"\\(auth\\)\")",
+      "Bash(mv auth:*)",
+      "Bash(mv page.tsx \"[module]\" ui-demo \"\\(platform\\)/\")",
+      "Bash(ls \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(platform\\)/\")",
+      "Bash(ls \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(auth\\)/\")",
+      "Bash(curl -s http://localhost:3000/logo_full.webp -o /dev/null -w \"%{http_code}\")",
+      "Bash(python3 -c \":*)",
+      "Bash(sips -g pixelWidth -g pixelHeight \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/public/logo_full.webp\")",
+      "Bash(curl -s \"http://localhost:3000/_next/image?url=%2Flogo_full.webp&w=384&q=75\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s \"http://localhost:3000/_next/image?url=%2Flogo_full.webp&w=256&q=75\" -v)",
+      "Bash(curl -s \"http://localhost:3000/logo_full.webp\" -o /dev/null -w \"%{http_code} %{redirect_url}\")",
+      "Bash(curl -s \"http://localhost:3000/logo_full.webp\" -o /dev/null -w \"%{http_code}\")",
+      "Bash(grep -rn \"from ''\\\\.\\\\.\" \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(platform\\)/\")",
+      "Bash(grep -rn \"from ''\\\\.\\\\.\" \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(auth\\)/\")",
+      "Bash(ls \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(platform\\)/ui-demo/sections/\")"
+    ],
+    "additionalDirectories": [
+      "/Users/vungbui/Workspaces/My project/enterprise-platform",
+      "/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/(platform)/ui-demo/sections"
     ]
   }
 }

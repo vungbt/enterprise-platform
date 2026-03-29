@@ -1,12 +1,15 @@
 import './globals.css';
 import { ReactNode } from 'react';
-import { DashboardLayout } from '@enterprise/ui/layout/dashboard-layout';
-import { modules } from '../module-registry/modules';
 import { Providers } from './providers';
 
 export const metadata = {
   title: 'Enterprise Platform',
-  description: 'Modular ERP dashboard'
+  description: 'Modular ERP dashboard',
+  icons: {
+    icon: '/favicon_io/favicon.ico',
+    shortcut: '/favicon_io/favicon-16x16.png',
+    apple: '/favicon_io/apple-touch-icon.png'
+  }
 };
 
 type RootLayoutProps = {
@@ -14,20 +17,10 @@ type RootLayoutProps = {
 };
 
 export default function RootLayout({ children }: RootLayoutProps) {
-  const moduleNav = modules.map(({ id, name, route, icon, themeKey }) => ({
-    id,
-    name,
-    route,
-    icon,
-    themeKey
-  }));
-
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <DashboardLayout modules={moduleNav}>{children}</DashboardLayout>
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

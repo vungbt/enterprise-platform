@@ -2,8 +2,22 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "incremental": true,
-    "plugins": [{ "name": "next" }]
+    "plugins": [{ "name": "next" }],
+    "baseUrl": ".",
+    "paths": {
+      "@dashboard/*": ["./*"],
+      "@enterprise/ui/*": ["../../libs/ui/*"],
+      "@enterprise/api-client/*": ["../../libs/api-client/*"],
+      "@enterprise/auth/*": ["../../libs/auth/*"],
+      "@enterprise/permissions/*": ["../../libs/permissions/*"],
+      "@enterprise/shared-types/*": ["../../libs/shared-types/*"],
+      "@enterprise/modules/hr/*": ["../../modules/hr/*"],
+      "@enterprise/modules/crm/*": ["../../modules/crm/*"],
+      "@enterprise/modules/finance/*": ["../../modules/finance/*"],
+      "@enterprise/modules/inventory/*": ["../../modules/inventory/*"],
+      "@enterprise/modules/sports-clubs/*": ["../../modules/sports-clubs/*"]
+    }
   },
-  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.d.ts"],
   "exclude": ["node_modules"]
 }

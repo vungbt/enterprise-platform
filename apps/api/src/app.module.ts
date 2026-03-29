@@ -9,6 +9,7 @@ import { InventoryModule } from './modules/inventory/inventory.module';
 import { DepartmentModule } from './modules/department/department.module';
 import { SportsClubsModule } from './modules/sports-clubs/sports-clubs.module';
 import { ExpenseModule } from './modules/expense/expense.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './shared/database/database.module';
 import { AbilitiesResolver } from './shared/permissions/abilities.resolver';
 
@@ -21,6 +22,7 @@ import { AbilitiesResolver } from './shared/permissions/abilities.resolver';
       playground: true
     }),
     DatabaseModule,
+    AuthModule,
     HrModule,
     CrmModule,
     FinanceModule,

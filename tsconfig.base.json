@@ -27,7 +27,8 @@
       "@enterprise/modules/crm/*": ["modules/crm/*"],
       "@enterprise/modules/finance/*": ["modules/finance/*"],
       "@enterprise/modules/inventory/*": ["modules/inventory/*"],
-      "@enterprise/modules/sports-clubs/*": ["modules/sports-clubs/*"]
+      "@enterprise/modules/sports-clubs/*": ["modules/sports-clubs/*"],
+      "@dashboard/*": ["apps/dashboard-web/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

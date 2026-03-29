@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { modules } from '../../module-registry/modules';
-import { ModuleWrapper } from '../../module-shell/module-wrapper';
+import { modules } from '@dashboard/module-registry/modules';
+import { ModuleWrapper } from '@dashboard/module-shell/module-wrapper';
 
 type ModulePageProps = {
   params: Promise<{ module: string }>;
