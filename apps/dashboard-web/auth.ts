@@ -64,6 +64,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     authorized({ auth, request }) {
       const { pathname } = request.nextUrl;
+      if (pathname.startsWith('/api/')) return true;
       if (PUBLIC_ROUTES.some((route) => pathname.startsWith(route))) return true;
       return !!auth?.user;
     },
