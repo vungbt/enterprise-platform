@@ -4,11 +4,12 @@ export type ClubDto = {
   id: string;
   name: string;
   sport: string;
+  description?: string;
   captain: string;
   members: number;
   status: 'active' | 'inactive';
   fundBalance: number;
-  createdAt: string; // ISO date string
+  createdAt: string;
 };
 
 const GET_CLUBS_QUERY = `
@@ -18,6 +19,7 @@ const GET_CLUBS_QUERY = `
         id
         name
         sport
+        description
         status
         createdAt
         membersCount
@@ -34,6 +36,7 @@ type GetClubsResponse = {
       id: string;
       name: string;
       sport: string;
+      description?: string;
       status: 'active' | 'inactive';
       createdAt: string;
       membersCount: number;
@@ -65,6 +68,13 @@ export type CreateClubInput = {
   status?: 'active' | 'inactive';
 };
 
+export type UpdateClubInput = {
+  name?: string;
+  sport?: string;
+  description?: string;
+  status?: 'active' | 'inactive';
+};
+
 export async function createClubApi(input: CreateClubInput, token?: string): Promise<ClubDto> {
   const data = await gqlFetch<{
     createClub: ClubDto & { membersCount: number; captainName: string | null; fundBalance: number };
@@ -74,12 +84,63 @@ export async function createClubApi(input: CreateClubInput, token?: string): Pro
     id: item.id,
     name: item.name,
     sport: item.sport,
+    description: item.description,
     status: item.status,
     captain: item.captainName ?? '—',
     members: item.membersCount,
     fundBalance: item.fundBalance,
     createdAt: item.createdAt,
   };
+}
+
+const UPDATE_CLUB_MUTATION = `
+  mutation UpdateClub($id: String!, $input: UpdateClubInput!) {
+    updateClub(id: $id, input: $input) {
+      id
+      name
+      sport
+      description
+      status
+      createdAt
+      membersCount
+      captainName
+      fundBalance
+    }
+  }
+`;
+
+export async function updateClubApi(
+  id: string,
+  input: UpdateClubInput,
+  token?: string,
+): Promise<ClubDto> {
+  const data = await gqlFetch<{
+    updateClub: ClubDto & { membersCount: number; captainName: string | null; fundBalance: number };
+  }>(UPDATE_CLUB_MUTATION, { id, input }, token);
+
+  const item = data.updateClub;
+  return {
+    id: item.id,
+    name: item.name,
+    sport: item.sport,
+    description: item.description,
+    status: item.status,
+    captain: item.captainName ?? '—',
+    members: item.membersCount,
+    fundBalance: item.fundBalance,
+    createdAt: item.createdAt,
+  };
+}
+
+const DELETE_CLUB_MUTATION = `
+  mutation DeleteClub($id: String!) {
+    deleteClub(id: $id)
+  }
+`;
+
+export async function deleteClubApi(id: string, token?: string): Promise<boolean> {
+  const data = await gqlFetch<{ deleteClub: boolean }>(DELETE_CLUB_MUTATION, { id }, token);
+  return data.deleteClub;
 }
 
 const MOCK_CLUBS: ClubDto[] = [
@@ -122,6 +183,7 @@ export async function getClubsApi(token?: string): Promise<ClubDto[]> {
       id: item.id,
       name: item.name,
       sport: item.sport,
+      description: item.description,
       status: item.status,
       captain: item.captainName ?? '—',
       members: item.membersCount,

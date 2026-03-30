@@ -15,9 +15,9 @@ import {
 } from '@enterprise/ui/components';
 import { useMemo, useState } from 'react';
 import type { ClubDto } from '../api/sports-clubs.api';
-import { ClubCard } from './club-card';
-import { ClubsTable } from './clubs-table';
-import { CreateClubModal } from './create-club-modal';
+import { ClubCard } from '../components/club-card';
+import { CreateClubModal } from '../components/club-modal';
+import { ClubsTable } from '../components/clubs-table';
 
 type View = 'grid' | 'table';
 
@@ -113,7 +113,7 @@ export function ClubsView({ clubs }: ClubsViewProps) {
           <Button
             size="small"
             variant="outline"
-            color="primary"
+            color="neutral"
             icon="adjustments-vertical"
             onClick={() => setFiltersOpen((v) => !v)}
           >

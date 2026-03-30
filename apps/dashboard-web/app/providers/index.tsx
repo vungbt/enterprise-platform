@@ -1,5 +1,6 @@
 'use client';
 
+import { Toaster } from '@enterprise/ui/components';
 import { SessionProvider } from 'next-auth/react';
 import type { ReactNode } from 'react';
 import { AbilityProvider } from './ability.provider';
@@ -10,8 +11,11 @@ type ProvidersProps = {
 
 export function Providers({ children }: ProvidersProps) {
   return (
-    <SessionProvider>
-      <AbilityProvider>{children}</AbilityProvider>
-    </SessionProvider>
+    <>
+      <SessionProvider>
+        <AbilityProvider>{children}</AbilityProvider>
+      </SessionProvider>
+      <Toaster />
+    </>
   );
 }

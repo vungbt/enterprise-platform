@@ -5,7 +5,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { Avatar } from '../components/avatar';
 import { Divider } from '../components/divider';
 import { IconButton } from '../components/icon-button';
-import { Menu, MenuButton, MenuItem } from '../components/menu';
+import { Menu } from '../components/menu';
 
 type HeaderProps = {
   activeModule?: ModuleNavItem;
@@ -31,8 +31,12 @@ export function Header({ activeModule }: HeaderProps) {
         <Divider orientation="vertical" className="mx-2 h-9" />
 
         <Menu
-          menuButton={
-            <MenuButton className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-neutral-bg transition-colors focus:outline-none">
+          align="end"
+          trigger={
+            <button
+              type="button"
+              className="flex items-center gap-2 rounded-lg px-2 py-1 hover:bg-neutral-bg transition-colors focus:outline-none"
+            >
               <div className="text-right">
                 <p className="text-sm font-medium text-neutral-black leading-tight">
                   {user?.name ?? 'Profile'}
@@ -42,15 +46,24 @@ export function Header({ activeModule }: HeaderProps) {
                 </p>
               </div>
               <Avatar name={user?.name} src={user?.image} size="md" />
-            </MenuButton>
+            </button>
           }
-          align="end"
-        >
-          <MenuItem disabled className="text-xs text-neutral-text-secondary px-3 py-1">
-            {user?.email}
-          </MenuItem>
-          <MenuItem onClick={() => signOut({ callbackUrl: '/auth/login' })}>Log out</MenuItem>
-        </Menu>
+          customClasses={{
+            menu: '!w-44 !bg-white !border !border-neutral-border !rounded-lg !shadow-2xl overflow-hidden',
+          }}
+          items={[
+            {
+              key: 'email',
+              disabled: true,
+              label: <span className="text-neutral-text-secondary">{user?.email ?? ''}</span>,
+            },
+            {
+              key: 'logout',
+              label: 'Log out',
+              onClick: () => signOut({ callbackUrl: '/auth/login' }),
+            },
+          ]}
+        />
       </div>
     </header>
   );

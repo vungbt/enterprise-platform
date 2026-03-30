@@ -47,11 +47,11 @@ const colorClasses: Record<Color, Record<Variant, string>> = {
     default: 'text-neutral-text-secondary hover:bg-pending-bg hover:text-pending',
   },
   neutral: {
-    solid: 'bg-neutral text-white hover:bg-neutral-text-primary',
-    outline: 'border border-neutral text-neutral bg-white hover:bg-neutral-bg',
-    subtle: 'bg-neutral-bg text-neutral hover:bg-neutral-text-primary',
+    solid: 'bg-neutral-black text-white hover:bg-neutral-text-primary',
+    outline: 'border border-neutral-border text-neutral-text-primary bg-white hover:bg-neutral',
+    subtle: 'bg-neutral-bg text-neutral-text-primary hover:bg-neutral-border',
     ghost: 'text-neutral-text-secondary hover:bg-neutral-bg hover:text-neutral-black',
-    text: 'text-neutral hover:text-neutral-text-primary',
+    text: 'text-neutral-text-primary hover:text-neutral-black',
     default: 'text-neutral-text-secondary hover:bg-neutral-bg hover:text-neutral-black',
   },
 };

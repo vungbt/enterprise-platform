@@ -1,44 +1,61 @@
 'use client';
 
-import { Button, IconButton, Tag } from '@enterprise/ui/components';
+import {
+  Button,
+  IconButton,
+  Menu,
+  ModalConfirm,
+  Tag,
+  toastError,
+  toastSuccess,
+} from '@enterprise/ui/components';
 import { RenderIcon } from '@enterprise/ui/components/icons';
+import { formatCurrency, formatDate, getInitials } from '@enterprise/ui/lib/format';
 import { cn } from '@enterprise/ui/lib/utils';
+import { useTheme } from '@enterprise/ui/theme/theme-provider';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { useState } from 'react';
 import type { ClubDto } from '../api/sports-clubs.api';
-
-const SPORT_COLORS: Record<string, string> = {
-  Football: '#3b82f6',
-  Badminton: '#10b981',
-  Pickleball: '#f59e0b',
-};
-
-const DEFAULT_SPORT_COLOR = '#6366f1';
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
-}
-
-function formatDate(dateStr: string) {
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-}
-
-function getInitials(name: string) {
-  return name
-    .split(' ')
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
+import { deleteClubApi } from '../api/sports-clubs.api';
+import { EditClubModal } from './club-modal';
 
 type ClubCardProps = {
   club: ClubDto;
 };
 
 export function ClubCard({ club }: ClubCardProps) {
+  const { resolvedTokens } = useTheme();
+
   const isZeroBalance = club.fundBalance === 0;
   const isLowBalance = club.fundBalance > 0 && club.fundBalance < 500;
   const hasFundWarning = isZeroBalance || isLowBalance;
-  const sportColor = SPORT_COLORS[club.sport] ?? DEFAULT_SPORT_COLOR;
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  function handleEdit() {
+    setIsEditOpen(true);
+  }
+
+  function handleDelete() {
+    setIsDeleteOpen(true);
+  }
+
+  const getSportTagColor = (sport: string) => {
+    switch (sport) {
+      case 'Football':
+        return resolvedTokens.color.pending;
+      case 'Badminton':
+        return resolvedTokens.color.success;
+      case 'Pickleball':
+        return resolvedTokens.color.info;
+      default:
+        return resolvedTokens.color.primary;
+    }
+  };
 
   return (
     <div
@@ -51,19 +68,25 @@ export function ClubCard({ club }: ClubCardProps) {
     >
       {/* Top row */}
       <div className="mb-3 flex items-center justify-between">
-        <Tag content={club.sport} color={sportColor} type="outline" />
+        <Tag content={club.sport} type="outline" color={getSportTagColor(club.sport)} />
         <div className="flex items-center gap-1">
           {hasFundWarning && (
             <RenderIcon name="exclamation-triangle" className="h-5 w-5 text-error" />
           )}
-          <IconButton
-            type="button"
-            icon="adjustments-vertical"
-            color="neutral"
-            variant="ghost"
-            aria-label="Club options"
-            iconClassName="!h-4 !w-4"
-            className="h-8 w-8 rounded-md"
+          <Menu
+            align="start"
+            trigger={
+              <IconButton
+                icon="ellipsis-vertical"
+                color="neutral"
+                variant="default"
+                className="rounded-md"
+              />
+            }
+            items={[
+              { key: 'edit', label: 'Edit', onClick: handleEdit },
+              { key: 'delete', label: 'Delete', onClick: handleDelete, danger: true },
+            ]}
           />
         </div>
       </div>
@@ -104,10 +127,16 @@ export function ClubCard({ club }: ClubCardProps) {
         </div>
       </div>
 
-      {/* Creator info + status */}
+      {/* Captain info + status */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-background text-xs font-semibold text-primary">
+          <div
+            className="flex h-8 w-8 items-center justify-center rounded-full text-xs font-semibold"
+            style={{
+              background: resolvedTokens.color.primaryBg,
+              color: resolvedTokens.color.primary,
+            }}
+          >
             {getInitials(club.captain)}
           </div>
           <div>
@@ -119,7 +148,9 @@ export function ClubCard({ club }: ClubCardProps) {
         </div>
         <Tag
           content={club.status === 'active' ? 'Active' : 'Inactive'}
-          color={club.status === 'active' ? '#52c41a' : '#ff4d4f'}
+          color={
+            club.status === 'active' ? resolvedTokens.color.success : resolvedTokens.color.error
+          }
           type="outline"
         />
       </div>
@@ -137,10 +168,38 @@ export function ClubCard({ club }: ClubCardProps) {
         <Button size="small" variant="outline" color="neutral" className="flex-1">
           Manage Members
         </Button>
-        <Button size="small" variant="outline" color="neutral" className="flex-1">
+        <Button size="small" color="primary" className="flex-1">
           View Details
         </Button>
       </div>
+
+      <ModalConfirm
+        isOpen={isDeleteOpen}
+        onClose={() => setIsDeleteOpen(false)}
+        onCancel={() => setIsDeleteOpen(false)}
+        message={`Are you sure you want to delete "${club.name}"?`}
+        submitLabel="Delete"
+        submitColor="error"
+        cancelLabel="Cancel"
+        onSubmit={() => {
+          setIsDeleting(true);
+          void deleteClubApi(club.id, session?.backendToken)
+            .then(() => {
+              toastSuccess('Delete club success!');
+              setIsDeleteOpen(false);
+              router.refresh();
+            })
+            .catch((err) => {
+              toastError(err instanceof Error ? err.message : 'Delete club failed');
+            })
+            .finally(() => {
+              setIsDeleting(false);
+            });
+        }}
+        isLoading={isDeleting}
+      />
+
+      <EditClubModal club={club} isOpen={isEditOpen} onClose={() => setIsEditOpen(false)} />
     </div>
   );
 }

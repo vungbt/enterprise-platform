@@ -49,7 +49,7 @@ const selectedClasses: Record<RadioButtonGroupColor, string> = {
   success: 'bg-success text-white hover:bg-success-base',
   error: 'bg-error text-white hover:bg-error-base',
   pending: 'bg-pending text-white hover:bg-pending-base',
-  neutral: 'bg-neutral text-white hover:bg-neutral-text-primary',
+  neutral: 'bg-neutral-black text-white hover:bg-neutral-text-primary',
 };
 
 const unselectedClasses =

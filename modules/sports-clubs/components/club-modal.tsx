@@ -11,6 +11,7 @@ import {
   Select,
   type SelectOption,
   Textarea,
+  toastSuccess,
   useAppForm,
   useStore,
   z,
@@ -20,7 +21,8 @@ import { ModalBase } from '@enterprise/ui/components/modal';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import { createClubApi } from '../api/sports-clubs.api';
+import type { ClubDto } from '../api/sports-clubs.api';
+import { createClubApi, updateClubApi } from '../api/sports-clubs.api';
 
 type Props = {
   isOpen: boolean;
@@ -44,7 +46,7 @@ const modalSelectMenuPortalStyles = {
   menuPortal: (base: Record<string, unknown>) => ({ ...base, zIndex: 10_000 }),
 };
 
-const createClubSchema = {
+const clubSchema = {
   name: z.string().min(1, 'Club name is required'),
   sport: z.string(),
   customSport: z.string(),
@@ -52,7 +54,7 @@ const createClubSchema = {
   status: z.enum(['active', 'inactive']),
 };
 
-type CreateClubFormValues = {
+type ClubModalFormValues = {
   name: string;
   sport: string;
   customSport: string;
@@ -60,19 +62,42 @@ type CreateClubFormValues = {
   status: 'active' | 'inactive';
 };
 
-export function CreateClubModal({ isOpen, onClose }: Props) {
+type ClubModalProps = Props & {
+  editClub?: ClubDto;
+};
+
+function getSportValues(clubSport: string) {
+  const isKnown = SPORT_OPTIONS.includes(clubSport as (typeof SPORT_OPTIONS)[number]);
+  const isOther = clubSport === 'Other';
+
+  // When user selects "Other" in the UI: send the custom sport string to backend.
+  // So the value coming from API is usually not "Other" but the actual custom value.
+  if (!isKnown || isOther) {
+    return { sport: 'Other', customSport: isOther ? '' : clubSport };
+  }
+
+  return { sport: clubSport, customSport: '' };
+}
+
+function ClubModal({ isOpen, onClose, editClub }: ClubModalProps) {
   const router = useRouter();
   const { data: session } = useSession();
   const [submitError, setSubmitError] = useState('');
 
+  const initialSportValues = editClub
+    ? getSportValues(editClub.sport)
+    : { sport: '', customSport: '' };
+
+  const initialValues: ClubModalFormValues = {
+    name: editClub?.name ?? '',
+    sport: initialSportValues.sport,
+    customSport: initialSportValues.customSport,
+    description: '',
+    status: (editClub?.status ?? 'active') as 'active' | 'inactive',
+  };
+
   const form = useAppForm({
-    defaultValues: {
-      name: '',
-      sport: '',
-      customSport: '',
-      description: '',
-      status: 'active' as 'active' | 'inactive',
-    },
+    defaultValues: initialValues,
     validators: {
       onSubmit: ({ value }) => {
         const final = value.sport === 'Other' ? value.customSport : value.sport;
@@ -86,15 +111,31 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
       setSubmitError('');
       const finalSport = value.sport === 'Other' ? value.customSport : value.sport;
       try {
-        await createClubApi(
-          {
-            name: value.name.trim(),
-            sport: finalSport.trim(),
-            description: value.description.trim() || undefined,
-            status: value.status,
-          },
-          session?.backendToken,
-        );
+        if (editClub) {
+          await updateClubApi(
+            editClub.id,
+            {
+              name: value.name.trim(),
+              sport: finalSport.trim(),
+              description: value.description.trim() || undefined,
+              status: value.status,
+            },
+            session?.backendToken,
+          );
+          toastSuccess('Cập nhật thành công!');
+        } else {
+          await createClubApi(
+            {
+              name: value.name.trim(),
+              sport: finalSport.trim(),
+              description: value.description.trim() || undefined,
+              status: value.status,
+            },
+            session?.backendToken,
+          );
+          toastSuccess('Tạo thành công!');
+        }
+
         form.reset();
         onClose();
         router.refresh();
@@ -106,7 +147,7 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
 
   const sportValue = useStore(
     form.store,
-    (s) => (s as { values: CreateClubFormValues }).values.sport,
+    (s) => (s as { values: ClubModalFormValues }).values.sport,
   );
 
   function handleClose() {
@@ -121,7 +162,9 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
         <div className="flex items-center justify-between border-b border-neutral-border px-6 py-4">
           <div className="flex items-center gap-2">
             <RenderIcon name="trophy" className="h-5 w-5 text-primary" />
-            <h3 className="text-base font-semibold text-neutral-black">Create New Club</h3>
+            <h3 className="text-base font-semibold text-neutral-black">
+              {editClub ? 'Edit Club' : 'Create New Club'}
+            </h3>
           </div>
           <IconButton
             type="button"
@@ -134,7 +177,7 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
           />
         </div>
 
-        <Form form={form} schema={createClubSchema}>
+        <Form form={form} schema={clubSchema}>
           <div className="space-y-1 px-6 py-5">
             <FormField name="name" label="Club Name" required>
               <Input placeholder="e.g. Saigon FC" />
@@ -214,7 +257,7 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
             <FormSubmit form={form}>
               {(isSubmitting) => (
                 <Button type="submit" size="small" icon="plus" loading={isSubmitting}>
-                  Create Club
+                  {editClub ? 'Update Club' : 'Create Club'}
                 </Button>
               )}
             </FormSubmit>
@@ -223,4 +266,12 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
       </div>
     </ModalBase>
   );
+}
+
+export function CreateClubModal({ isOpen, onClose }: Props) {
+  return <ClubModal isOpen={isOpen} onClose={onClose} />;
+}
+
+export function EditClubModal({ club, isOpen, onClose }: { club: ClubDto } & Props) {
+  return <ClubModal isOpen={isOpen} onClose={onClose} editClub={club} />;
 }

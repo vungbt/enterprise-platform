@@ -81,12 +81,13 @@ const colorClasses = {
     ghost: 'text-pending bg-transparent border border-dashed border-pending hover:bg-pending-bg',
   },
   neutral: {
-    solid: 'bg-neutral text-white hover:bg-neutral-text-primary',
-    outline: 'border border-neutral text-neutral bg-white hover:bg-neutral-bg',
-    subtle: 'bg-neutral-bg text-neutral hover:bg-neutral-text-primary',
-    link: 'text-neutral bg-transparent hover:underline',
-    text: 'text-neutral bg-transparent hover:text-neutral-text-primary',
-    ghost: 'text-neutral bg-transparent border border-dashed border-neutral hover:bg-neutral-bg',
+    solid: 'bg-neutral-black text-white hover:bg-neutral-text-primary',
+    outline: 'border border-neutral-border text-neutral-text-primary bg-white hover:bg-neutral-bg',
+    subtle: 'bg-neutral-bg text-neutral-text-primary hover:bg-neutral-border',
+    link: 'text-neutral-text-primary bg-transparent hover:underline',
+    text: 'text-neutral-text-primary bg-transparent hover:text-neutral-black',
+    ghost:
+      'text-neutral-text-primary bg-transparent border border-dashed border-neutral-border hover:bg-neutral-bg',
   },
 };
 

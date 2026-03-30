@@ -118,7 +118,6 @@ export const ModalBase = ({
 };
 
 // ─── ModalConfirm ────────────────────────────────────────────────────────────
-
 type ModalConfirmProps = Omit<ModalBaseProps, 'children'> & {
   onCancel?: () => void;
   cancelLabel?: string;
