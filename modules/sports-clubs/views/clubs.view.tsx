@@ -3,6 +3,7 @@
 import {
   Button,
   DrawerBase,
+  Empty,
   Form,
   FormField,
   IconButton,
@@ -14,7 +15,7 @@ import {
   useStore,
 } from '@enterprise/ui/components';
 import { useMemo, useState } from 'react';
-import type { Club } from '../api/sports-clubs.api';
+import type { Club } from '../api/server.api';
 import { ClubCard } from '../components/club-card';
 import { CreateClubModal } from '../components/club-modal';
 import { ClubsTable } from '../components/clubs-table';
@@ -227,8 +228,28 @@ export function ClubsView({ clubs }: ClubsViewProps) {
         </p>
       )}
 
-      {view === 'grid' ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {filteredClubs.length === 0 ? (
+        <Empty
+          title={hasActiveFilters ? 'No clubs match current filters' : 'No clubs yet'}
+          description={
+            hasActiveFilters
+              ? 'Try clearing or adjusting filters to see clubs.'
+              : 'Create your first club to get started.'
+          }
+          action={
+            hasActiveFilters ? (
+              <Button size="small" variant="outline" color="neutral" onClick={clearFilters}>
+                Clear filters
+              </Button>
+            ) : (
+              <Button size="small" icon="plus" onClick={() => setIsCreateOpen(true)}>
+                New Club
+              </Button>
+            )
+          }
+        />
+      ) : view === 'grid' ? (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredClubs.map((club) => (
             <ClubCard key={club.id} club={club} />
           ))}

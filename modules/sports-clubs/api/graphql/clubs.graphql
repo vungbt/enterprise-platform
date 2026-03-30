@@ -14,6 +14,32 @@ query GetClubs {
   }
 }
 
+query GetClubMembers($id: String!) {
+  club(id: $id) {
+    id
+    name
+    members {
+      userId
+      role
+      joinedAt
+      user {
+        id
+        name
+        email
+      }
+    }
+  }
+}
+
+query GetMemberCandidateUsers {
+  candidateUsers {
+    id
+    name
+    email
+    isActive
+  }
+}
+
 mutation CreateClub($input: CreateClubInput!) {
   createClub(input: $input) {
     id
@@ -44,4 +70,27 @@ mutation UpdateClub($id: String!, $input: UpdateClubInput!) {
 
 mutation DeleteClub($id: String!) {
   deleteClub(id: $id)
+}
+
+mutation AddClubMember($input: AddClubMemberInput!) {
+  addClubMember(input: $input) {
+    clubId
+    userId
+    role
+    joinedAt
+  }
+}
+
+mutation RemoveClubMember($clubId: String!, $userId: String!) {
+  removeClubMember(clubId: $clubId, userId: $userId)
+}
+
+mutation RegisterMemberUser($input: RegisterInput!) {
+  register(input: $input) {
+    user {
+      id
+      name
+      email
+    }
+  }
 }

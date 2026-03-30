@@ -21,7 +21,7 @@ import { ModalBase } from '@enterprise/ui/components/modal';
 import { ClubStatus } from '@gql/graphql';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import type { Club } from '../api/sports-clubs.api';
+import type { Club } from '../api/server.api';
 import { useClubsApi } from '../api/use-clubs-api';
 
 type Props = {

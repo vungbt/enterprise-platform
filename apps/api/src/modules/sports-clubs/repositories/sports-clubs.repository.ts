@@ -116,6 +116,23 @@ export class SportsClubsRepository {
     });
   }
 
+  findActiveUsers(limit = 100) {
+    return this.prisma.user.findMany({
+      where: { isActive: true, deletedAt: null },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatar: true,
+        isActive: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
+
   findClubById(clubId: string) {
     return this.prisma.club.findUnique({
       where: { id: clubId },

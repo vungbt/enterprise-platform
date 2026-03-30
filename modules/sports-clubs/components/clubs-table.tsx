@@ -10,11 +10,12 @@ import {
 } from '@enterprise/ui/components';
 import { Pagination } from '@enterprise/ui/components/pagination';
 import { usePageFooter } from '@enterprise/ui/layout/footer-context';
+import { useTheme } from '@enterprise/ui/theme/theme-provider';
 import { ClubStatus } from '@gql/graphql';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import type { Club } from '../api/sports-clubs.api';
+import type { Club } from '../api/server.api';
 import { useClubsApi } from '../api/use-clubs-api';
 import { EditClubModal } from './club-modal';
 
@@ -24,12 +25,8 @@ type ClubsTableProps = {
 
 const LIMIT = 10;
 
-const statusConfig: Record<ClubStatus, { label: string; color: string }> = {
-  [ClubStatus.Active]: { label: 'Active', color: '#52c41a' },
-  [ClubStatus.Inactive]: { label: 'Inactive', color: '#ff4d4f' },
-};
-
 export function ClubsTable({ clubs }: ClubsTableProps) {
+  const { resolvedTokens } = useTheme();
   const [page, setPage] = useState(1);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
   const { deleteClub } = useClubsApi();
@@ -45,6 +42,14 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
   const total = clubs.length;
   const pageCount = Math.ceil(total / LIMIT);
   const pageData = useMemo(() => clubs.slice((page - 1) * LIMIT, page * LIMIT), [clubs, page]);
+
+  const statusConfig: Record<ClubStatus, { label: string; color: string }> = useMemo(
+    () => ({
+      [ClubStatus.Active]: { label: 'Active', color: resolvedTokens.color.success },
+      [ClubStatus.Inactive]: { label: 'Inactive', color: resolvedTokens.color.error },
+    }),
+    [resolvedTokens],
+  );
 
   const columns: ColumnDef<Club>[] = useMemo(
     () => [
@@ -106,7 +111,7 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
         ),
       },
     ],
-    [],
+    [statusConfig],
   );
 
   usePageFooter(

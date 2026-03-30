@@ -34,6 +34,11 @@ export class SportsClubsResolver {
     return this.sportsClubsService.getClubById(id);
   }
 
+  @Query(() => [UserEntity], { name: 'candidateUsers' })
+  candidateUsers() {
+    return this.sportsClubsService.getCandidateUsers();
+  }
+
   @Mutation(() => ClubEntity)
   @CheckAbility({ action: 'create', subject: 'Club' })
   createClub(@Args('input') input: CreateClubInput, @CurrentUser() user: { id: string }) {

@@ -5,10 +5,9 @@ import {
   type CreateClubInput,
   createClubApi,
   deleteClubApi,
-  getClubsApi,
   type UpdateClubInput,
   updateClubApi,
-} from './sports-clubs.api';
+} from './server.api';
 
 /**
  * Returns all clubs API functions pre-bound with the current user's token.
@@ -19,7 +18,6 @@ export function useClubsApi() {
   const token = session?.backendToken;
 
   return {
-    getClubs: () => getClubsApi(token),
     createClub: (input: CreateClubInput) => createClubApi(input, token),
     updateClub: (id: string, input: UpdateClubInput) => updateClubApi(id, input, token),
     deleteClub: (id: string) => deleteClubApi(id, token),

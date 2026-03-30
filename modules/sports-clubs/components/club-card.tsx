@@ -16,8 +16,8 @@ import { useTheme } from '@enterprise/ui/theme/theme-provider';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import type { Club } from '../api/sports-clubs.api';
-import { deleteClubApi } from '../api/sports-clubs.api';
+import type { Club } from '../api/server.api';
+import { deleteClubApi } from '../api/server.api';
 import { EditClubModal } from './club-modal';
 
 type ClubCardProps = {
@@ -165,10 +165,21 @@ export function ClubCard({ club }: ClubCardProps) {
 
       {/* Actions */}
       <div className="mt-auto flex gap-2">
-        <Button size="small" variant="outline" color="neutral" className="flex-1">
+        <Button
+          size="small"
+          variant="outline"
+          color="neutral"
+          className="flex-1"
+          onClick={() => router.push(`/sports-clubs/${club.id}/members`)}
+        >
           Manage Members
         </Button>
-        <Button size="small" color="primary" className="flex-1">
+        <Button
+          size="small"
+          color="primary"
+          className="flex-1"
+          onClick={() => router.push(`/sports-clubs/${club.id}/members`)}
+        >
           View Details
         </Button>
       </div>

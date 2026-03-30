@@ -77,6 +77,10 @@ export class SportsClubsService {
     return this.sportsClubsRepository.findUserById(userId);
   }
 
+  getCandidateUsers() {
+    return this.sportsClubsRepository.findActiveUsers();
+  }
+
   getClubById2(clubId: string) {
     return this.sportsClubsRepository.findClubById(clubId);
   }
