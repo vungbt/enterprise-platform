@@ -1,0 +1,47 @@
+query GetClubs {
+  clubs {
+    items {
+      id
+      name
+      sport
+      description
+      status
+      createdAt
+      membersCount
+      captainName
+      fundBalance
+    }
+  }
+}
+
+mutation CreateClub($input: CreateClubInput!) {
+  createClub(input: $input) {
+    id
+    name
+    sport
+    description
+    status
+    createdAt
+    membersCount
+    captainName
+    fundBalance
+  }
+}
+
+mutation UpdateClub($id: String!, $input: UpdateClubInput!) {
+  updateClub(id: $id, input: $input) {
+    id
+    name
+    sport
+    description
+    status
+    createdAt
+    membersCount
+    captainName
+    fundBalance
+  }
+}
+
+mutation DeleteClub($id: String!) {
+  deleteClub(id: $id)
+}

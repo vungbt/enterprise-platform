@@ -10,29 +10,29 @@ import {
 } from '@enterprise/ui/components';
 import { Pagination } from '@enterprise/ui/components/pagination';
 import { usePageFooter } from '@enterprise/ui/layout/footer-context';
+import { ClubStatus } from '@gql/graphql';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useMemo, useState } from 'react';
-import type { ClubDto } from '../api/sports-clubs.api';
-import { deleteClubApi } from '../api/sports-clubs.api';
+import type { Club } from '../api/sports-clubs.api';
+import { useClubsApi } from '../api/use-clubs-api';
 import { EditClubModal } from './club-modal';
 
 type ClubsTableProps = {
-  clubs: ClubDto[];
+  clubs: Club[];
 };
 
 const LIMIT = 10;
 
-const statusConfig: Record<ClubDto['status'], { label: string; color: string }> = {
-  active: { label: 'Active', color: '#52c41a' },
-  inactive: { label: 'Inactive', color: '#ff4d4f' },
+const statusConfig: Record<ClubStatus, { label: string; color: string }> = {
+  [ClubStatus.Active]: { label: 'Active', color: '#52c41a' },
+  [ClubStatus.Inactive]: { label: 'Inactive', color: '#ff4d4f' },
 };
 
 export function ClubsTable({ clubs }: ClubsTableProps) {
   const [page, setPage] = useState(1);
   const [selectedKeys, setSelectedKeys] = useState<React.Key[]>([]);
-  const { data: session } = useSession();
+  const { deleteClub } = useClubsApi();
   const router = useRouter();
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -40,19 +40,23 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
   const [deleteIds, setDeleteIds] = useState<string[]>([]);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editClub, setEditClub] = useState<ClubDto | null>(null);
+  const [editClub, setEditClub] = useState<Club | null>(null);
 
   const total = clubs.length;
   const pageCount = Math.ceil(total / LIMIT);
   const pageData = useMemo(() => clubs.slice((page - 1) * LIMIT, page * LIMIT), [clubs, page]);
 
-  const columns: ColumnDef<ClubDto>[] = useMemo(
+  const columns: ColumnDef<Club>[] = useMemo(
     () => [
       { header: '#', accessorKey: 'id', size: 80 },
       { header: 'Club Name', accessorKey: 'name', enableSorting: true },
       { header: 'Sport', accessorKey: 'sport', enableSorting: true },
-      { header: 'Captain', accessorKey: 'captain' },
-      { header: 'Members', accessorKey: 'members', size: 100 },
+      {
+        header: 'Captain',
+        accessorKey: 'captainName',
+        cell: ({ getValue }) => (getValue() as string | null) ?? '—',
+      },
+      { header: 'Members', accessorKey: 'membersCount', size: 100 },
       {
         header: 'Fund Balance',
         accessorKey: 'fundBalance',
@@ -69,7 +73,7 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
         header: 'Status',
         accessorKey: 'status',
         cell: ({ getValue }) => {
-          const val = getValue() as ClubDto['status'];
+          const val = getValue() as ClubStatus;
           const cfg = statusConfig[val];
           return <Tag content={cfg.label} color={cfg.color} />;
         },
@@ -162,13 +166,13 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
           void (async () => {
             setIsDeleting(true);
             try {
-              await Promise.all(deleteIds.map((id) => deleteClubApi(id, session?.backendToken)));
-              toastSuccess('Delete club(s) success!');
+              await Promise.all(deleteIds.map((id) => deleteClub(id)));
+              toastSuccess('Club(s) deleted successfully!');
               setIsDeleteOpen(false);
               setSelectedKeys([]);
               router.refresh();
             } catch (err) {
-              toastError(err instanceof Error ? err.message : 'Delete club(s) failed');
+              toastError(err instanceof Error ? err.message : 'Failed to delete club(s)');
             } finally {
               setIsDeleting(false);
             }

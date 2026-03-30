@@ -16,12 +16,12 @@ import { useTheme } from '@enterprise/ui/theme/theme-provider';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import type { ClubDto } from '../api/sports-clubs.api';
+import type { Club } from '../api/sports-clubs.api';
 import { deleteClubApi } from '../api/sports-clubs.api';
 import { EditClubModal } from './club-modal';
 
 type ClubCardProps = {
-  club: ClubDto;
+  club: Club;
 };
 
 export function ClubCard({ club }: ClubCardProps) {
@@ -100,7 +100,7 @@ export function ClubCard({ club }: ClubCardProps) {
           <p className="mb-1 text-xs font-medium uppercase tracking-wide text-neutral-text-secondary">
             Members
           </p>
-          <p className="text-2xl font-bold text-neutral-black">{club.members}</p>
+          <p className="text-2xl font-bold text-neutral-black">{club.membersCount}</p>
         </div>
         <div
           className={cn(
@@ -137,10 +137,10 @@ export function ClubCard({ club }: ClubCardProps) {
               color: resolvedTokens.color.primary,
             }}
           >
-            {getInitials(club.captain)}
+            {getInitials(club.captainName ?? '—')}
           </div>
           <div>
-            <p className="text-sm font-medium text-neutral-black">{club.captain}</p>
+            <p className="text-sm font-medium text-neutral-black">{club.captainName ?? '—'}</p>
             <p className="text-xs text-neutral-text-secondary">
               Created {formatDate(club.createdAt)}
             </p>

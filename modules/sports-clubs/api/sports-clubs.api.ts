@@ -1,156 +1,29 @@
 import { gqlFetch } from '@enterprise/api-client/gql';
+import {
+  ClubStatus,
+  CreateClubDocument,
+  type CreateClubMutationVariables,
+  DeleteClubDocument,
+  GetClubsDocument,
+  type GetClubsQuery,
+  UpdateClubDocument,
+  type UpdateClubMutationVariables,
+} from '@gql/graphql';
 
-export type ClubDto = {
-  id: string;
-  name: string;
-  sport: string;
-  description?: string;
-  captain: string;
-  members: number;
-  status: 'active' | 'inactive';
-  fundBalance: number;
-  createdAt: string;
-};
+/** Derived directly from the GraphQL query — no manual type definition. */
+export type Club = GetClubsQuery['clubs']['items'][number];
 
-const GET_CLUBS_QUERY = `
-  query GetClubs {
-    clubs {
-      items {
-        id
-        name
-        sport
-        description
-        status
-        createdAt
-        membersCount
-        captainName
-        fundBalance
-      }
-    }
-  }
-`;
+export type CreateClubInput = CreateClubMutationVariables['input'];
+export type UpdateClubInput = UpdateClubMutationVariables['input'];
 
-type GetClubsResponse = {
-  clubs: {
-    items: {
-      id: string;
-      name: string;
-      sport: string;
-      description?: string;
-      status: 'active' | 'inactive';
-      createdAt: string;
-      membersCount: number;
-      captainName: string | null;
-      fundBalance: number;
-    }[];
-  };
-};
-
-const CREATE_CLUB_MUTATION = `
-  mutation CreateClub($input: CreateClubInput!) {
-    createClub(input: $input) {
-      id
-      name
-      sport
-      status
-      createdAt
-      membersCount
-      captainName
-      fundBalance
-    }
-  }
-`;
-
-export type CreateClubInput = {
-  name: string;
-  sport: string;
-  description?: string;
-  status?: 'active' | 'inactive';
-};
-
-export type UpdateClubInput = {
-  name?: string;
-  sport?: string;
-  description?: string;
-  status?: 'active' | 'inactive';
-};
-
-export async function createClubApi(input: CreateClubInput, token?: string): Promise<ClubDto> {
-  const data = await gqlFetch<{
-    createClub: ClubDto & { membersCount: number; captainName: string | null; fundBalance: number };
-  }>(CREATE_CLUB_MUTATION, { input }, token);
-  const item = data.createClub;
-  return {
-    id: item.id,
-    name: item.name,
-    sport: item.sport,
-    description: item.description,
-    status: item.status,
-    captain: item.captainName ?? '—',
-    members: item.membersCount,
-    fundBalance: item.fundBalance,
-    createdAt: item.createdAt,
-  };
-}
-
-const UPDATE_CLUB_MUTATION = `
-  mutation UpdateClub($id: String!, $input: UpdateClubInput!) {
-    updateClub(id: $id, input: $input) {
-      id
-      name
-      sport
-      description
-      status
-      createdAt
-      membersCount
-      captainName
-      fundBalance
-    }
-  }
-`;
-
-export async function updateClubApi(
-  id: string,
-  input: UpdateClubInput,
-  token?: string,
-): Promise<ClubDto> {
-  const data = await gqlFetch<{
-    updateClub: ClubDto & { membersCount: number; captainName: string | null; fundBalance: number };
-  }>(UPDATE_CLUB_MUTATION, { id, input }, token);
-
-  const item = data.updateClub;
-  return {
-    id: item.id,
-    name: item.name,
-    sport: item.sport,
-    description: item.description,
-    status: item.status,
-    captain: item.captainName ?? '—',
-    members: item.membersCount,
-    fundBalance: item.fundBalance,
-    createdAt: item.createdAt,
-  };
-}
-
-const DELETE_CLUB_MUTATION = `
-  mutation DeleteClub($id: String!) {
-    deleteClub(id: $id)
-  }
-`;
-
-export async function deleteClubApi(id: string, token?: string): Promise<boolean> {
-  const data = await gqlFetch<{ deleteClub: boolean }>(DELETE_CLUB_MUTATION, { id }, token);
-  return data.deleteClub;
-}
-
-const MOCK_CLUBS: ClubDto[] = [
+const MOCK_CLUBS: Club[] = [
   {
     id: 'SC-001',
     name: 'Saigon FC',
     sport: 'Football',
-    captain: 'Nguyen Van Toan',
-    members: 22,
-    status: 'active',
+    captainName: 'Nguyen Van Toan',
+    membersCount: 22,
+    status: ClubStatus.Active,
     fundBalance: 5200,
     createdAt: '2024-02-10',
   },
@@ -158,9 +31,9 @@ const MOCK_CLUBS: ClubDto[] = [
     id: 'SC-002',
     name: 'HCM Badminton Club',
     sport: 'Badminton',
-    captain: 'Tran Minh Duc',
-    members: 15,
-    status: 'active',
+    captainName: 'Tran Minh Duc',
+    membersCount: 15,
+    status: ClubStatus.Active,
     fundBalance: 0,
     createdAt: '2024-05-15',
   },
@@ -168,29 +41,38 @@ const MOCK_CLUBS: ClubDto[] = [
     id: 'SC-003',
     name: 'Pickleball Masters',
     sport: 'Pickleball',
-    captain: 'Le Thu Hang',
-    members: 18,
-    status: 'active',
+    captainName: 'Le Thu Hang',
+    membersCount: 18,
+    status: ClubStatus.Active,
     fundBalance: 3400,
     createdAt: '2024-08-20',
   },
 ];
 
-export async function getClubsApi(token?: string): Promise<ClubDto[]> {
+export async function getClubsApi(token?: string): Promise<Club[]> {
   try {
-    const data = await gqlFetch<GetClubsResponse>(GET_CLUBS_QUERY, {}, token);
-    return data.clubs.items.map((item) => ({
-      id: item.id,
-      name: item.name,
-      sport: item.sport,
-      description: item.description,
-      status: item.status,
-      captain: item.captainName ?? '—',
-      members: item.membersCount,
-      fundBalance: item.fundBalance,
-      createdAt: item.createdAt,
-    }));
+    const data = await gqlFetch(GetClubsDocument, {}, token);
+    return data.clubs.items;
   } catch {
     return MOCK_CLUBS;
   }
+}
+
+export async function createClubApi(input: CreateClubInput, token?: string): Promise<Club> {
+  const data = await gqlFetch(CreateClubDocument, { input }, token);
+  return data.createClub;
+}
+
+export async function updateClubApi(
+  id: string,
+  input: UpdateClubInput,
+  token?: string,
+): Promise<Club> {
+  const data = await gqlFetch(UpdateClubDocument, { id, input }, token);
+  return data.updateClub;
+}
+
+export async function deleteClubApi(id: string, token?: string): Promise<boolean> {
+  const data = await gqlFetch(DeleteClubDocument, { id }, token);
+  return data.deleteClub;
 }

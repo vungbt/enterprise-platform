@@ -15,7 +15,8 @@
       "@enterprise/modules/crm/*": ["../../modules/crm/*"],
       "@enterprise/modules/finance/*": ["../../modules/finance/*"],
       "@enterprise/modules/inventory/*": ["../../modules/inventory/*"],
-      "@enterprise/modules/sports-clubs/*": ["../../modules/sports-clubs/*"]
+      "@enterprise/modules/sports-clubs/*": ["../../modules/sports-clubs/*"],
+      "@gql/*": ["../../gql/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "types/**/*.d.ts"],

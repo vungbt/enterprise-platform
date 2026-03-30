@@ -19,13 +19,16 @@
     "prisma:generate": "dotenv -e apps/api/.env -- prisma generate --schema apps/api/prisma/schema.prisma",
     "prisma:migrate": "dotenv -e apps/api/.env -- prisma migrate dev --schema apps/api/prisma/schema.prisma",
     "prisma:seed": "tsx --env-file apps/api/.env apps/api/prisma/seed.ts",
-    "prisma:studio": "dotenv -e apps/api/.env -- prisma studio --schema apps/api/prisma/schema.prisma"
+    "prisma:studio": "dotenv -e apps/api/.env -- prisma studio --schema apps/api/prisma/schema.prisma",
+    "codegen": "graphql-codegen --config codegen.ts",
+    "codegen:watch": "graphql-codegen --config codegen.ts --watch"
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",
     "@as-integrations/express5": "^1.1.2",
     "@casl/ability": "^6.8.0",
     "@casl/react": "^5.0.1",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@nestjs/apollo": "^13.2.1",
     "@nestjs/common": "^11.1.6",
     "@nestjs/core": "^11.1.6",
@@ -72,6 +75,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",
+    "@graphql-codegen/cli": "^6.2.1",
+    "@graphql-codegen/client-preset": "^5.2.4",
     "@nx/js": "22.5.4",
     "@nx/next": "22.5.4",
     "@nx/workspace": "22.5.4",

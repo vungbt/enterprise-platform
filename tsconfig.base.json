@@ -12,7 +12,6 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "ignoreDeprecations": "6.0",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "baseUrl": ".",
@@ -28,7 +27,8 @@
       "@enterprise/modules/finance/*": ["modules/finance/*"],
       "@enterprise/modules/inventory/*": ["modules/inventory/*"],
       "@enterprise/modules/sports-clubs/*": ["modules/sports-clubs/*"],
-      "@dashboard/*": ["apps/dashboard-web/*"]
+      "@dashboard/*": ["apps/dashboard-web/*"],
+      "@gql/*": ["gql/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

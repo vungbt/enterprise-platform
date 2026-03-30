@@ -14,7 +14,7 @@ import {
   useStore,
 } from '@enterprise/ui/components';
 import { useMemo, useState } from 'react';
-import type { ClubDto } from '../api/sports-clubs.api';
+import type { Club } from '../api/sports-clubs.api';
 import { ClubCard } from '../components/club-card';
 import { CreateClubModal } from '../components/club-modal';
 import { ClubsTable } from '../components/clubs-table';
@@ -49,7 +49,7 @@ const STATUS_FILTER_SELECT_OPTIONS: SelectOption[] = [
 ];
 
 type ClubsViewProps = {
-  clubs: ClubDto[];
+  clubs: Club[];
 };
 
 export function ClubsView({ clubs }: ClubsViewProps) {

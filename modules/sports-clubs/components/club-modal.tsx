@@ -18,11 +18,11 @@ import {
 } from '@enterprise/ui/components';
 import { RenderIcon } from '@enterprise/ui/components/icons';
 import { ModalBase } from '@enterprise/ui/components/modal';
+import { ClubStatus } from '@gql/graphql';
 import { useRouter } from 'next/navigation';
-import { useSession } from 'next-auth/react';
 import { useState } from 'react';
-import type { ClubDto } from '../api/sports-clubs.api';
-import { createClubApi, updateClubApi } from '../api/sports-clubs.api';
+import type { Club } from '../api/sports-clubs.api';
+import { useClubsApi } from '../api/use-clubs-api';
 
 type Props = {
   isOpen: boolean;
@@ -51,7 +51,7 @@ const clubSchema = {
   sport: z.string(),
   customSport: z.string(),
   description: z.string(),
-  status: z.enum(['active', 'inactive']),
+  status: z.enum([ClubStatus.Active, ClubStatus.Inactive]),
 };
 
 type ClubModalFormValues = {
@@ -59,11 +59,11 @@ type ClubModalFormValues = {
   sport: string;
   customSport: string;
   description: string;
-  status: 'active' | 'inactive';
+  status: ClubStatus;
 };
 
 type ClubModalProps = Props & {
-  editClub?: ClubDto;
+  editClub?: Club;
 };
 
 function getSportValues(clubSport: string) {
@@ -81,7 +81,7 @@ function getSportValues(clubSport: string) {
 
 function ClubModal({ isOpen, onClose, editClub }: ClubModalProps) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { createClub, updateClub } = useClubsApi();
   const [submitError, setSubmitError] = useState('');
 
   const initialSportValues = editClub
@@ -93,7 +93,7 @@ function ClubModal({ isOpen, onClose, editClub }: ClubModalProps) {
     sport: initialSportValues.sport,
     customSport: initialSportValues.customSport,
     description: '',
-    status: (editClub?.status ?? 'active') as 'active' | 'inactive',
+    status: editClub?.status ?? ClubStatus.Active,
   };
 
   const form = useAppForm({
@@ -112,28 +112,21 @@ function ClubModal({ isOpen, onClose, editClub }: ClubModalProps) {
       const finalSport = value.sport === 'Other' ? value.customSport : value.sport;
       try {
         if (editClub) {
-          await updateClubApi(
-            editClub.id,
-            {
-              name: value.name.trim(),
-              sport: finalSport.trim(),
-              description: value.description.trim() || undefined,
-              status: value.status,
-            },
-            session?.backendToken,
-          );
-          toastSuccess('Cập nhật thành công!');
+          await updateClub(editClub.id, {
+            name: value.name.trim(),
+            sport: finalSport.trim(),
+            description: value.description.trim() || undefined,
+            status: value.status,
+          });
+          toastSuccess('Club updated successfully!');
         } else {
-          await createClubApi(
-            {
-              name: value.name.trim(),
-              sport: finalSport.trim(),
-              description: value.description.trim() || undefined,
-              status: value.status,
-            },
-            session?.backendToken,
-          );
-          toastSuccess('Tạo thành công!');
+          await createClub({
+            name: value.name.trim(),
+            sport: finalSport.trim(),
+            description: value.description.trim() || undefined,
+            status: value.status,
+          });
+          toastSuccess('Club created successfully!');
         }
 
         form.reset();
@@ -272,6 +265,6 @@ export function CreateClubModal({ isOpen, onClose }: Props) {
   return <ClubModal isOpen={isOpen} onClose={onClose} />;
 }
 
-export function EditClubModal({ club, isOpen, onClose }: { club: ClubDto } & Props) {
+export function EditClubModal({ club, isOpen, onClose }: { club: Club } & Props) {
   return <ClubModal isOpen={isOpen} onClose={onClose} editClub={club} />;
 }
