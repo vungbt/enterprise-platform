@@ -16,10 +16,10 @@
     "api:dev": "nx run api:dev",
     "api:build": "nx run api:build",
     "api:start": "nx run api:start",
-    "prisma:generate": "prisma generate --schema apps/api/prisma/schema.prisma",
-    "prisma:migrate": "prisma migrate dev --schema apps/api/prisma/schema.prisma",
+    "prisma:generate": "dotenv -e apps/api/.env -- prisma generate --schema apps/api/prisma/schema.prisma",
+    "prisma:migrate": "dotenv -e apps/api/.env -- prisma migrate dev --schema apps/api/prisma/schema.prisma",
     "prisma:seed": "tsx --env-file apps/api/.env apps/api/prisma/seed.ts",
-    "prisma:studio": "prisma studio --schema apps/api/prisma/schema.prisma"
+    "prisma:studio": "dotenv -e apps/api/.env -- prisma studio --schema apps/api/prisma/schema.prisma"
   },
   "dependencies": {
     "@apollo/server": "^5.4.0",
@@ -53,7 +53,6 @@
     "next-auth": "5.0.0-beta.30",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
-    "rc-drawer": "^7.3.0",
     "react": "^19.0.0",
     "react-date-picker": "^12.0.1",
     "react-daterange-picker": "^2.0.1",
@@ -84,6 +83,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "autoprefixer": "^10.4.20",
+    "dotenv-cli": "^11.0.0",
     "nx": "22.5.4",
     "postcss": "^8.5.3",
     "prisma": "^6.4.1",

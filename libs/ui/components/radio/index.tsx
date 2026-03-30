@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type React from 'react';
+import { cn } from '../../lib/utils';
 
 export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: React.ReactNode;
@@ -28,7 +28,7 @@ export const Radio: React.FC<RadioProps> = (props) => {
 
   return (
     <label
-      className={clsx(
+      className={cn(
         'cursor-pointer group',
         props.disabled && 'cursor-not-allowed opacity-50',
         className,
@@ -39,13 +39,11 @@ export const Radio: React.FC<RadioProps> = (props) => {
     >
       <input type="radio" className="peer hidden" {...reset} />
       {!optionIsButton ? (
-        <span
-          className={clsx('transition-all ease-linear', optionClass.circle, colorClass.circle)}
-        />
+        <span className={cn('transition-all ease-linear', optionClass.circle, colorClass.circle)} />
       ) : null}
 
       {label && (
-        <span className={clsx('transition-all ease-linear', optionClass.label, colorClass.label)}>
+        <span className={cn('transition-all ease-linear', optionClass.label, colorClass.label)}>
           {label}
         </span>
       )}
@@ -174,4 +172,5 @@ const optionClasses = {
   },
 };
 
+export * from './radio-button-group';
 export * from './radio-group';

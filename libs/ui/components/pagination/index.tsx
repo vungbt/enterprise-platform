@@ -1,6 +1,6 @@
-import clsx from 'clsx';
 import type { ReactNode } from 'react';
 import ReactPaginate from 'react-paginate';
+import { cn } from '../../lib/utils';
 import { RenderIcon } from '../icons';
 
 type PaginationProps = {
@@ -30,7 +30,7 @@ export const Pagination = ({
   onChangePage,
 }: PaginationProps): ReactNode => {
   return (
-    <div className={clsx('flex items-center gap-2 justify-between w-full', customClasses?.root)}>
+    <div className={cn('flex items-center gap-2 justify-between w-full', customClasses?.root)}>
       <div className="flex items-center text-sm gap-[5px]">
         Showing <span className="font-semibold">{limit * (page - 1)}</span> to{' '}
         <span className="font-semibold">{total < limit * page ? total : limit * page}</span> of{' '}
@@ -49,22 +49,22 @@ export const Pagination = ({
         }}
         pageRangeDisplayed={5}
         renderOnZeroPageCount={null}
-        className={clsx(className, customClasses?.container)}
-        containerClassName={clsx(customClasses?.container, 'flex items-center gap-2')}
-        pageClassName={clsx(
+        className={cn(className, customClasses?.container)}
+        containerClassName={cn(customClasses?.container, 'flex items-center gap-2')}
+        pageClassName={cn(
           customClasses?.page,
           'h-7 min-w-7 w-fit text-14 transition-all ease-linear flex items-center justify-center border border-solid border-neutral rounded-md hover:bg-primary-background hover:border-primary-hover cursor-pointer',
         )}
-        activeClassName={clsx(
+        activeClassName={cn(
           customClasses?.active,
           'bg-primary-hover rounded-md text-neutral-white border-primary-hover hover:text-neutral-black',
         )}
-        previousClassName={clsx(
+        previousClassName={cn(
           customClasses?.previous,
           'rounded-md border-neutral hover:bg-primary-background hover:border-primary-hover border border-solid',
           { '!cursor-not-allowed bg-neutral hover:!bg-neutral hover:!border-neutral': page === 1 },
         )}
-        nextClassName={clsx(
+        nextClassName={cn(
           customClasses?.next,
           'rounded-md border-neutral hover:bg-primary-background hover:border-primary-hover border border-solid',
           {
@@ -79,7 +79,7 @@ export const Pagination = ({
 
 const renderPageFL = (isNext = true, disabled = false): ReactNode => (
   <div
-    className={clsx('flex text-sm py-2 items-center justify-center h-7 min-w-7 aspect-square', {
+    className={cn('flex text-sm py-2 items-center justify-center h-7 min-w-7 aspect-square', {
       'cursor-not-allowed': disabled,
     })}
   >

@@ -1,5 +1,4 @@
 'use client';
-import clsx from 'clsx';
 import type React from 'react';
 import { forwardRef } from 'react';
 import {
@@ -13,7 +12,8 @@ import {
   type Props as ReactSelectProps,
 } from 'react-select';
 import AsyncSelect from 'react-select/async';
-import { getIconSize } from '../common';
+import { cn } from '../../lib/utils';
+import { getIconSize, getPlaceholderFontSizeVar } from '../common';
 import { type IconName, RenderIcon } from '../icons';
 import { Tag } from '../tag';
 import type { SelectOption } from './select';
@@ -141,7 +141,7 @@ const DropdownIndicator = (
   <components.DropdownIndicator {...props}>
     <RenderIcon
       name="chevron-down"
-      className={clsx(
+      className={cn(
         'text-neutral-placeholder transition-transform duration-200 !w-5 !h-5',
         props.selectProps.menuIsOpen ? 'rotate-180' : '',
       )}
@@ -184,6 +184,7 @@ export const SelectAsync = forwardRef<React.ElementRef<typeof AsyncSelect>, Sele
     ref,
   ) => {
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
+    const menuFontSize = size === 'large' ? 'var(--size-16)' : 'var(--size-14)';
 
     const customStyles = {
       control: (provided: CSSObjectWithLabel) => ({
@@ -195,6 +196,11 @@ export const SelectAsync = forwardRef<React.ElementRef<typeof AsyncSelect>, Sele
         '&:hover': { border: 'none' },
       }),
       valueContainer: (provided: CSSObjectWithLabel) => ({ ...provided, padding: 0 }),
+      placeholder: (provided: CSSObjectWithLabel) => ({
+        ...provided,
+        fontSize: getPlaceholderFontSizeVar(size),
+        color: 'var(--color-neutral-placeholder)',
+      }),
       input: (provided: CSSObjectWithLabel) => ({ ...provided, margin: 0, padding: 0 }),
       indicatorSeparator: () => ({ display: 'none' }) as CSSObjectWithLabel,
       dropdownIndicator: (provided: CSSObjectWithLabel) => ({
@@ -214,19 +220,37 @@ export const SelectAsync = forwardRef<React.ElementRef<typeof AsyncSelect>, Sele
         alignItems: 'center',
         border: 'none',
       }),
+      menuList: (provided: CSSObjectWithLabel) => ({
+        ...provided,
+        fontSize: menuFontSize,
+        color: 'var(--color-neutral-text-primary)',
+      }),
       option: (
         provided: CSSObjectWithLabel,
         state: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>,
-      ) => ({
-        ...provided,
-        backgroundColor:
-          state.isSelected || state.isFocused ? 'var(--color-primary-bg)' : 'transparent',
-        color: state.isSelected ? 'var(--color-primary-hover)' : '',
-        '&:hover': { backgroundColor: 'var(--color-primary-bg)' },
-      }),
+      ) => {
+        const { isSelected, isFocused, isDisabled } = state;
+        let color = 'var(--color-neutral-text-primary)';
+        if (isDisabled) color = 'var(--color-neutral-disable)';
+        else if (isSelected) color = 'var(--color-primary-hover)';
+
+        return {
+          ...provided,
+          fontSize: menuFontSize,
+          backgroundColor: isDisabled
+            ? 'transparent'
+            : isSelected || isFocused
+              ? 'var(--color-primary-bg)'
+              : 'transparent',
+          color,
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          '&:hover': isDisabled ? {} : { backgroundColor: 'var(--color-primary-bg)' },
+        };
+      },
       menu: (provided: CSSObjectWithLabel) => ({
         ...provided,
         zIndex: 50,
+        backgroundColor: 'var(--color-neutral-white)',
         boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         border: '1px solid var(--color-neutral)',
         borderRadius: '8px',
@@ -248,18 +272,18 @@ export const SelectAsync = forwardRef<React.ElementRef<typeof AsyncSelect>, Sele
     };
 
     return (
-      <div className={clsx('w-full relative', customClasses?.root)}>
+      <div className={cn('w-full relative', customClasses?.root)}>
         {icon && (
           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
             <RenderIcon
               name={loading ? 'loading' : icon}
-              className={clsx(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
+              className={cn(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
             />
           </div>
         )}
 
         <div
-          className={clsx(
+          className={cn(
             'relative',
             getPaddingClasses(size, !!icon, !!iconRight),
             'border rounded-lg transition-all ease-in-out focus-within:shadow-border',
@@ -292,7 +316,7 @@ export const SelectAsync = forwardRef<React.ElementRef<typeof AsyncSelect>, Sele
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none z-10">
             <RenderIcon
               name={iconRight}
-              className={clsx(getIconSize(size), customClasses?.iconRight)}
+              className={cn(getIconSize(size), customClasses?.iconRight)}
             />
           </div>
         )}

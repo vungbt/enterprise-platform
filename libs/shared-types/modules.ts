@@ -9,5 +9,5 @@ export type ModuleNavItem = {
 };
 
 export type DashboardModule = ModuleNavItem & {
-  component: ComponentType;
+  component: ComponentType<{ token?: string }>;
 };

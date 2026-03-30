@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 import { ClubStatus } from '../../../shared/graphql/enums';
 
 @ObjectType()
@@ -26,4 +26,14 @@ export class ClubEntity {
 
   @Field()
   updatedAt!: Date;
+
+  // Resolved fields — populated via @ResolveField in resolver
+  @Field(() => Int)
+  membersCount!: number;
+
+  @Field({ nullable: true })
+  captainName?: string;
+
+  @Field(() => Int)
+  fundBalance!: number;
 }

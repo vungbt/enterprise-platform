@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type React from 'react';
+import { cn } from '../../lib/utils';
 import { Radio, type RadioProps } from './index';
 
 export interface RadioOption {
@@ -44,7 +44,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({
 
   return (
     <div
-      className={clsx(
+      className={cn(
         className,
         customClasses?.root,
         error && customClasses?.error,

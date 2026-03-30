@@ -12,28 +12,33 @@ datasource db {
 // ============================================================
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   name      String
   password  String
   avatar    String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
-  roles       UserRole[]
-  employees   Employee[]
-  ownedCustomers Customer[] @relation("CustomerOwner")
-  clubMemberships ClubMember[]
-  expenses    Expense[]
+  roles                  UserRole[]
+  employees              Employee[]
+  ownedCustomers         Customer[]         @relation("CustomerOwner")
+  clubMemberships        ClubMember[]
+  ownedClubs             Club[]             @relation("ClubOwner")
+  expenses               Expense[]
+  fundContributions      FundContribution[] @relation("FundContributor")
+  confirmedContributions FundContribution[] @relation("FundContributionConfirmer")
+  fundTransactions       FundTransaction[]  @relation("FundTransactionCreator")
 
   @@map("users")
 }
 
 model Role {
   id    String @id @default(cuid())
-  name  String @unique  // "hr_manager", "finance_viewer", "admin"
-  label String          // "HR Manager", "Finance Viewer", "Admin"
+  name  String @unique // "hr_manager", "finance_viewer", "admin"
+  label String // "HR Manager", "Finance Viewer", "Admin"
 
   permissions RolePermission[]
   users       UserRole[]
@@ -43,7 +48,7 @@ model Role {
 
 model RolePermission {
   roleId     String
-  permission String  // "view:hr", "create:hr", "delete:finance", ...
+  permission String // "view:hr", "create:hr", "delete:finance", ...
 
   role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
@@ -88,7 +93,7 @@ model Department {
 
 model Employee {
   id           String         @id @default(cuid())
-  code         String         @unique  // "EMP-001"
+  code         String         @unique // "EMP-001"
   name         String
   email        String         @unique
   phone        String?
@@ -97,7 +102,7 @@ model Employee {
   status       EmployeeStatus @default(active)
   departmentId String
   managerId    String?
-  userId       String?        // link to User account (optional)
+  userId       String? // link to User account (optional)
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 
@@ -151,7 +156,7 @@ enum InvoiceStatus {
 
 model Invoice {
   id         String        @id @default(cuid())
-  code       String        @unique  // "INV-2024-001"
+  code       String        @unique // "INV-2024-001"
   amount     Float
   tax        Float         @default(0)
   total      Float
@@ -184,7 +189,7 @@ model InventoryItem {
   name      String
   category  String?
   stock     Int                 @default(0)
-  minStock  Int                 @default(0)  // ngưỡng cảnh báo low stock
+  minStock  Int                 @default(0)
   unit      String              @default("pcs")
   price     Float               @default(0)
   status    InventoryItemStatus @default(available)
@@ -209,6 +214,12 @@ enum ClubMemberRole {
   member
 }
 
+enum ClubMemberStatus {
+  active
+  left
+  banned
+}
+
 model Club {
   id          String     @id @default(cuid())
   name        String
@@ -216,11 +227,15 @@ model Club {
   description String?
   status      ClubStatus @default(active)
   foundedAt   DateTime?
+  createdById String
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
 
-  members ClubMember[]
-  expenses Expense[]
+  createdBy User         @relation("ClubOwner", fields: [createdById], references: [id])
+  members   ClubMember[]
+  expenses  Expense[]
+  fund      ClubFund?
 
   @@map("clubs")
 }
@@ -228,14 +243,115 @@ model Club {
 model ClubMember {
   clubId   String
   userId   String
-  role     ClubMemberRole @default(member)
-  joinedAt DateTime       @default(now())
+  role     ClubMemberRole   @default(member)
+  status   ClubMemberStatus @default(active)
+  joinedAt DateTime         @default(now())
+  leftAt   DateTime?
 
   club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([clubId, userId])
   @@map("club_members")
+}
+
+// Quy cau lac bo — moi CLB co toi da 1 quy
+// Current balance = FundTransaction moi nhat cua quy.balanceAfter
+// Khong bao gio tinh runtime bang SUM — lay tu ledger
+model ClubFund {
+  id             String    @id @default(cuid())
+  clubId         String    @unique
+  name           String    @default("Quy cau lac bo")
+  initialBalance Float     @default(0) // opening balance khi tao quy
+  description    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  club          Club               @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  contributions FundContribution[]
+  expenses      Expense[]
+  transactions  FundTransaction[]
+
+  @@map("club_funds")
+}
+
+// ─── So cai (Ledger) ───────────────────────────────────────
+// Moi bien dong tien (thu / chi / dieu chinh / hoan) tao 1 dong.
+// balanceAfter = snapshot so du SAU khi ap dung transaction nay.
+// rollback = tao 1 transaction dao chieu (reversal), khong sua dong cu.
+// Race condition: service phai dung DB transaction + SELECT FOR UPDATE
+// truoc khi tinh balanceAfter moi.
+
+enum FundTransactionType {
+  contribution // thu tien thanh vien
+  expense // chi tien tu quy
+  adjustment // dieu chinh thu cong (admin)
+  refund // hoan tien
+}
+
+// flow xac dinh chieu tang/giam ro rang, tranh implicit logic
+enum FundFlow {
+  inflow // tien vao quy (+)
+  outflow // tien ra khoi quy (-)
+}
+
+model FundTransaction {
+  id               String              @id @default(cuid())
+  fundId           String
+  type             FundTransactionType
+  flow             FundFlow // inflow = cong; outflow = tru
+  amount           Float // luon duong; chieu xac dinh boi flow
+  balanceAfter     Float // snapshot so du sau transaction nay
+  note             String?
+  refContribId     String? // neu type = contribution
+  refExpenseId     String? // neu type = expense
+  refTransactionId String? // neu la reversal cua 1 transaction khac
+  createdById      String
+  createdAt        DateTime @default(now())
+
+  fund         ClubFund          @relation(fields: [fundId], references: [id])
+  contribution FundContribution? @relation(fields: [refContribId], references: [id])
+  expense      Expense?          @relation(fields: [refExpenseId], references: [id])
+  createdBy    User              @relation("FundTransactionCreator", fields: [createdById], references: [id])
+
+  @@index([fundId, createdAt])
+  @@map("fund_transactions")
+}
+
+// ─── Thu tien thanh vien ────────────────────────────────────
+// Khi status chuyen confirmed → service tao FundTransaction(type=contribution, flow=inflow)
+// Service phai dung DB transaction + SELECT FOR UPDATE de tranh race condition.
+
+enum FundContributionStatus {
+  pending // cho xac nhan
+  confirmed // da thu — da co FundTransaction tuong ung
+  cancelled // huy
+}
+
+model FundContribution {
+  id          String                 @id @default(cuid())
+  fundId      String
+  memberId    String
+  // month + year thay cho period String de tranh format sai va de query theo date range
+  month       Int? // 1-12; null = dong gop 1 lan (khong theo ky)
+  year        Int? // e.g. 2025
+  amount      Float
+  note        String?
+  paidAt      DateTime
+  status      FundContributionStatus @default(pending)
+  confirmedBy String?
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+
+  fund            ClubFund          @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  member          User              @relation("FundContributor", fields: [memberId], references: [id])
+  confirmedByUser User?             @relation("FundContributionConfirmer", fields: [confirmedBy], references: [id])
+  transactions    FundTransaction[]
+
+  // Mot thanh vien chi dong 1 lan moi ky (khi ca month va year deu co gia tri)
+  @@unique([fundId, memberId, month, year])
+  @@map("fund_contributions")
 }
 
 // ============================================================
@@ -272,13 +388,19 @@ model Expense {
   createdById  String
   clubId       String?
   departmentId String?
+  // fundId: khi set, service phai enforce clubId == fund.clubId
+  fundId       String?
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
 
-  category    ExpenseCategory @relation(fields: [categoryId], references: [id])
-  createdBy   User            @relation(fields: [createdById], references: [id])
-  club        Club?           @relation(fields: [clubId], references: [id])
-  department  Department?     @relation(fields: [departmentId], references: [id])
+  category         ExpenseCategory  @relation(fields: [categoryId], references: [id])
+  createdBy        User             @relation(fields: [createdById], references: [id])
+  club             Club?            @relation(fields: [clubId], references: [id])
+  department       Department?      @relation(fields: [departmentId], references: [id])
+  fund             ClubFund?        @relation(fields: [fundId], references: [id])
+  fundTransactions FundTransaction[]
 
+  @@index([clubId, fundId])
   @@map("expenses")
 }

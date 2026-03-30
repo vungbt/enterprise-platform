@@ -7,8 +7,8 @@ import {
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import clsx from 'clsx';
 import { type ReactNode, useState } from 'react';
+import { cn } from '../../lib/utils';
 import { Checkbox } from '../checkbox';
 import { Pagination } from '../pagination';
 import { Radio } from '../radio';
@@ -166,8 +166,8 @@ export const Table = <T extends Record<string, unknown>>({
   const missingRows = limit && rows.length < limit ? limit - rows.length : 0;
 
   return (
-    <div className={clsx('w-full bg-neutral-white', customClasses.root)}>
-      <div className={clsx('overflow-y-auto h-full', scroll?.y && `max-h-[${scroll?.y}px]`)}>
+    <div className={cn('w-full bg-neutral-white', customClasses.root)}>
+      <div className={cn('overflow-y-auto h-full', scroll?.y && `max-h-[${scroll?.y}px]`)}>
         <table className="min-w-full table-auto h-full">
           <TableHeader headers={table.getHeaderGroups() as TableHeaderType<T>} />
           <tbody className="relative">

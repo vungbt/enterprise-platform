@@ -1,6 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
-import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 import type { TableRowType } from '.';
 
 type TableRowProps<T> = {
@@ -23,7 +23,7 @@ export const TableRow = <T extends Record<string, unknown>>({
         return (
           <tr
             key={key}
-            className={clsx('transition-all ease-linear hover:bg-primary-background', {
+            className={cn('transition-all ease-linear hover:bg-primary-background', {
               'bg-primary-background': isSelected,
               'even:bg-neutral-table-header': !isSelected,
             })}

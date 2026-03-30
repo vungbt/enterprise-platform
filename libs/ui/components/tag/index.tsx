@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import { type CSSProperties, type ReactNode, useMemo } from 'react';
+import { cn } from '../../lib/utils';
 import { type IconName, RenderIcon } from '../icons';
 
 type TagProps = {
@@ -36,7 +36,7 @@ export function Tag({
 
   return (
     <span
-      className={clsx(
+      className={cn(
         'flex w-fit items-center gap-1 rounded border border-solid px-1 py-0.5 text-xs font-medium',
         {
           '!border-neutral-border !bg-neutral-bg !text-neutral-text-primary':

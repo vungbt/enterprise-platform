@@ -1,17 +1,16 @@
-import { forwardRef, type InputHTMLAttributes, useState } from 'react';
-import { cn } from '../../lib/utils';
-import { getIconSize, getPlaceholderTextClass, type Size } from '../common';
-import { FormLabel } from '../form/form-label';
-import { type IconName, RenderIcon } from '../icons';
+'use client';
 
-export type InputPasswordProps = {
+import { forwardRef, type TextareaHTMLAttributes } from 'react';
+import { cn } from '../../lib/utils';
+import { getPlaceholderTextClass, type Size } from '../common';
+import { FormLabel } from '../form/form-label';
+
+export type TextareaProps = {
   className?: string;
   disabled?: boolean;
-  loading?: boolean;
   size?: Size;
   color?: 'primary' | 'secondary' | 'success' | 'error' | 'pending' | 'neutral';
   variant?: 'solid' | 'outline' | 'subtle' | 'ghost';
-  icon?: IconName;
   label?: string;
   helperText?: string;
   error?: string;
@@ -20,17 +19,15 @@ export type InputPasswordProps = {
     root?: string;
     label?: string;
     input?: string;
-    icon?: string;
-    iconRight?: string;
     helperText?: string;
     error?: string;
   };
-} & Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>;
+} & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'>;
 
 const sizeClasses: Record<Size, string> = {
-  small: 'px-2 py-1 text-14',
-  middle: 'min-h-10 px-4 py-2 text-14',
-  large: 'px-6 py-3 text-16',
+  small: 'px-2 py-1 text-14 min-h-[4.5rem]',
+  middle: 'min-h-24 px-4 py-2 text-14',
+  large: 'min-h-28 px-6 py-3 text-16',
 };
 
 const colorClasses = {
@@ -71,22 +68,20 @@ const colorClasses = {
   neutral: {
     solid: 'bg-neutral-bg border-neutral text-neutral-text-primary focus:border-primary-border',
     outline: 'bg-transparent border-neutral text-neutral-text-primary focus:border-primary-border',
-    subtle: 'bg-neutral-bg border-neutral-bg text-neutral-text-primary focus:border-neutral',
+    subtle: 'bg-neutral-bg border-neutral-bg text-neutral-text-primary focus:border-primary-border',
     ghost:
-      'text-neutral-text-primary bg-transparent border border-dashed border-neutral hover:bg-neutral-bg',
+      'text-neutral-text-primary bg-transparent border border-dashed border-primary-border hover:bg-neutral-bg',
   },
 };
 
-export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       className,
       disabled,
-      loading,
       size = 'middle',
       color = 'neutral',
       variant = 'outline',
-      icon,
       label,
       helperText,
       error,
@@ -97,11 +92,8 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
     },
     ref,
   ) => {
-    const [showPassword, setShowPassword] = useState(false);
     const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
-    const iconSizeClass = getIconSize(size);
     const helperTextSize = size === 'large' ? 'text-16' : 'text-14';
-    const hasLeftIcon = icon || loading;
 
     return (
       <div className={cn('w-full', customClasses?.root)}>
@@ -111,47 +103,21 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
           </FormLabel>
         )}
 
-        <div className="relative">
-          {hasLeftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-              <RenderIcon
-                name={loading ? 'loading' : icon}
-                className={cn(iconSizeClass, loading && 'animate-spin', customClasses?.icon)}
-              />
-            </div>
+        <textarea
+          {...rest}
+          ref={ref}
+          id={id}
+          className={cn(
+            'w-full resize-y border rounded-lg transition-all ease-in-out outline-none placeholder:text-neutral-placeholder',
+            getPlaceholderTextClass(size),
+            sizeClasses[size],
+            colorClass,
+            disabled ? 'opacity-50 cursor-not-allowed' : '',
+            className,
+            customClasses?.input,
           )}
-
-          <input
-            ref={ref}
-            id={id}
-            type={showPassword ? 'text' : 'password'}
-            className={cn(
-              'w-full border rounded-lg transition-all ease-in-out outline-none placeholder:text-neutral-placeholder',
-              getPlaceholderTextClass(size),
-              sizeClasses[size],
-              colorClass,
-              hasLeftIcon ? (size === 'small' ? 'pl-8' : size === 'large' ? 'pl-12' : 'pl-10') : '',
-              size === 'small' ? 'pr-8' : size === 'large' ? 'pr-12' : 'pr-10',
-              disabled || loading ? 'opacity-50 cursor-not-allowed' : '',
-              className,
-              customClasses?.input,
-            )}
-            disabled={disabled || loading}
-            {...rest}
-          />
-
-          <button
-            type="button"
-            tabIndex={-1}
-            onClick={() => setShowPassword((v) => !v)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-placeholder cursor-pointer"
-          >
-            <RenderIcon
-              name={showPassword ? 'eye-slash' : 'eye'}
-              className={cn(iconSizeClass, customClasses?.iconRight)}
-            />
-          </button>
-        </div>
+          disabled={disabled}
+        />
 
         {error ? (
           <p className={cn('mt-1 text-error', helperTextSize, customClasses?.error)}>{error}</p>
@@ -171,4 +137,4 @@ export const InputPassword = forwardRef<HTMLInputElement, InputPasswordProps>(
   },
 );
 
-InputPassword.displayName = 'InputPassword';
+Textarea.displayName = 'Textarea';

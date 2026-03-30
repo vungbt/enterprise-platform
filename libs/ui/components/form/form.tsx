@@ -1,8 +1,7 @@
 'use client';
 
 import type { AnyFieldApi, AnyFormState } from '@tanstack/react-form';
-import { createFormHook, createFormHookContexts, useForm } from '@tanstack/react-form';
-import clsx from 'clsx';
+import { createFormHook, createFormHookContexts, useForm, useStore } from '@tanstack/react-form';
 import {
   type ComponentType,
   createContext,
@@ -11,8 +10,9 @@ import {
   useContext,
 } from 'react';
 import { z } from 'zod';
+import { cn } from '../../lib/utils';
 
-export { useForm, z };
+export { useForm, useStore, z };
 
 type AppFormWrapperProps = {
   form: {
@@ -84,7 +84,7 @@ export function Form({
             form.handleSubmit();
             onSubmit?.(e);
           }}
-          className={clsx(className)}
+          className={cn(className)}
         >
           {children}
         </form>

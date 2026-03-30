@@ -1,9 +1,9 @@
 'use client';
 
-import clsx from 'clsx';
 import { format, isValid } from 'date-fns';
 import { useEffect, useRef, useState } from 'react';
 import Calendar from 'react-calendar';
+import { cn } from '../../lib/utils';
 import 'react-calendar/dist/Calendar.css';
 import '../datepicker/calendar.css';
 import './daterangepicker.css';
@@ -82,7 +82,7 @@ export function DateRangePicker({
   })();
 
   return (
-    <div ref={rootRef} className={clsx('w-full relative', customClasses?.root)}>
+    <div ref={rootRef} className={cn('w-full relative', customClasses?.root)}>
       <input
         readOnly
         disabled={disabled || loading}
@@ -94,7 +94,7 @@ export function DateRangePicker({
         onFocus={() => {
           if (!(disabled || loading)) setOpen(true);
         }}
-        className={clsx(
+        className={cn(
           'w-full border rounded-lg transition-all ease-in-out outline-none focus:shadow-border pr-10',
           sizeClasses[size],
           colorClass,
@@ -120,7 +120,7 @@ export function DateRangePicker({
 
       <div className="absolute top-1/2 right-4 transform -translate-y-1/2 pointer-events-none text-neutral-placeholder">
         <RenderIcon
-          className={clsx(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
+          className={cn(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
           name={loading ? 'loading' : (icon ?? 'calendar-days')}
         />
       </div>
@@ -128,7 +128,7 @@ export function DateRangePicker({
       {open && !(disabled || loading) ? (
         <div
           role="none"
-          className={clsx(
+          className={cn(
             'absolute z-50 mt-2 bg-white rounded-lg shadow-lg',
             customClasses?.calendar,
           )}

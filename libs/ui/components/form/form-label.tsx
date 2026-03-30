@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type React from 'react';
+import { cn } from '../../lib/utils';
 
 export const FormLabel = ({
   children,
@@ -14,24 +14,14 @@ export const FormLabel = ({
   size?: 'small' | 'middle' | 'large';
   className?: string;
 }) => {
-  const getLabelSize = () => {
-    switch (size) {
-      case 'small':
-        return 'text-14';
-      case 'large':
-        return 'text-16';
-      default:
-        return 'text-14';
-    }
-  };
+  const labelSizeClass = size === 'large' ? 'text-15' : size === 'small' ? 'text-13' : 'text-14';
 
   return (
     <label
       htmlFor={id ?? (children as React.ReactElement<{ id?: string }>)?.props?.id}
-      className={clsx(
-        'block font-medium mb-1 w-fit',
-        getLabelSize(),
-        'text-neutral-text-primary',
+      className={cn(
+        'block font-normal mb-1 w-fit leading-tight text-neutral-text-primary',
+        labelSizeClass,
         className,
       )}
     >

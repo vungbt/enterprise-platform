@@ -1,8 +1,8 @@
 'use client';
 
-import clsx from 'clsx';
 import type React from 'react';
 import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { cn } from '../../lib/utils';
 import { getIconSize, type Size } from '../common';
 import { type IconName, RenderIcon } from '../icons';
 
@@ -115,8 +115,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={clsx(
-          'inline-flex items-center justify-center transition-colors focus:outline-none',
+        className={cn(
+          'inline-flex items-center justify-center border border-transparent box-border transition-colors focus:outline-none',
           sizeClasses[size],
           shapeClasses[shape],
           colorClass,
@@ -129,7 +129,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         <RenderIcon
           name={loading ? 'loading' : icon}
-          className={clsx(
+          className={cn(
             iconSizeClass,
             children ? 'mr-2' : '',
             loading && 'animate-spin',
@@ -139,7 +139,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
         <RenderIcon
           name={iconRight}
-          className={clsx(iconSizeClass, children ? 'ml-2' : '', customClasses?.iconRight)}
+          className={cn(iconSizeClass, children ? 'ml-2' : '', customClasses?.iconRight)}
         />
       </button>
     );

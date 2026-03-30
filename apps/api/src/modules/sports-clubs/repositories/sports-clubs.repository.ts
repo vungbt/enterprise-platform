@@ -76,6 +76,34 @@ export class SportsClubsRepository {
     });
   }
 
+  countMembers(clubId: string) {
+    return this.prisma.clubMember.count({ where: { clubId } });
+  }
+
+  async findCaptainName(clubId: string): Promise<string | null> {
+    const member = await this.prisma.clubMember.findFirst({
+      where: { clubId, role: 'captain' },
+      include: { user: { select: { name: true } } },
+    });
+    return member?.user?.name ?? null;
+  }
+
+  async findFundBalance(clubId: string): Promise<number> {
+    const fund = await this.prisma.clubFund.findUnique({
+      where: { clubId },
+      include: {
+        transactions: {
+          orderBy: { createdAt: 'desc' },
+          take: 1,
+          select: { balanceAfter: true },
+        },
+      },
+    });
+    if (!fund) return 0;
+    const latest = fund.transactions[0];
+    return latest ? latest.balanceAfter : fund.initialBalance;
+  }
+
   findExpensesByClubId(clubId: string) {
     return this.prisma.expense.findMany({
       where: { clubId },

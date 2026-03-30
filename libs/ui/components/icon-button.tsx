@@ -75,7 +75,7 @@ export function IconButton({
     <button
       {...props}
       className={cn(
-        'flex h-9 w-9 items-center justify-center rounded-full transition-colors focus:outline-none',
+        'flex h-9 w-9 items-center justify-center rounded-full border border-transparent box-border transition-colors focus:outline-none',
         colorClasses[color][variant],
         className,
       )}

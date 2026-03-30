@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import {
   AnimatePresence,
   motion,
@@ -8,7 +7,9 @@ import {
   type VariantLabels,
   type Variants,
 } from 'framer-motion';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { cn } from '../../lib/utils';
 import { Button } from '../button';
 import { type IconName, RenderIcon } from '../icons';
 
@@ -25,10 +26,10 @@ const modalAnimation: Variants = {
   exit: { y: '100vh', opacity: 0, scale: 0.8 },
 };
 
-const backdropAnimation = {
+const backdropAnimation: Variants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-  exit: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.2 } },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
 };
 
 // ─── Backdrop ────────────────────────────────────────────────────────────────
@@ -56,8 +57,8 @@ export const Backdrop = ({
     initial={initial}
     animate={animate}
     exit={exit}
-    className={clsx(
-      'modal-backdrop fixed inset-0 h-full w-full flex items-center justify-center bg-black bg-opacity-50 z-[9999]',
+    className={cn(
+      'modal-backdrop fixed inset-0 z-[9999] flex h-full w-full items-center justify-center bg-black/50',
       className,
     )}
   >
@@ -81,29 +82,40 @@ export const ModalBase = ({
   children,
   className,
   classNameBackdrop,
-}: ModalBaseProps) => (
-  <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
-    <Backdrop
-      className={clsx(classNameBackdrop, { hidden: !isOpen, block: isOpen })}
-      onClick={onClose}
-      variants={backdropAnimation}
-      initial={isOpen ? 'visible' : 'hidden'}
-      animate={isOpen ? 'visible' : 'hidden'}
-      exit="exit"
-    >
-      <motion.div
-        onClick={(e) => e.stopPropagation()}
-        className={clsx('modal bg-white shadow-2xl rounded-lg', className)}
-        variants={modalAnimation}
-        initial="hidden"
-        animate={isOpen ? 'visible' : 'hidden'}
-        exit="exit"
-      >
-        {children}
-      </motion.div>
-    </Backdrop>
-  </AnimatePresence>
-);
+}: ModalBaseProps) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const tree = (
+    <AnimatePresence initial={false} mode="wait" onExitComplete={() => null}>
+      {isOpen && (
+        <Backdrop
+          key="modal-overlay"
+          className={classNameBackdrop}
+          onClick={onClose}
+          variants={backdropAnimation}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <motion.div
+            onClick={(e) => e.stopPropagation()}
+            className={cn('modal bg-white shadow-2xl rounded-lg', className)}
+            variants={modalAnimation}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            {children}
+          </motion.div>
+        </Backdrop>
+      )}
+    </AnimatePresence>
+  );
+
+  if (!mounted) return null;
+  return createPortal(tree, document.body);
+};
 
 // ─── ModalConfirm ────────────────────────────────────────────────────────────
 
@@ -155,7 +167,7 @@ export const ModalConfirm = ({
         <Button
           onClick={onSubmit}
           icon={submitIcon ?? 'trash'}
-          className={clsx(classNameSubmit)}
+          className={cn(classNameSubmit)}
           color={submitColor ?? 'error'}
           size="small"
           loading={isLoading}

@@ -1,9 +1,9 @@
 'use client';
 
-import clsx from 'clsx';
 import type React from 'react';
 import type { ReactNode } from 'react';
 import { Tabs as ReactTabs, Tab, TabList, TabPanel } from 'react-tabs';
+import { cn } from '../../lib/utils';
 import { type IconName, RenderIcon } from '../icons';
 
 export type TabItem = {
@@ -50,9 +50,9 @@ export const Tabs: React.FC<TabsProps> = (props) => {
   const variableClass = variableClasses[variant];
 
   return (
-    <ReactTabs className={clsx(className, customClasses?.root)} onSelect={onChange} {...reset}>
+    <ReactTabs className={cn(className, customClasses?.root)} onSelect={onChange} {...reset}>
       <TabList
-        className={clsx(
+        className={cn(
           customClasses?.tabs,
           tabListSize,
           'flex w-full relative before:content-[""] before:absolute before:bottom-0 before:right-0 before:left-0 before:w-full before:h-[1px] before:bg-neutral',
@@ -62,21 +62,21 @@ export const Tabs: React.FC<TabsProps> = (props) => {
           <Tab
             key={tab.value}
             disabled={tab.disabled}
-            className={clsx(
+            className={cn(
               customClasses?.tab,
               tabItemSize,
               colorClass.tab,
               variableClass.tab,
               'cursor-pointer relative outline-none transition-all ease-linear',
             )}
-            selectedClassName={clsx(
+            selectedClassName={cn(
               colorClass.tabActive,
               'after:w-full border-b-neutral-white bg-neutral-white',
             )}
           >
             <span className="flex items-center gap-1">
               {tab.icon && (
-                <RenderIcon name={tab.icon} className={clsx(customClasses?.icon, '!w-3 !h-3')} />
+                <RenderIcon name={tab.icon} className={cn(customClasses?.icon, '!w-3 !h-3')} />
               )}
               {tab.label}
             </span>
@@ -85,7 +85,7 @@ export const Tabs: React.FC<TabsProps> = (props) => {
       </TabList>
 
       {tabs.map((tab) => (
-        <TabPanel key={tab.value} className={clsx(customClasses?.content)}>
+        <TabPanel key={tab.value} className={cn(customClasses?.content)}>
           {tab.content}
         </TabPanel>
       ))}

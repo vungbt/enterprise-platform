@@ -1,7 +1,6 @@
 'use client';
 
 import type { AnyFieldApi } from '@tanstack/react-form';
-import clsx from 'clsx';
 import {
   type ChangeEvent,
   cloneElement,
@@ -9,6 +8,7 @@ import {
   type ReactElement,
   type ReactNode,
 } from 'react';
+import { cn } from '../../lib/utils';
 import { fieldContext, useFormContext, useFormValidatorsContext } from './form';
 import { FormErrorMessage } from './form-error-message';
 import { FormLabel } from './form-label';
@@ -64,6 +64,7 @@ function FormFieldContent({
     const selfHandledErrors = [
       'Input',
       'InputPassword',
+      'Textarea',
       'DatePicker',
       'TimePicker',
       'DateRangePicker',
@@ -129,7 +130,7 @@ function FormFieldContent({
   };
 
   return (
-    <div className={clsx('mb-4', className)}>
+    <div className={cn('mb-4', className)}>
       {label && (
         <FormLabel id={field.name} size={size} required={required}>
           {label}

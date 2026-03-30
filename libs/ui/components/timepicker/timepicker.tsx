@@ -1,7 +1,7 @@
 'use client';
 
-import clsx from 'clsx';
 import ReactTimePicker from 'react-time-picker';
+import { cn } from '../../lib/utils';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import './timepicker.css';
@@ -41,9 +41,9 @@ export function TimePicker({
   const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
 
   return (
-    <div className={clsx('w-full', customClasses?.root)}>
+    <div className={cn('w-full', customClasses?.root)}>
       <div
-        className={clsx(
+        className={cn(
           'border rounded-lg transition-all ease-in-out',
           sizeClasses[size],
           colorClass,
@@ -72,13 +72,13 @@ export function TimePicker({
           clockIcon={
             <RenderIcon
               name={loading ? 'loading' : (icon ?? 'clock')}
-              className={clsx(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
+              className={cn(getIconSize(size), customClasses?.icon, loading && 'animate-spin')}
             />
           }
         />
       </div>
 
-      {error && <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
+      {error && <p className={cn('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
     </div>
   );
 }

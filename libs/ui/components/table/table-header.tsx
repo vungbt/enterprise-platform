@@ -1,6 +1,6 @@
 import { flexRender } from '@tanstack/react-table';
-import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 import { RenderIcon } from '../icons';
 import type { TableHeaderType } from '.';
 
@@ -21,10 +21,10 @@ export const TableHeader = <T extends Record<string, unknown>>({
 }: TableHeaderProps<T>): ReactNode => {
   return (
     <thead
-      className={clsx('sticky top-0 bg-neutral-table-header z-[1]', className, customClasses?.root)}
+      className={cn('sticky top-0 bg-neutral-table-header z-[1]', className, customClasses?.root)}
     >
       {headers.map((headerGroup) => (
-        <tr key={headerGroup.id} className={clsx(customClasses?.tr)}>
+        <tr key={headerGroup.id} className={cn(customClasses?.tr)}>
           {headerGroup.headers.map((header) => {
             const columnDef = header?.column?.columnDef;
             const sortActive = header.column.getIsSorted() as 'asc' | 'desc';
@@ -32,7 +32,7 @@ export const TableHeader = <T extends Record<string, unknown>>({
             return (
               <th
                 key={header.id}
-                className={clsx(
+                className={cn(
                   'p-3 text-left select-none transition-all ease-linear hover:bg-primary-background border-b border-solid border-neutral-divider',
                   {
                     'cursor-pointer': showSort,
@@ -65,13 +65,13 @@ const SortAction = ({ active }: { active: 'asc' | 'desc' }): ReactNode => {
       <span className="mb-[-2px]">
         <RenderIcon
           name="caret-up-fill"
-          className={clsx('!w-3 !h-3', { 'text-primary': active === 'asc' })}
+          className={cn('!w-3 !h-3', { 'text-primary': active === 'asc' })}
         />
       </span>
       <span className="mt-[-2px]">
         <RenderIcon
           name="caret-down-fill"
-          className={clsx('!w-3 !h-3', { 'text-primary': active === 'desc' })}
+          className={cn('!w-3 !h-3', { 'text-primary': active === 'desc' })}
         />
       </span>
     </div>

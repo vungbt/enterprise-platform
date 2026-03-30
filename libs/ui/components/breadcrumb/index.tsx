@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type { MouseEventHandler, ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 
 export type BreadcrumbItem = {
   key?: string | number;
@@ -42,7 +42,7 @@ export function Breadcrumb({
               {node}
               {!isLast ? (
                 <span
-                  className={clsx('mx-2 select-none text-neutral-placeholder', separatorClassName)}
+                  className={cn('mx-2 select-none text-neutral-placeholder', separatorClassName)}
                   aria-hidden="true"
                 >
                   {separator}
@@ -54,7 +54,7 @@ export function Breadcrumb({
       </ol>
 
       {description ? (
-        <p className={clsx('mt-1 text-14 text-neutral-placeholder', descriptionClassName)}>
+        <p className={cn('mt-1 text-14 text-neutral-placeholder', descriptionClassName)}>
           {description}
         </p>
       ) : null}
@@ -65,9 +65,7 @@ export function Breadcrumb({
 const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?: string) => {
   if (isLast) {
     return (
-      <span
-        className={clsx('font-medium text-neutral-text-primary', itemClassName, item.className)}
-      >
+      <span className={cn('font-medium text-neutral-text-primary', itemClassName, item.className)}>
         {item.title}
       </span>
     );
@@ -78,7 +76,7 @@ const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?
       <a
         href={item.href}
         onClick={item.onClick}
-        className={clsx(
+        className={cn(
           'text-neutral-placeholder transition-colors hover:text-primary',
           itemClassName,
           item.className,
@@ -94,7 +92,7 @@ const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?
       <button
         type="button"
         onClick={item.onClick}
-        className={clsx(
+        className={cn(
           'cursor-pointer border-none bg-transparent p-0 text-neutral-placeholder transition-colors hover:text-primary',
           itemClassName,
           item.className,
@@ -106,7 +104,7 @@ const renderDefaultItem = (item: BreadcrumbItem, isLast: boolean, itemClassName?
   }
 
   return (
-    <span className={clsx('text-neutral-placeholder', itemClassName, item.className)}>
+    <span className={cn('text-neutral-placeholder', itemClassName, item.className)}>
       {item.title}
     </span>
   );

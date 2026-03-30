@@ -14,18 +14,30 @@ type ClubsTableProps = {
 const LIMIT = 10;
 
 const statusConfig: Record<ClubDto['status'], { label: string; color: string }> = {
-  active: { label: 'Hoạt động', color: '#52c41a' },
-  inactive: { label: 'Không hoạt động', color: '#ff4d4f' },
+  active: { label: 'Active', color: '#52c41a' },
+  inactive: { label: 'Inactive', color: '#ff4d4f' },
 };
 
 const columns: ColumnDef<ClubDto>[] = [
   { header: '#', accessorKey: 'id', size: 80 },
-  { header: 'Tên CLB', accessorKey: 'name', enableSorting: true },
-  { header: 'Môn thể thao', accessorKey: 'sport', enableSorting: true },
-  { header: 'Đội trưởng', accessorKey: 'captain' },
-  { header: 'Thành viên', accessorKey: 'members', size: 100 },
+  { header: 'Club Name', accessorKey: 'name', enableSorting: true },
+  { header: 'Sport', accessorKey: 'sport', enableSorting: true },
+  { header: 'Captain', accessorKey: 'captain' },
+  { header: 'Members', accessorKey: 'members', size: 100 },
   {
-    header: 'Trạng thái',
+    header: 'Fund Balance',
+    accessorKey: 'fundBalance',
+    cell: ({ getValue }) => {
+      const val = getValue() as number;
+      const formatted = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      }).format(val);
+      return <span className={val === 0 ? 'font-semibold text-error' : ''}>{formatted}</span>;
+    },
+  },
+  {
+    header: 'Status',
     accessorKey: 'status',
     cell: ({ getValue }) => {
       const val = getValue() as ClubDto['status'];
@@ -34,7 +46,7 @@ const columns: ColumnDef<ClubDto>[] = [
     },
   },
   {
-    header: 'Hành động',
+    header: 'Actions',
     id: 'actions',
     cell: () => (
       <div className="flex gap-1">
@@ -70,7 +82,8 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
       {selectedKeys.length > 0 && (
         <div className="mb-3 flex items-center gap-2">
           <span className="text-14 text-neutral-text-secondary">
-            Đã chọn <strong>{selectedKeys.length}</strong> hàng
+            <strong>{selectedKeys.length}</strong> row{selectedKeys.length !== 1 ? 's' : ''}{' '}
+            selected
           </span>
           <Button
             size="small"
@@ -79,7 +92,7 @@ export function ClubsTable({ clubs }: ClubsTableProps) {
             icon="trash"
             onClick={() => setSelectedKeys([])}
           >
-            Xoá đã chọn
+            Delete selected
           </Button>
         </div>
       )}

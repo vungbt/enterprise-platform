@@ -1,5 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '../../shared/auth/current-user.decorator';
 import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
 import { UserEntity } from '../../shared/entities/user.entity';
 import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
@@ -35,8 +36,8 @@ export class SportsClubsResolver {
 
   @Mutation(() => ClubEntity)
   @CheckAbility({ action: 'create', subject: 'Club' })
-  createClub(@Args('input') input: CreateClubInput) {
-    return this.sportsClubsService.createClub(input);
+  createClub(@Args('input') input: CreateClubInput, @CurrentUser() user: { id: string }) {
+    return this.sportsClubsService.createClub(input, user.id);
   }
 
   @Mutation(() => ClubEntity)
@@ -71,6 +72,21 @@ export class SportsClubsResolver {
   @ResolveField(() => [ExpenseEntity])
   expenses(@Parent() club: ClubEntity) {
     return this.sportsClubsService.getExpensesByClubId(club.id);
+  }
+
+  @ResolveField(() => Number)
+  membersCount(@Parent() club: ClubEntity) {
+    return this.sportsClubsService.getMembersCount(club.id);
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  captainName(@Parent() club: ClubEntity) {
+    return this.sportsClubsService.getCaptainName(club.id);
+  }
+
+  @ResolveField(() => Number)
+  fundBalance(@Parent() club: ClubEntity) {
+    return this.sportsClubsService.getFundBalance(club.id);
   }
 }
 

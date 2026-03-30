@@ -1,6 +1,6 @@
-import clsx from 'clsx';
 import { forwardRef, type InputHTMLAttributes } from 'react';
-import { getIconSize, type Size } from '../common';
+import { cn } from '../../lib/utils';
+import { getIconSize, getPlaceholderTextClass, type Size } from '../common';
 import { FormLabel } from '../form/form-label';
 import { type IconName, RenderIcon } from '../icons';
 
@@ -105,7 +105,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     const hasLeftIcon = icon || loading;
 
     return (
-      <div className={clsx('w-full', customClasses?.root)}>
+      <div className={cn('w-full', customClasses?.root)}>
         {label && (
           <FormLabel id={id} size={size} required={required} className={customClasses?.label}>
             {label}
@@ -117,7 +117,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <RenderIcon
                 name={loading ? 'loading' : icon}
-                className={clsx(iconSizeClass, loading && 'animate-spin', customClasses?.icon)}
+                className={cn(iconSizeClass, loading && 'animate-spin', customClasses?.icon)}
               />
             </div>
           )}
@@ -126,8 +126,9 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {...rest}
             ref={ref}
             id={id}
-            className={clsx(
-              'w-full border rounded-lg transition-all ease-in-out outline-none',
+            className={cn(
+              'w-full border rounded-lg transition-all ease-in-out outline-none placeholder:text-neutral-placeholder',
+              getPlaceholderTextClass(size),
               sizeClasses[size],
               colorClass,
               hasLeftIcon ? (size === 'small' ? 'pl-8' : size === 'large' ? 'pl-12' : 'pl-10') : '',
@@ -143,17 +144,17 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
               <RenderIcon
                 name={iconRight}
-                className={clsx(iconSizeClass, customClasses?.iconRight)}
+                className={cn(iconSizeClass, customClasses?.iconRight)}
               />
             </div>
           )}
         </div>
 
         {error ? (
-          <p className={clsx('mt-1 text-error', helperTextSize, customClasses?.error)}>{error}</p>
+          <p className={cn('mt-1 text-error', helperTextSize, customClasses?.error)}>{error}</p>
         ) : helperText ? (
           <p
-            className={clsx(
+            className={cn(
               'mt-1 text-neutral-placeholder',
               helperTextSize,
               customClasses?.helperText,

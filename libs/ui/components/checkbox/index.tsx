@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type React from 'react';
+import { cn } from '../../lib/utils';
 import { RenderIcon } from '../icons';
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
@@ -35,7 +35,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
 
   return (
     <label
-      className={clsx(
+      className={cn(
         'flex items-center cursor-pointer',
         reset.disabled && 'cursor-not-allowed opacity-50',
         className,
@@ -45,7 +45,7 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
     >
       <input type="checkbox" className="peer hidden" {...reset} />
       <span
-        className={clsx(
+        className={cn(
           'relative inline-flex items-center justify-center border border-solid bg-white transition-all ease-linear',
           sizeClass.box,
           colorClass.box,
@@ -55,12 +55,12 @@ export const Checkbox: React.FC<CheckboxProps> = (props) => {
         {shouldShowIcon && (
           <RenderIcon
             name={indeterminate ? 'minus' : 'check-v2'}
-            className={clsx(sizeClass.icon, colorClass.icon)}
+            className={cn(sizeClass.icon, colorClass.icon)}
           />
         )}
       </span>
 
-      {label && <span className={clsx(sizeClass.label, customClasses?.label)}>{label}</span>}
+      {label && <span className={cn(sizeClass.label, customClasses?.label)}>{label}</span>}
     </label>
   );
 };

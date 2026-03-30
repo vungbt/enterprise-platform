@@ -1,5 +1,6 @@
 import type { Type } from '@nestjs/common';
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
+import { IsInt, IsOptional, Min } from 'class-validator';
 
 export interface IPaginatedType<T> {
   items: T[];
@@ -12,9 +13,15 @@ export interface IPaginatedType<T> {
 @InputType()
 export class PaginationInput {
   @Field(() => Int, { defaultValue: 1 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   page: number = 1;
 
   @Field(() => Int, { defaultValue: 20 })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   limit: number = 20;
 }
 

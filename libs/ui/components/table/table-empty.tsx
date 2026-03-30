@@ -1,5 +1,5 @@
-import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import { cn } from '../../lib/utils';
 import { RenderIcon } from '../icons';
 
 type TableEmptyProps = {
@@ -19,7 +19,7 @@ export const TableEmpty = ({
     <tr>
       <td
         colSpan={columnLength}
-        className={clsx('p-4 text-center text-neutral-border text-14', className)}
+        className={cn('p-4 text-center text-neutral-border text-14', className)}
         style={{ height }}
       >
         <div className="flex w-full justify-center items-center flex-col gap-2">

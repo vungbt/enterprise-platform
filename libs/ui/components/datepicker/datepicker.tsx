@@ -1,7 +1,7 @@
 'use client';
 
-import clsx from 'clsx';
 import ReactDatePicker from 'react-date-picker';
+import { cn } from '../../lib/utils';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
 import './calendar.css';
@@ -40,9 +40,9 @@ export function DatePicker({
   const colorClass = error ? colorClasses.error[variant] : colorClasses[color][variant];
 
   return (
-    <div className={clsx('w-full', customClasses?.root)}>
+    <div className={cn('w-full', customClasses?.root)}>
       <div
-        className={clsx(
+        className={cn(
           'border rounded-lg transition-all ease-in-out',
           sizeClasses[size],
           colorClass,
@@ -73,7 +73,7 @@ export function DatePicker({
           calendarIcon={
             <RenderIcon
               name={loading ? 'loading' : (icon ?? 'calendar-days')}
-              className={clsx(
+              className={cn(
                 getIconSize(size),
                 'text-neutral-placeholder',
                 customClasses?.icon,
@@ -84,7 +84,7 @@ export function DatePicker({
         />
       </div>
 
-      {error && <p className={clsx('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
+      {error && <p className={cn('mt-1 text-error text-14', customClasses?.error)}>{error}</p>}
     </div>
   );
 }

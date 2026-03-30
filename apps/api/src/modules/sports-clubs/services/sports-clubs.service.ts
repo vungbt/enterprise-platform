@@ -23,8 +23,8 @@ export class SportsClubsService {
     return club;
   }
 
-  createClub(input: CreateClubInput) {
-    return this.sportsClubsRepository.create(input);
+  createClub(input: CreateClubInput, createdById: string) {
+    return this.sportsClubsRepository.create({ ...input, createdById });
   }
 
   async updateClub(id: string, input: UpdateClubInput) {
@@ -55,6 +55,18 @@ export class SportsClubsService {
 
   getMembersByClubId(clubId: string) {
     return this.sportsClubsRepository.findMembersByClubId(clubId);
+  }
+
+  getMembersCount(clubId: string) {
+    return this.sportsClubsRepository.countMembers(clubId);
+  }
+
+  getCaptainName(clubId: string) {
+    return this.sportsClubsRepository.findCaptainName(clubId);
+  }
+
+  getFundBalance(clubId: string) {
+    return this.sportsClubsRepository.findFundBalance(clubId);
   }
 
   getExpensesByClubId(clubId: string) {

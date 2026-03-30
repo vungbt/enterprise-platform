@@ -51,7 +51,8 @@
       "Bash(cat \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(public\\)/ui-demo/sections/demo-table.tsx\")",
       "Bash(/dev/null echo:*)",
       "Bash(cat \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(platform\\)/layout.tsx\")",
-      "Bash(grep -v \"^Checked\\\\|^Found\\\\|^$\")"
+      "Bash(grep -v \"^Checked\\\\|^Found\\\\|^$\")",
+      "Bash(DATABASE_URL=\"postgresql://x:x@localhost/x\" npx prisma validate --schema apps/api/prisma/schema.prisma)"
     ],
     "additionalDirectories": [
       "/Users/vungbui/Workspaces/My project/enterprise-platform",

@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { cn } from '../../lib/utils';
 
 type FormErrorMessageProps = {
   error: string;
@@ -21,8 +21,8 @@ export const FormErrorMessage = ({
   customClasses,
 }: FormErrorMessageProps) => {
   return (
-    <div className={clsx('mt-1', customClasses?.root)}>
-      <p className={clsx('text-error px-0', sizeClasses[size], customClasses?.error)}>{error}</p>
+    <div className={cn('mt-1', customClasses?.root)}>
+      <p className={cn('text-error px-0', sizeClasses[size], customClasses?.error)}>{error}</p>
     </div>
   );
 };
