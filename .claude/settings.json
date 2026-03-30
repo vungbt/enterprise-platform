@@ -47,7 +47,11 @@
       "Bash(find '/Users/vungbui/Workspaces/My project/enterprise-platform/node_modules/.pnpm/' -name types.d.ts -path */@auth/core*)",
       "Bash(timeout 10 bash -c 'DOTENV_CONFIG_PATH=apps/api/.env SWC_NODE_PROJECT=apps/api/tsconfig.app.json node --require dotenv/config --require @swc-node/register apps/api/src/main.ts')",
       "Bash(lsof -ti:4000)",
-      "Bash(xargs kill:*)"
+      "Bash(xargs kill:*)",
+      "Bash(cat \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(public\\)/ui-demo/sections/demo-table.tsx\")",
+      "Bash(/dev/null echo:*)",
+      "Bash(cat \"/Users/vungbui/Workspaces/My project/enterprise-platform/apps/dashboard-web/app/\\(platform\\)/layout.tsx\")",
+      "Bash(grep -v \"^Checked\\\\|^Found\\\\|^$\")"
     ],
     "additionalDirectories": [
       "/Users/vungbui/Workspaces/My project/enterprise-platform",
