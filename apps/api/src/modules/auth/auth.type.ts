@@ -1,6 +1,3 @@
-/**
- * Auth-only GraphQL types (login/register/payload). `User` comes from generated `@/prisma/graphql`.
- */
 import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { User } from '@/prisma/graphql';

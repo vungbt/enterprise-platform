@@ -1,6 +1,3 @@
-/**
- * Finance GraphQL surface.
- */
 export {
   Customer,
   Invoice,

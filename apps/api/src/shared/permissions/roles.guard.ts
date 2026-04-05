@@ -2,6 +2,11 @@ import { type CanActivate, type ExecutionContext, Injectable } from '@nestjs/com
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles.decorator';
 
+/**
+ * @deprecated Use CaslAbilityGuard + @CheckAbility() instead.
+ * This guard only works with HTTP context, not GraphQL.
+ * Kept for backward compatibility — will be removed in a future release.
+ */
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private readonly reflector: Reflector) {}

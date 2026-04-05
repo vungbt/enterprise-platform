@@ -40,3 +40,6 @@ Thumbs.db
 .vscode/settings.json
 .claude
 .kiro
+
+# prisma-nestjs-graphql (chạy `pnpm api:generate` hoặc `nx run api:build`)
+apps/api/src/prisma/graphql/

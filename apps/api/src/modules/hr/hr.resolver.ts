@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedEmployee } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
@@ -38,10 +39,7 @@ export class HrResolver {
 
   @Mutation(() => Employee)
   @CheckAbility({ action: 'update', subject: 'Employee' })
-  updateEmployee(
-    @Args('id') id: string,
-    @Args('input') input: EmployeeUncheckedUpdateInput,
-  ) {
+  updateEmployee(@Args('id') id: string, @Args('input') input: EmployeeUncheckedUpdateInput) {
     return this.hrService.updateEmployee(id, input);
   }
 
@@ -52,18 +50,18 @@ export class HrResolver {
   }
 
   @ResolveField(() => Department, { nullable: true })
-  department(@Parent() employee: Employee) {
-    return this.hrService.getDepartmentForEmployee(employee.departmentId);
+  department(@Parent() employee: Employee, @Context('loaders') loaders: DataLoaders) {
+    return loaders.department.load(employee.departmentId);
   }
 
   @ResolveField(() => Employee, { nullable: true })
-  manager(@Parent() employee: Employee) {
+  manager(@Parent() employee: Employee, @Context('loaders') loaders: DataLoaders) {
     if (!employee.managerId) return null;
-    return this.hrService.getManagerById(employee.managerId);
+    return loaders.employee.load(employee.managerId);
   }
 
   @ResolveField(() => [Employee])
-  reports(@Parent() employee: Employee) {
-    return this.hrService.getReportsByManagerId(employee.id);
+  reports(@Parent() employee: Employee, @Context('loaders') loaders: DataLoaders) {
+    return loaders.employeesByManagerId.load(employee.id);
   }
 }

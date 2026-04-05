@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedDepartment } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
@@ -38,10 +39,7 @@ export class DepartmentResolver {
 
   @Mutation(() => Department)
   @CheckAbility({ action: 'update', subject: 'Department' })
-  updateDepartment(
-    @Args('id') id: string,
-    @Args('input') input: DepartmentUncheckedUpdateInput,
-  ) {
+  updateDepartment(@Args('id') id: string, @Args('input') input: DepartmentUncheckedUpdateInput) {
     return this.departmentService.updateDepartment(id, input);
   }
 
@@ -52,18 +50,18 @@ export class DepartmentResolver {
   }
 
   @ResolveField(() => Department, { nullable: true })
-  parent(@Parent() department: Department) {
+  parent(@Parent() department: Department, @Context('loaders') loaders: DataLoaders) {
     if (!department.parentId) return null;
-    return this.departmentService.getParentDepartment(department.parentId);
+    return loaders.department.load(department.parentId);
   }
 
   @ResolveField(() => [Department])
-  children(@Parent() department: Department) {
-    return this.departmentService.getChildrenDepartments(department.id);
+  children(@Parent() department: Department, @Context('loaders') loaders: DataLoaders) {
+    return loaders.childrenByParentId.load(department.id);
   }
 
   @ResolveField(() => [Employee])
-  employees(@Parent() department: Department) {
-    return this.departmentService.getEmployeesByDepartmentId(department.id);
+  employees(@Parent() department: Department, @Context('loaders') loaders: DataLoaders) {
+    return loaders.employeesByDepartmentId.load(department.id);
   }
 }

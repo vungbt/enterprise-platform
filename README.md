@@ -51,15 +51,18 @@ enterprise-platform/
 # Cài dependencies
 pnpm install
 
+# Start PostgreSQL
+docker compose up -d
+
 # Setup DB (lần đầu)
-cp apps/api/.env.example apps/api/.env   # điền DATABASE_URL, JWT_SECRET
-pnpm prisma migrate dev --schema apps/api/prisma/schema.prisma --name init
-pnpm prisma generate --schema apps/api/prisma/schema.prisma
+cp apps/api/.env.example apps/api/.env
+pnpm prisma:migrate
+pnpm api:generate
 
 # Chạy frontend (Next.js) — http://localhost:3000
 pnpm dev
 
-# Chạy backend (NestJS) — http://localhost:3001/graphql
+# Chạy backend (NestJS) — http://localhost:4000/graphql
 pnpm api:dev
 
 # Build production
@@ -71,7 +74,7 @@ pnpm api:build
 
 ```env
 # apps/api/.env
-DATABASE_URL=postgresql://user:password@localhost:5432/enterprise
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/enterprise_platform?schema=public
 JWT_SECRET=your-secret-key-change-in-production
 
 # apps/dashboard-web/.env.local
@@ -389,10 +392,11 @@ Mỗi module override màu primary qua `data-module` attribute (tự động t�
 
 | Hạng mục | Mô tả |
 |---|---|
-| `prisma migrate dev` | Tạo DB tables từ schema hiện tại |
-| JWT thật | Hiện tại guard đang dùng demo user khi không có token |
-| Frontend CASL dynamic | `AbilityProvider` đang dùng hardcode admin, cần fetch `myAbilities` từ API |
 | Finance & Inventory FE | 2 module chỉ có skeleton page, chưa có table/component |
-| Property tests | 9 property tests optional trong `.kiro/specs/be-schema-design/tasks.md` |
 | Expense FE module | Backend đã có, chưa có frontend module |
 | Department FE module | Backend đã có, chưa có frontend module |
+| CRM FE kết nối API | Hiện dùng hardcode data, chưa gọi GraphQL |
+| HR FE kết nối API | Fallback hardcode khi API fail, cần chuyển sang GraphQL |
+| Property tests | 9 property tests optional trong `.kiro/specs/be-schema-design/tasks.md` |
+| DataLoader optimization | Đã implement nhưng chưa có benchmark/monitoring |
+| `libs/auth/index.ts` | Legacy file, có thể xóa — đã thay bằng `AbilityProvider` + `next-auth` |

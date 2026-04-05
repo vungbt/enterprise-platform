@@ -9,10 +9,6 @@ import {
   updateClubApi,
 } from './server.api';
 
-/**
- * Returns all clubs API functions pre-bound with the current user's token.
- * Components using this hook don't need to know about auth tokens.
- */
 export function useClubsApi() {
   const { data: session } = useSession();
   const token = session?.backendToken;

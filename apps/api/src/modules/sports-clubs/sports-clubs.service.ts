@@ -1,6 +1,11 @@
 import { PrismaService } from '@api/shared/database/prisma.service';
 import type { PaginationInput } from '@api/shared/graphql/pagination.types';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type {
   AddClubMemberInput,
@@ -19,11 +24,12 @@ export class SportsClubsService {
 
     const [items, total] = await Promise.all([
       this.prisma.club.findMany({
+        where: { deletedAt: null },
         orderBy: { name: 'asc' },
         skip,
         take: limit,
       }),
-      this.prisma.club.count(),
+      this.prisma.club.count({ where: { deletedAt: null } }),
     ]);
 
     return {
@@ -46,11 +52,19 @@ export class SportsClubsService {
     return club;
   }
 
-  createClub(input: ClubUncheckedCreateInput, createdById: string) {
+  async createClub(input: ClubUncheckedCreateInput, createdById: string) {
     const { members: _m, expenses: _e, fund: _f, createdById: _c, ...rest } = input;
-    return this.prisma.club.create({
-      data: { ...rest, createdById } as Prisma.ClubUncheckedCreateInput,
-    });
+    try {
+      return await this.prisma.club.create({
+        data: { ...rest, createdById } as Prisma.ClubUncheckedCreateInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const field = (error.meta?.target as string[])?.join(', ');
+        throw new ConflictException(`Club with duplicate ${field} already exists`);
+      }
+      throw error;
+    }
   }
 
   async updateClub(id: string, input: ClubUncheckedUpdateInput) {
@@ -63,7 +77,10 @@ export class SportsClubsService {
 
   async deleteClub(id: string) {
     await this.getClubById(id);
-    await this.prisma.club.delete({ where: { id } });
+    await this.prisma.club.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
     return true;
   }
 
@@ -153,7 +170,7 @@ export class SportsClubsService {
     });
   }
 
-  getClubById2(clubId: string) {
+  findClubById(clubId: string) {
     return this.prisma.club.findUnique({ where: { id: clubId } });
   }
 }

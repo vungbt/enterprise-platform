@@ -1,9 +1,6 @@
-/**
- * Expense GraphQL surface.
- * - Lists query filters are hand-written (generated `ExpenseWhereInput` is huge).
- * - Add more custom inputs / payloads next to `ExpenseFilterInput` below.
- */
 import { Field, InputType } from '@nestjs/graphql';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { BaseFilterInput } from '@api/shared/graphql/base-filter.types';
 import { ExpenseStatus } from '@/prisma/graphql/prisma/expense-status.enum';
 
 export {
@@ -19,16 +16,14 @@ export {
 } from '@/prisma/graphql';
 
 @InputType()
-export class ExpenseFilterInput {
+export class ExpenseFilterInput extends BaseFilterInput {
   @Field({ nullable: true })
-  clubId?: string;
-
-  @Field({ nullable: true })
-  departmentId?: string;
-
-  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
   categoryId?: string;
 
   @Field(() => ExpenseStatus, { nullable: true })
+  @IsOptional()
+  @IsEnum(ExpenseStatus)
   status?: ExpenseStatus;
 }

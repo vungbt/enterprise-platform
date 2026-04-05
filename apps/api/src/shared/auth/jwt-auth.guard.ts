@@ -18,7 +18,9 @@ export class JwtAuthGuard implements CanActivate {
     const authHeader: string | undefined = request.headers?.authorization;
 
     if (!authHeader) {
-      // Auto mode: no token → attach demo admin user for development
+      if (process.env.NODE_ENV === 'production') {
+        throw new UnauthorizedException('Authorization header is required');
+      }
       request.user = { id: 'demo-user', email: 'demo@example.com', roles: ['admin'] };
       return true;
     }

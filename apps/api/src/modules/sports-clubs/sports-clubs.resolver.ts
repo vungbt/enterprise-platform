@@ -1,11 +1,21 @@
 import { CurrentUser } from '@api/shared/auth/current-user.decorator';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedClub } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
 import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
 import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { SportsClubsService } from './sports-clubs.service';
 import {
   AddClubMemberInput,
@@ -70,13 +80,13 @@ export class SportsClubsResolver {
   }
 
   @ResolveField(() => [ClubMember])
-  members(@Parent() club: Club) {
-    return this.sportsClubsService.getMembersByClubId(club.id);
+  members(@Parent() club: Club, @Context('loaders') loaders: DataLoaders) {
+    return loaders.membersByClubId.load(club.id);
   }
 
   @ResolveField(() => [Expense])
-  expenses(@Parent() club: Club) {
-    return this.sportsClubsService.getExpensesByClubId(club.id);
+  expenses(@Parent() club: Club, @Context('loaders') loaders: DataLoaders) {
+    return loaders.expensesByClubId.load(club.id);
   }
 
   @ResolveField(() => Int)
@@ -98,15 +108,13 @@ export class SportsClubsResolver {
 @Resolver(() => ClubMember)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class ClubMemberResolver {
-  constructor(private readonly sportsClubsService: SportsClubsService) {}
-
   @ResolveField(() => User)
-  user(@Parent() member: ClubMember) {
-    return this.sportsClubsService.getUserById(member.userId);
+  user(@Parent() member: ClubMember, @Context('loaders') loaders: DataLoaders) {
+    return loaders.user.load(member.userId);
   }
 
   @ResolveField(() => Club)
-  club(@Parent() member: ClubMember) {
-    return this.sportsClubsService.getClubById2(member.clubId);
+  club(@Parent() member: ClubMember, @Context('loaders') loaders: DataLoaders) {
+    return loaders.club.load(member.clubId);
   }
 }

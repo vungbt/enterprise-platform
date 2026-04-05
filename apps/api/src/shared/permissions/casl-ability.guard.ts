@@ -19,7 +19,6 @@ export class CaslAbilityGuard implements CanActivate {
       context.getHandler(),
     );
 
-    // If no @CheckAbility metadata on handler, allow access
     if (!requirement) {
       return true;
     }

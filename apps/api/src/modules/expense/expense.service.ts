@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma } from '@prisma/client';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@api/shared/database/prisma.service';
 import type { PaginationInput } from '@api/shared/graphql/pagination.types';
 import type {
@@ -19,7 +19,7 @@ export class ExpenseService {
     const limit = Math.min(Math.max(pagination?.limit ?? 20, 1), 100);
     const skip = (page - 1) * limit;
 
-    const where: Prisma.ExpenseWhereInput = {};
+    const where: Prisma.ExpenseWhereInput = { deletedAt: null };
     if (filter?.clubId) where.clubId = filter.clubId;
     if (filter?.departmentId) where.departmentId = filter.departmentId;
     if (filter?.categoryId) where.categoryId = filter.categoryId;
@@ -52,10 +52,18 @@ export class ExpenseService {
     return expense;
   }
 
-  createExpense(input: ExpenseUncheckedCreateInput) {
-    return this.prisma.expense.create({
-      data: input as Prisma.ExpenseUncheckedCreateInput,
-    });
+  async createExpense(input: ExpenseUncheckedCreateInput) {
+    try {
+      return await this.prisma.expense.create({
+        data: input as Prisma.ExpenseUncheckedCreateInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const field = (error.meta?.target as string[])?.join(', ');
+        throw new ConflictException(`Expense with duplicate ${field} already exists`);
+      }
+      throw error;
+    }
   }
 
   async updateExpense(id: string, input: ExpenseUncheckedUpdateInput) {
@@ -68,7 +76,10 @@ export class ExpenseService {
 
   async deleteExpense(id: string) {
     await this.getExpenseById(id);
-    await this.prisma.expense.delete({ where: { id } });
+    await this.prisma.expense.update({
+      where: { id },
+      data: { deletedAt: new Date() },
+    });
     return true;
   }
 
@@ -86,10 +97,18 @@ export class ExpenseService {
     return category;
   }
 
-  createExpenseCategory(input: ExpenseCategoryUncheckedCreateInput) {
-    return this.prisma.expenseCategory.create({
-      data: input as Prisma.ExpenseCategoryUncheckedCreateInput,
-    });
+  async createExpenseCategory(input: ExpenseCategoryUncheckedCreateInput) {
+    try {
+      return await this.prisma.expenseCategory.create({
+        data: input as Prisma.ExpenseCategoryUncheckedCreateInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const field = (error.meta?.target as string[])?.join(', ');
+        throw new ConflictException(`ExpenseCategory with duplicate ${field} already exists`);
+      }
+      throw error;
+    }
   }
 
   async updateExpenseCategory(id: string, input: ExpenseCategoryUncheckedUpdateInput) {

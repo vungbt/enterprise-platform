@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from '@api/shared/auth/current-user.decorator';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedExpense } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
@@ -57,10 +58,7 @@ export class ExpenseResolver {
 
   @Mutation(() => Expense)
   @CheckAbility({ action: 'update', subject: 'Expense' })
-  updateExpense(
-    @Args('id') id: string,
-    @Args('input') input: ExpenseUncheckedUpdateInput,
-  ) {
+  updateExpense(@Args('id') id: string, @Args('input') input: ExpenseUncheckedUpdateInput) {
     return this.expenseService.updateExpense(id, input);
   }
 
@@ -92,24 +90,24 @@ export class ExpenseResolver {
   }
 
   @ResolveField(() => ExpenseCategory)
-  category(@Parent() expense: Expense) {
-    return this.expenseService.getCategoryForExpense(expense.categoryId);
+  category(@Parent() expense: Expense, @Context('loaders') loaders: DataLoaders) {
+    return loaders.expenseCategory.load(expense.categoryId);
   }
 
   @ResolveField(() => User)
-  createdBy(@Parent() expense: Expense) {
-    return this.expenseService.getCreatedByForExpense(expense.createdById);
+  createdBy(@Parent() expense: Expense, @Context('loaders') loaders: DataLoaders) {
+    return loaders.user.load(expense.createdById);
   }
 
   @ResolveField(() => Club, { nullable: true })
-  club(@Parent() expense: Expense) {
+  club(@Parent() expense: Expense, @Context('loaders') loaders: DataLoaders) {
     if (!expense.clubId) return null;
-    return this.expenseService.getClubForExpense(expense.clubId);
+    return loaders.club.load(expense.clubId);
   }
 
   @ResolveField(() => Department, { nullable: true })
-  department(@Parent() expense: Expense) {
+  department(@Parent() expense: Expense, @Context('loaders') loaders: DataLoaders) {
     if (!expense.departmentId) return null;
-    return this.expenseService.getDepartmentForExpense(expense.departmentId);
+    return loaders.department.load(expense.departmentId);
   }
 }

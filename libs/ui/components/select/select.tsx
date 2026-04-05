@@ -171,7 +171,6 @@ const ClearIndicator = (
   );
 };
 
-/** Lets callers extend styles (e.g. `menuPortal` z-index) without losing defaults. */
 function mergeSelectStyles(
   base: StylesConfig<SelectOption, boolean, GroupBase<SelectOption>>,
   overrides?: StylesConfig<SelectOption, boolean, GroupBase<SelectOption>>,

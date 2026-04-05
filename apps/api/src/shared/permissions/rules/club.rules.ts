@@ -14,7 +14,6 @@ export function applyClubRules({ can }: AbilityBuilder<AppAbility>, user: Abilit
     return;
   }
 
-  // staff — read only
   can('read', 'Club');
   can('read', 'ClubMember');
 }

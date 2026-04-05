@@ -30,19 +30,16 @@ export type RadioButtonGroupProps<T extends string = string> = {
   className?: string;
   size?: Size;
   color?: RadioButtonGroupColor;
-  /** When true, each segment uses equal width (flex-1). */
   equalWidth?: boolean;
   customClasses?: { root?: string; item?: string };
 };
 
-/** Padding/typography aligned with {@link Button} per size. */
 const sizeClasses: Record<Size, string> = {
   small: 'px-2 py-1 text-sm gap-1.5',
   middle: 'px-4 py-2 text-base gap-2',
   large: 'px-6 py-3 text-lg gap-2',
 };
 
-/** Selected segment: same solid treatment as {@link Button}. */
 const selectedClasses: Record<RadioButtonGroupColor, string> = {
   primary: 'bg-primary text-white hover:bg-primary-base',
   secondary: 'bg-secondary text-white hover:bg-secondary-base',

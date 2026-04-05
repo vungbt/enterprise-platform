@@ -1,6 +1,3 @@
-/**
- * Inventory GraphQL surface.
- */
 export {
   InventoryItem,
   InventoryItemUncheckedCreateInput,

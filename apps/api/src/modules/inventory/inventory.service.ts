@@ -2,7 +2,10 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@api/shared/database/prisma.service';
 import type { PaginationInput } from '@api/shared/graphql/pagination.types';
-import type { InventoryItemUncheckedCreateInput, InventoryItemUncheckedUpdateInput } from './inventory.types';
+import type {
+  InventoryItemUncheckedCreateInput,
+  InventoryItemUncheckedUpdateInput,
+} from './inventory.types';
 
 @Injectable()
 export class InventoryService {

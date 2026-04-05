@@ -1,6 +1,7 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedInvoice } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
@@ -38,10 +39,7 @@ export class FinanceResolver {
 
   @Mutation(() => Invoice)
   @CheckAbility({ action: 'update', subject: 'Invoice' })
-  updateInvoice(
-    @Args('id') id: string,
-    @Args('input') input: InvoiceUncheckedUpdateInput,
-  ) {
+  updateInvoice(@Args('id') id: string, @Args('input') input: InvoiceUncheckedUpdateInput) {
     return this.financeService.updateInvoice(id, input);
   }
 
@@ -52,8 +50,8 @@ export class FinanceResolver {
   }
 
   @ResolveField(() => Customer, { nullable: true })
-  customer(@Parent() invoice: Invoice) {
+  customer(@Parent() invoice: Invoice, @Context('loaders') loaders: DataLoaders) {
     if (!invoice.customerId) return null;
-    return this.financeService.getCustomerForInvoice(invoice.customerId);
+    return loaders.customer.load(invoice.customerId);
   }
 }

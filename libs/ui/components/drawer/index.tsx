@@ -39,10 +39,6 @@ export type DrawerBaseProps = {
   placement?: 'left' | 'right';
 };
 
-/**
- * Same mental model as {@link ModalBase}: `isOpen` / `onClose`, fixed backdrop,
- * inner surface stops click propagation, Framer Motion enter/exit.
- */
 export function DrawerBase({
   isOpen,
   onClose,
@@ -103,7 +99,6 @@ export function DrawerBase({
   return createPortal(layer, document.body);
 }
 
-/** Alias for shorter imports; same API as {@link DrawerBase}. */
 export const Drawer = DrawerBase;
 
 export type DrawerProps = DrawerBaseProps;

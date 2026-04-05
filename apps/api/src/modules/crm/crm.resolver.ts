@@ -1,7 +1,8 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from '@api/shared/auth/current-user.decorator';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import type { DataLoaders } from '@api/shared/dataloader/dataloader.service';
 import { PaginatedCustomer } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
@@ -43,10 +44,7 @@ export class CrmResolver {
 
   @Mutation(() => Customer)
   @CheckAbility({ action: 'update', subject: 'Customer' })
-  updateCustomer(
-    @Args('id') id: string,
-    @Args('input') input: CustomerUncheckedUpdateInput,
-  ) {
+  updateCustomer(@Args('id') id: string, @Args('input') input: CustomerUncheckedUpdateInput) {
     return this.crmService.updateCustomer(id, input);
   }
 
@@ -57,12 +55,12 @@ export class CrmResolver {
   }
 
   @ResolveField(() => User)
-  owner(@Parent() customer: Customer) {
-    return this.crmService.getOwnerForCustomer(customer.ownerId);
+  owner(@Parent() customer: Customer, @Context('loaders') loaders: DataLoaders) {
+    return loaders.user.load(customer.ownerId);
   }
 
   @ResolveField(() => [Invoice])
-  invoices(@Parent() customer: Customer) {
-    return this.crmService.getInvoicesForCustomer(customer.id);
+  invoices(@Parent() customer: Customer, @Context('loaders') loaders: DataLoaders) {
+    return loaders.invoicesByCustomerId.load(customer.id);
   }
 }

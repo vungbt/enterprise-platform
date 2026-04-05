@@ -10,9 +10,7 @@
       "options": {
         "cwd": "{workspaceRoot}",
         "parallel": false,
-        "env": {
-          "DATABASE_URL": "postgresql://u:p@localhost:5432/db"
-        },
+        "envFile": "apps/api/.env",
         "commands": [
           "pnpm exec prisma generate --schema apps/api/prisma/schema.prisma",
           "pnpm exec tsc --project apps/api/tsconfig.app.json",
@@ -25,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "DOTENV_CONFIG_PATH=apps/api/.env pnpm exec tsx --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts"
+        "command": "pnpm exec tsx --env-file apps/api/.env --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts"
       }
     },
     "start": {

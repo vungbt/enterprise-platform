@@ -13,16 +13,14 @@ export function defineAbilityFor(user: AbilityUser): AppAbility {
   if (user.roles.includes('admin')) {
     can('manage', 'all');
   } else if (user.roles.includes('manager')) {
-    can(['read', 'create', 'update'], 'all' as AppSubject);
+    can(['read', 'create', 'update', 'delete'], 'all' as AppSubject);
   } else {
-    // staff — read only
     can('read', 'all' as AppSubject);
   }
 
   return build();
 }
 
-// Legacy permission types (kept for backward compatibility)
 export type UserRole = 'admin' | 'manager' | 'staff';
 export type Permission = 'read:hr' | 'read:crm' | 'read:finance' | 'read:inventory';
 

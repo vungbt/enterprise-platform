@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@api/shared/database/prisma.service';
 import type { PaginationInput } from '@api/shared/graphql/pagination.types';
-import type { DepartmentUncheckedCreateInput, DepartmentUncheckedUpdateInput } from './department.types';
+import type {
+  DepartmentUncheckedCreateInput,
+  DepartmentUncheckedUpdateInput,
+} from './department.types';
 
 @Injectable()
 export class DepartmentService {
@@ -39,18 +42,34 @@ export class DepartmentService {
     return department;
   }
 
-  createDepartment(input: DepartmentUncheckedCreateInput) {
-    return this.prisma.department.create({
-      data: input as Prisma.DepartmentUncheckedCreateInput,
-    });
+  async createDepartment(input: DepartmentUncheckedCreateInput) {
+    try {
+      return await this.prisma.department.create({
+        data: input as Prisma.DepartmentUncheckedCreateInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const field = (error.meta?.target as string[])?.join(', ');
+        throw new ConflictException(`Department with duplicate ${field} already exists`);
+      }
+      throw error;
+    }
   }
 
   async updateDepartment(id: string, input: DepartmentUncheckedUpdateInput) {
     await this.getDepartmentById(id);
-    return this.prisma.department.update({
-      where: { id },
-      data: input as Prisma.DepartmentUncheckedUpdateInput,
-    });
+    try {
+      return await this.prisma.department.update({
+        where: { id },
+        data: input as Prisma.DepartmentUncheckedUpdateInput,
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        const field = (error.meta?.target as string[])?.join(', ');
+        throw new ConflictException(`Department with duplicate ${field} already exists`);
+      }
+      throw error;
+    }
   }
 
   async deleteDepartment(id: string) {
