@@ -1,18 +1,18 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, ObjectType, Query, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
-import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
-import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
-import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
-import { CreateInventoryItemInput } from './dto/create-inventory-item.input';
-import { UpdateInventoryItemInput } from './dto/update-inventory-item.input';
-import { InventoryItemEntity } from './entities/inventory-item.entity';
-import { InventoryService } from './services/inventory.service';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import { PaginatedInventoryItem } from '@api/shared/graphql/graphql-pagination';
+import { PaginationInput } from '@api/shared/graphql/pagination.types';
+import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
+import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
+import {
+  InventoryItem,
+  InventoryItemUncheckedCreateInput,
+  InventoryItemUncheckedUpdateInput,
+} from './inventory.types';
+import { InventoryService } from './inventory.service';
 
-@ObjectType()
-export class PaginatedInventoryItem extends Paginated(InventoryItemEntity) {}
-
-@Resolver(() => InventoryItemEntity)
+@Resolver(() => InventoryItem)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class InventoryResolver {
   constructor(private readonly inventoryService: InventoryService) {}
@@ -23,21 +23,24 @@ export class InventoryResolver {
     return this.inventoryService.getItems(pagination);
   }
 
-  @Query(() => InventoryItemEntity, { name: 'inventoryItem' })
+  @Query(() => InventoryItem, { name: 'inventoryItem' })
   @CheckAbility({ action: 'read', subject: 'InventoryItem' })
   inventoryItem(@Args('id') id: string) {
     return this.inventoryService.getItemById(id);
   }
 
-  @Mutation(() => InventoryItemEntity)
+  @Mutation(() => InventoryItem)
   @CheckAbility({ action: 'create', subject: 'InventoryItem' })
-  createInventoryItem(@Args('input') input: CreateInventoryItemInput) {
+  createInventoryItem(@Args('input') input: InventoryItemUncheckedCreateInput) {
     return this.inventoryService.createItem(input);
   }
 
-  @Mutation(() => InventoryItemEntity)
+  @Mutation(() => InventoryItem)
   @CheckAbility({ action: 'update', subject: 'InventoryItem' })
-  updateInventoryItem(@Args('id') id: string, @Args('input') input: UpdateInventoryItemInput) {
+  updateInventoryItem(
+    @Args('id') id: string,
+    @Args('input') input: InventoryItemUncheckedUpdateInput,
+  ) {
     return this.inventoryService.updateItem(id, input);
   }
 

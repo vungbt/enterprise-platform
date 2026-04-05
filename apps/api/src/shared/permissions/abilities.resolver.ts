@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Query, Resolver } from '@nestjs/graphql';
 import GraphQLJSON from 'graphql-type-json';
-import { CurrentUser } from '../auth/current-user.decorator';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '@api/shared/auth/current-user.decorator';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
 import type { AbilityUser } from './ability.util';
 import { defineAbilityFor } from './ability.util';
 

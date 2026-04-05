@@ -1,8 +1,8 @@
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
-import { DatabaseModule } from '../../shared/database/database.module';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import { DatabaseModule } from '@api/shared/database/database.module';
 import { AuthResolver } from './auth.resolver';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategies/jwt.strategy';

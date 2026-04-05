@@ -1,5 +1,5 @@
 import type { AbilityBuilder } from '@casl/ability';
-import type { AbilityUser, AppAbility } from '../ability.util';
+import type { AbilityUser, AppAbility } from '@api/shared/permissions/ability.util';
 import { applyClubRules } from './club.rules';
 import { applyCrmRules } from './crm.rules';
 import { applyFinanceRules } from './finance.rules';

@@ -2,6 +2,15 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator nestgraphql {
+  provider = "node node_modules/prisma-nestjs-graphql"
+  output   = "../src/prisma/graphql"
+  purgeOutput = true
+  reExport = Single
+  noAtomicOperations = true
+  tsConfigFilePath = "apps/api/tsconfig.app.json"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -15,6 +24,7 @@ model User {
   id        String    @id @default(cuid())
   email     String    @unique
   name      String
+  /// @HideField({ input: true, output: true })
   password  String
   avatar    String?
   isActive  Boolean   @default(true)

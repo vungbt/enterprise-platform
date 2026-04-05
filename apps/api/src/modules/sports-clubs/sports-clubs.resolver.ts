@@ -1,23 +1,23 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { CurrentUser } from '../../shared/auth/current-user.decorator';
-import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
-import { UserEntity } from '../../shared/entities/user.entity';
-import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
-import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
-import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
-import { ExpenseEntity } from '../expense/entities/expense.entity';
-import { AddClubMemberInput } from './dto/add-club-member.input';
-import { CreateClubInput } from './dto/create-club.input';
-import { UpdateClubInput } from './dto/update-club.input';
-import { ClubEntity } from './entities/club.entity';
-import { ClubMemberEntity } from './entities/club-member.entity';
-import { SportsClubsService } from './services/sports-clubs.service';
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '@api/shared/auth/current-user.decorator';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import { PaginatedClub } from '@api/shared/graphql/graphql-pagination';
+import { PaginationInput } from '@api/shared/graphql/pagination.types';
+import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
+import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
+import {
+  Club,
+  ClubMember,
+  ClubMemberUncheckedCreateInput,
+  ClubUncheckedCreateInput,
+  ClubUncheckedUpdateInput,
+  Expense,
+  User,
+} from './sports-clubs.types';
+import { SportsClubsService } from './sports-clubs.service';
 
-@ObjectType()
-export class PaginatedClub extends Paginated(ClubEntity) {}
-
-@Resolver(() => ClubEntity)
+@Resolver(() => Club)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class SportsClubsResolver {
   constructor(private readonly sportsClubsService: SportsClubsService) {}
@@ -28,26 +28,32 @@ export class SportsClubsResolver {
     return this.sportsClubsService.getClubs(pagination);
   }
 
-  @Query(() => ClubEntity, { name: 'club' })
+  @Query(() => Club, { name: 'club' })
   @CheckAbility({ action: 'read', subject: 'Club' })
   club(@Args('id') id: string) {
     return this.sportsClubsService.getClubById(id);
   }
 
-  @Query(() => [UserEntity], { name: 'candidateUsers' })
+  @Query(() => [User], { name: 'candidateUsers' })
   candidateUsers() {
     return this.sportsClubsService.getCandidateUsers();
   }
 
-  @Mutation(() => ClubEntity)
+  @Mutation(() => Club)
   @CheckAbility({ action: 'create', subject: 'Club' })
-  createClub(@Args('input') input: CreateClubInput, @CurrentUser() user: { id: string }) {
+  createClub(
+    @Args('input') input: ClubUncheckedCreateInput,
+    @CurrentUser() user: { id: string },
+  ) {
     return this.sportsClubsService.createClub(input, user.id);
   }
 
-  @Mutation(() => ClubEntity)
+  @Mutation(() => Club)
   @CheckAbility({ action: 'update', subject: 'Club' })
-  updateClub(@Args('id') id: string, @Args('input') input: UpdateClubInput) {
+  updateClub(
+    @Args('id') id: string,
+    @Args('input') input: ClubUncheckedUpdateInput,
+  ) {
     return this.sportsClubsService.updateClub(id, input);
   }
 
@@ -57,9 +63,9 @@ export class SportsClubsResolver {
     return this.sportsClubsService.deleteClub(id);
   }
 
-  @Mutation(() => ClubMemberEntity)
+  @Mutation(() => ClubMember)
   @CheckAbility({ action: 'create', subject: 'ClubMember' })
-  addClubMember(@Args('input') input: AddClubMemberInput) {
+  addClubMember(@Args('input') input: ClubMemberUncheckedCreateInput) {
     return this.sportsClubsService.addClubMember(input);
   }
 
@@ -69,44 +75,44 @@ export class SportsClubsResolver {
     return this.sportsClubsService.removeClubMember(clubId, userId);
   }
 
-  @ResolveField(() => [ClubMemberEntity])
-  members(@Parent() club: ClubEntity) {
+  @ResolveField(() => [ClubMember])
+  members(@Parent() club: Club) {
     return this.sportsClubsService.getMembersByClubId(club.id);
   }
 
-  @ResolveField(() => [ExpenseEntity])
-  expenses(@Parent() club: ClubEntity) {
+  @ResolveField(() => [Expense])
+  expenses(@Parent() club: Club) {
     return this.sportsClubsService.getExpensesByClubId(club.id);
   }
 
-  @ResolveField(() => Number)
-  membersCount(@Parent() club: ClubEntity) {
+  @ResolveField(() => Int)
+  membersCount(@Parent() club: Club) {
     return this.sportsClubsService.getMembersCount(club.id);
   }
 
   @ResolveField(() => String, { nullable: true })
-  captainName(@Parent() club: ClubEntity) {
+  captainName(@Parent() club: Club) {
     return this.sportsClubsService.getCaptainName(club.id);
   }
 
-  @ResolveField(() => Number)
-  fundBalance(@Parent() club: ClubEntity) {
+  @ResolveField(() => Int)
+  fundBalance(@Parent() club: Club) {
     return this.sportsClubsService.getFundBalance(club.id);
   }
 }
 
-@Resolver(() => ClubMemberEntity)
+@Resolver(() => ClubMember)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class ClubMemberResolver {
   constructor(private readonly sportsClubsService: SportsClubsService) {}
 
-  @ResolveField(() => UserEntity)
-  user(@Parent() member: ClubMemberEntity) {
+  @ResolveField(() => User)
+  user(@Parent() member: ClubMember) {
     return this.sportsClubsService.getUserById(member.userId);
   }
 
-  @ResolveField(() => ClubEntity)
-  club(@Parent() member: ClubMemberEntity) {
+  @ResolveField(() => Club)
+  club(@Parent() member: ClubMember) {
     return this.sportsClubsService.getClubById2(member.clubId);
   }
 }

@@ -5,24 +5,29 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-commands",
+      "outputs": ["{workspaceRoot}/dist/apps/api"],
       "options": {
-        "outputPath": "dist/apps/api",
-        "main": "apps/api/src/main.ts",
-        "tsConfig": "apps/api/tsconfig.app.json",
-        "assets": ["apps/api/src/**/*.graphql", "apps/api/prisma/schema.prisma"]
+        "cwd": "{workspaceRoot}",
+        "parallel": false,
+        "commands": [
+          "pnpm exec tsc --project apps/api/tsconfig.app.json",
+          "pnpm exec tsc-alias -p apps/api/tsconfig.app.json",
+          "mkdir -p dist/apps/api/prisma && cp apps/api/prisma/schema.prisma dist/apps/api/prisma/schema.prisma"
+        ]
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "DOTENV_CONFIG_PATH=apps/api/.env SWC_NODE_PROJECT=apps/api/tsconfig.app.json node --require dotenv/config --require @swc-node/register apps/api/src/main.ts"
+        "cwd": "{workspaceRoot}",
+        "command": "DOTENV_CONFIG_PATH=apps/api/.env pnpm exec tsx --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts"
       }
     },
     "start": {
       "executor": "nx:run-commands",
       "options": {
+        "cwd": "{workspaceRoot}",
         "command": "node dist/apps/api/main.js"
       },
       "dependsOn": ["build"]

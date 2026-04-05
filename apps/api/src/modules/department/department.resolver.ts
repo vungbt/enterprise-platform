@@ -1,19 +1,19 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
-import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
-import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
-import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
-import { EmployeeEntity } from '../hr/entities/employee.entity';
-import { CreateDepartmentInput } from './dto/create-department.input';
-import { UpdateDepartmentInput } from './dto/update-department.input';
-import { DepartmentEntity } from './entities/department.entity';
-import { DepartmentService } from './services/department.service';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import { PaginatedDepartment } from '@api/shared/graphql/graphql-pagination';
+import { PaginationInput } from '@api/shared/graphql/pagination.types';
+import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
+import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
+import {
+  Department,
+  DepartmentUncheckedCreateInput,
+  DepartmentUncheckedUpdateInput,
+  Employee,
+} from './department.types';
+import { DepartmentService } from './department.service';
 
-@ObjectType()
-export class PaginatedDepartment extends Paginated(DepartmentEntity) {}
-
-@Resolver(() => DepartmentEntity)
+@Resolver(() => Department)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class DepartmentResolver {
   constructor(private readonly departmentService: DepartmentService) {}
@@ -24,21 +24,24 @@ export class DepartmentResolver {
     return this.departmentService.getDepartments(pagination);
   }
 
-  @Query(() => DepartmentEntity, { name: 'department' })
+  @Query(() => Department, { name: 'department' })
   @CheckAbility({ action: 'read', subject: 'Department' })
   department(@Args('id') id: string) {
     return this.departmentService.getDepartmentById(id);
   }
 
-  @Mutation(() => DepartmentEntity)
+  @Mutation(() => Department)
   @CheckAbility({ action: 'create', subject: 'Department' })
-  createDepartment(@Args('input') input: CreateDepartmentInput) {
+  createDepartment(@Args('input') input: DepartmentUncheckedCreateInput) {
     return this.departmentService.createDepartment(input);
   }
 
-  @Mutation(() => DepartmentEntity)
+  @Mutation(() => Department)
   @CheckAbility({ action: 'update', subject: 'Department' })
-  updateDepartment(@Args('id') id: string, @Args('input') input: UpdateDepartmentInput) {
+  updateDepartment(
+    @Args('id') id: string,
+    @Args('input') input: DepartmentUncheckedUpdateInput,
+  ) {
     return this.departmentService.updateDepartment(id, input);
   }
 
@@ -48,19 +51,19 @@ export class DepartmentResolver {
     return this.departmentService.deleteDepartment(id);
   }
 
-  @ResolveField(() => DepartmentEntity, { nullable: true })
-  parent(@Parent() department: DepartmentEntity) {
+  @ResolveField(() => Department, { nullable: true })
+  parent(@Parent() department: Department) {
     if (!department.parentId) return null;
     return this.departmentService.getParentDepartment(department.parentId);
   }
 
-  @ResolveField(() => [DepartmentEntity])
-  children(@Parent() department: DepartmentEntity) {
+  @ResolveField(() => [Department])
+  children(@Parent() department: Department) {
     return this.departmentService.getChildrenDepartments(department.id);
   }
 
-  @ResolveField(() => [EmployeeEntity])
-  employees(@Parent() department: DepartmentEntity) {
+  @ResolveField(() => [Employee])
+  employees(@Parent() department: Department) {
     return this.departmentService.getEmployeesByDepartmentId(department.id);
   }
 }

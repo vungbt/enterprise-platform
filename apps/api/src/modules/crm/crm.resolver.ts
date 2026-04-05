@@ -1,20 +1,21 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, ObjectType, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { JwtAuthGuard } from '../../shared/auth/jwt-auth.guard';
-import { UserEntity } from '../../shared/entities/user.entity';
-import { Paginated, PaginationInput } from '../../shared/graphql/pagination.types';
-import { CaslAbilityGuard } from '../../shared/permissions/casl-ability.guard';
-import { CheckAbility } from '../../shared/permissions/check-ability.decorator';
-import { InvoiceEntity } from '../finance/entities/invoice.entity';
-import { CreateCustomerInput } from './dto/create-customer.input';
-import { UpdateCustomerInput } from './dto/update-customer.input';
-import { CustomerEntity } from './entities/customer.entity';
-import { CrmService } from './services/crm.service';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { CurrentUser } from '@api/shared/auth/current-user.decorator';
+import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
+import { PaginatedCustomer } from '@api/shared/graphql/graphql-pagination';
+import { PaginationInput } from '@api/shared/graphql/pagination.types';
+import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
+import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
+import {
+  Customer,
+  CustomerUncheckedCreateInput,
+  CustomerUncheckedUpdateInput,
+  Invoice,
+  User,
+} from './crm.types';
+import { CrmService } from './crm.service';
 
-@ObjectType()
-export class PaginatedCustomer extends Paginated(CustomerEntity) {}
-
-@Resolver(() => CustomerEntity)
+@Resolver(() => Customer)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class CrmResolver {
   constructor(private readonly crmService: CrmService) {}
@@ -25,21 +26,27 @@ export class CrmResolver {
     return this.crmService.getCustomers(pagination);
   }
 
-  @Query(() => CustomerEntity, { name: 'customer' })
+  @Query(() => Customer, { name: 'customer' })
   @CheckAbility({ action: 'read', subject: 'Customer' })
   customer(@Args('id') id: string) {
     return this.crmService.getCustomerById(id);
   }
 
-  @Mutation(() => CustomerEntity)
+  @Mutation(() => Customer)
   @CheckAbility({ action: 'create', subject: 'Customer' })
-  createCustomer(@Args('input') input: CreateCustomerInput) {
-    return this.crmService.createCustomer(input);
+  createCustomer(
+    @Args('input') input: CustomerUncheckedCreateInput,
+    @CurrentUser() user: { id: string },
+  ) {
+    return this.crmService.createCustomer({ ...input, ownerId: user.id });
   }
 
-  @Mutation(() => CustomerEntity)
+  @Mutation(() => Customer)
   @CheckAbility({ action: 'update', subject: 'Customer' })
-  updateCustomer(@Args('id') id: string, @Args('input') input: UpdateCustomerInput) {
+  updateCustomer(
+    @Args('id') id: string,
+    @Args('input') input: CustomerUncheckedUpdateInput,
+  ) {
     return this.crmService.updateCustomer(id, input);
   }
 
@@ -49,13 +56,13 @@ export class CrmResolver {
     return this.crmService.deleteCustomer(id);
   }
 
-  @ResolveField(() => UserEntity)
-  owner(@Parent() customer: CustomerEntity) {
+  @ResolveField(() => User)
+  owner(@Parent() customer: Customer) {
     return this.crmService.getOwnerForCustomer(customer.ownerId);
   }
 
-  @ResolveField(() => [InvoiceEntity])
-  invoices(@Parent() customer: CustomerEntity) {
+  @ResolveField(() => [Invoice])
+  invoices(@Parent() customer: Customer) {
     return this.crmService.getInvoicesForCustomer(customer.id);
   }
 }

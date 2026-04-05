@@ -1,5 +1,5 @@
 import type { AbilityBuilder } from '@casl/ability';
-import type { AbilityUser, AppAbility } from '../ability.util';
+import type { AbilityUser, AppAbility } from '@api/shared/permissions/ability.util';
 
 export function applyInventoryRules({ can }: AbilityBuilder<AppAbility>, user: AbilityUser) {
   if (user.roles.includes('admin')) {

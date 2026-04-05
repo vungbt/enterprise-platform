@@ -1,0 +1,40 @@
+import { Field } from '@nestjs/graphql';
+import { InputType } from '@nestjs/graphql';
+import { SortOrder } from '../prisma/sort-order.enum';
+
+@InputType()
+export class InventoryItemCountOrderByAggregateInput {
+
+    @Field(() => SortOrder, {nullable:true})
+    id?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    sku?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    name?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    category?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    stock?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    minStock?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    unit?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    price?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    status?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    createdAt?: `${SortOrder}`;
+
+    @Field(() => SortOrder, {nullable:true})
+    updatedAt?: `${SortOrder}`;
+}

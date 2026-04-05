@@ -14,9 +14,6 @@ tmp
 # TypeScript incremental build info
 *.tsbuildinfo
 
-# Auto-generated GraphQL schema
-apps/api/src/schema.gql
-
 # Environment variables (keep .env.example)
 .env
 .env.local

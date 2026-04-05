@@ -1,9 +1,8 @@
 import { Module } from '@nestjs/common';
 import { InventoryResolver } from './inventory.resolver';
-import { InventoryRepository } from './repositories/inventory.repository';
-import { InventoryService } from './services/inventory.service';
+import { InventoryService } from './inventory.service';
 
 @Module({
-  providers: [InventoryRepository, InventoryService, InventoryResolver],
+  providers: [InventoryService, InventoryResolver],
 })
 export class InventoryModule {}

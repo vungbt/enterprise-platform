@@ -1,0 +1,482 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+input AddClubMemberInput {
+  clubId: String!
+  role: ClubMemberRole! = member
+  userId: String!
+}
+
+type AuthPayload {
+  accessToken: String!
+  user: UserEntity!
+}
+
+type ClubEntity {
+  captainName: String
+  createdAt: DateTime!
+  description: String
+  expenses: [ExpenseEntity!]!
+  foundedAt: DateTime
+  fundBalance: Int!
+  id: ID!
+  members: [ClubMemberEntity!]!
+  membersCount: Int!
+  name: String!
+  sport: String!
+  status: ClubStatus!
+  updatedAt: DateTime!
+}
+
+type ClubMemberEntity {
+  club: ClubEntity!
+  clubId: String!
+  joinedAt: DateTime!
+  role: ClubMemberRole!
+  user: UserEntity!
+  userId: String!
+}
+
+enum ClubMemberRole {
+  captain
+  coach
+  member
+}
+
+enum ClubStatus {
+  active
+  inactive
+}
+
+input CreateClubInput {
+  description: String
+  foundedAt: DateTime
+  name: String!
+  sport: String!
+  status: ClubStatus! = active
+}
+
+input CreateCustomerInput {
+  company: String
+  email: String
+  name: String!
+  ownerId: String!
+  phone: String
+  status: CustomerStatus! = active
+}
+
+input CreateDepartmentInput {
+  name: String!
+  parentId: String
+}
+
+input CreateEmployeeInput {
+  code: String!
+  departmentId: String!
+  email: String!
+  hireDate: DateTime!
+  managerId: String
+  name: String!
+  phone: String
+  position: String!
+  status: EmployeeStatus! = active
+  userId: String
+}
+
+input CreateExpenseCategoryInput {
+  description: String
+  name: String!
+}
+
+input CreateExpenseInput {
+  amount: Float!
+  categoryId: String!
+  clubId: String
+  createdById: String!
+  date: DateTime!
+  departmentId: String
+  description: String
+  status: ExpenseStatus! = pending
+  title: String!
+}
+
+input CreateInventoryItemInput {
+  category: String
+  minStock: Int!
+  name: String!
+  price: Float!
+  sku: String!
+  status: InventoryItemStatus! = available
+  stock: Int!
+  unit: String!
+}
+
+input CreateInvoiceInput {
+  amount: Float!
+  code: String!
+  customerId: String
+  dueDate: DateTime
+  issuedAt: DateTime
+  status: InvoiceStatus! = pending
+  tax: Float!
+  total: Float!
+}
+
+type CustomerEntity {
+  company: String
+  createdAt: DateTime!
+  email: String
+  id: ID!
+  invoices: [InvoiceEntity!]!
+  name: String!
+  owner: UserEntity!
+  ownerId: String!
+  phone: String
+  status: CustomerStatus!
+  updatedAt: DateTime!
+}
+
+enum CustomerStatus {
+  active
+  churned
+  inactive
+  prospect
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type DepartmentEntity {
+  children: [DepartmentEntity!]!
+  employees: [EmployeeEntity!]!
+  id: ID!
+  name: String!
+  parent: DepartmentEntity
+  parentId: String
+}
+
+type EmployeeEntity {
+  code: String!
+  createdAt: DateTime!
+  department: DepartmentEntity
+  departmentId: String!
+  email: String!
+  hireDate: DateTime!
+  id: ID!
+  manager: EmployeeEntity
+  managerId: String
+  name: String!
+  phone: String
+  position: String!
+  reports: [EmployeeEntity!]!
+  status: EmployeeStatus!
+  updatedAt: DateTime!
+  userId: String
+}
+
+enum EmployeeStatus {
+  active
+  on_leave
+  resigned
+  terminated
+}
+
+type ExpenseCategoryEntity {
+  createdAt: DateTime!
+  description: String
+  id: ID!
+  name: String!
+  updatedAt: DateTime!
+}
+
+type ExpenseEntity {
+  amount: Float!
+  category: ExpenseCategoryEntity!
+  categoryId: String!
+  club: ClubEntity
+  clubId: String
+  createdAt: DateTime!
+  createdBy: UserEntity!
+  createdById: String!
+  date: DateTime!
+  department: DepartmentEntity
+  departmentId: String
+  description: String
+  id: ID!
+  status: ExpenseStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input ExpenseFilterInput {
+  categoryId: String
+  clubId: String
+  departmentId: String
+  status: ExpenseStatus
+}
+
+enum ExpenseStatus {
+  approved
+  pending
+  reimbursed
+  rejected
+}
+
+type InventoryItemEntity {
+  category: String
+  createdAt: DateTime!
+  id: ID!
+  minStock: Int!
+  name: String!
+  price: Float!
+  sku: String!
+  status: InventoryItemStatus!
+  stock: Int!
+  unit: String!
+  updatedAt: DateTime!
+}
+
+enum InventoryItemStatus {
+  available
+  discontinued
+  low_stock
+  out_of_stock
+}
+
+type InvoiceEntity {
+  amount: Float!
+  code: String!
+  createdAt: DateTime!
+  customer: CustomerEntity
+  customerId: String
+  dueDate: DateTime
+  id: ID!
+  issuedAt: DateTime
+  status: InvoiceStatus!
+  tax: Float!
+  total: Float!
+  updatedAt: DateTime!
+}
+
+enum InvoiceStatus {
+  cancelled
+  draft
+  overdue
+  paid
+  pending
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+type Mutation {
+  addClubMember(input: AddClubMemberInput!): ClubMemberEntity!
+  createClub(input: CreateClubInput!): ClubEntity!
+  createCustomer(input: CreateCustomerInput!): CustomerEntity!
+  createDepartment(input: CreateDepartmentInput!): DepartmentEntity!
+  createEmployee(input: CreateEmployeeInput!): EmployeeEntity!
+  createExpense(input: CreateExpenseInput!): ExpenseEntity!
+  createExpenseCategory(input: CreateExpenseCategoryInput!): ExpenseCategoryEntity!
+  createInventoryItem(input: CreateInventoryItemInput!): InventoryItemEntity!
+  createInvoice(input: CreateInvoiceInput!): InvoiceEntity!
+  deleteClub(id: String!): Boolean!
+  deleteCustomer(id: String!): Boolean!
+  deleteDepartment(id: String!): Boolean!
+  deleteEmployee(id: String!): Boolean!
+  deleteExpense(id: String!): Boolean!
+  deleteExpenseCategory(id: String!): Boolean!
+  deleteInventoryItem(id: String!): Boolean!
+  deleteInvoice(id: String!): Boolean!
+  login(input: LoginInput!): AuthPayload!
+  loginWithOAuth(email: String!, name: String!): AuthPayload!
+  register(input: RegisterInput!): AuthPayload!
+  removeClubMember(clubId: String!, userId: String!): Boolean!
+  updateClub(id: String!, input: UpdateClubInput!): ClubEntity!
+  updateCustomer(id: String!, input: UpdateCustomerInput!): CustomerEntity!
+  updateDepartment(id: String!, input: UpdateDepartmentInput!): DepartmentEntity!
+  updateEmployee(id: String!, input: UpdateEmployeeInput!): EmployeeEntity!
+  updateExpense(id: String!, input: UpdateExpenseInput!): ExpenseEntity!
+  updateExpenseCategory(id: String!, input: UpdateExpenseCategoryInput!): ExpenseCategoryEntity!
+  updateInventoryItem(id: String!, input: UpdateInventoryItemInput!): InventoryItemEntity!
+  updateInvoice(id: String!, input: UpdateInvoiceInput!): InvoiceEntity!
+}
+
+type PaginatedClub {
+  items: [ClubEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedCustomer {
+  items: [CustomerEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedDepartment {
+  items: [DepartmentEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedEmployee {
+  items: [EmployeeEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedExpense {
+  items: [ExpenseEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedInventoryItem {
+  items: [InventoryItemEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+type PaginatedInvoice {
+  items: [InvoiceEntity!]!
+  limit: Int!
+  page: Int!
+  total: Int!
+  totalPages: Int!
+}
+
+input PaginationInput {
+  limit: Int! = 20
+  page: Int! = 1
+}
+
+type Query {
+  candidateUsers: [UserEntity!]!
+  club(id: String!): ClubEntity!
+  clubs(pagination: PaginationInput): PaginatedClub!
+  customer(id: String!): CustomerEntity!
+  customers(pagination: PaginationInput): PaginatedCustomer!
+  department(id: String!): DepartmentEntity!
+  departments(pagination: PaginationInput): PaginatedDepartment!
+  employee(id: String!): EmployeeEntity!
+  employees(pagination: PaginationInput): PaginatedEmployee!
+  expense(id: String!): ExpenseEntity!
+  expenseCategories: [ExpenseCategoryEntity!]!
+  expenses(filter: ExpenseFilterInput, pagination: PaginationInput): PaginatedExpense!
+  inventoryItem(id: String!): InventoryItemEntity!
+  inventoryItems(pagination: PaginationInput): PaginatedInventoryItem!
+  invoice(id: String!): InvoiceEntity!
+  invoices(pagination: PaginationInput): PaginatedInvoice!
+  myAbilities: JSON!
+}
+
+input RegisterInput {
+  email: String!
+  name: String!
+  password: String!
+}
+
+input UpdateClubInput {
+  description: String
+  foundedAt: DateTime
+  name: String
+  sport: String
+  status: ClubStatus
+}
+
+input UpdateCustomerInput {
+  company: String
+  email: String
+  name: String
+  ownerId: String
+  phone: String
+  status: CustomerStatus
+}
+
+input UpdateDepartmentInput {
+  name: String
+  parentId: String
+}
+
+input UpdateEmployeeInput {
+  code: String
+  departmentId: String
+  email: String
+  hireDate: DateTime
+  managerId: String
+  name: String
+  phone: String
+  position: String
+  status: EmployeeStatus
+  userId: String
+}
+
+input UpdateExpenseCategoryInput {
+  description: String
+  name: String
+}
+
+input UpdateExpenseInput {
+  amount: Float
+  categoryId: String
+  clubId: String
+  date: DateTime
+  departmentId: String
+  description: String
+  status: ExpenseStatus
+  title: String
+}
+
+input UpdateInventoryItemInput {
+  category: String
+  minStock: Int
+  name: String
+  price: Float
+  sku: String
+  status: InventoryItemStatus
+  stock: Int
+  unit: String
+}
+
+input UpdateInvoiceInput {
+  amount: Float
+  code: String
+  customerId: String
+  dueDate: DateTime
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+}
+
+type UserEntity {
+  avatar: String
+  createdAt: DateTime!
+  email: String!
+  id: ID!
+  isActive: Boolean!
+  name: String!
+  updatedAt: DateTime!
+}
