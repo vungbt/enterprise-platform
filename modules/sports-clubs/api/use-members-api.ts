@@ -16,6 +16,6 @@ export function useMembersApi() {
   return {
     createMember: (input: AddClubMemberInput) => addClubMemberApi(input, token),
     createUser: (input: RegisterMemberUserInput) => registerMemberUserApi(input, token),
-    deleteMember: (clubId: string, userId: string) => removeClubMemberApi(clubId, userId, token),
+    deleteMember: (memberId: string) => removeClubMemberApi(memberId, token),
   };
 }

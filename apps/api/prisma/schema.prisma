@@ -38,7 +38,6 @@ model User {
   clubMemberships        ClubMember[]
   ownedClubs             Club[]             @relation("ClubOwner")
   expenses               Expense[]
-  fundContributions      FundContribution[] @relation("FundContributor")
   confirmedContributions FundContribution[] @relation("FundContributionConfirmer")
   fundTransactions       FundTransaction[]  @relation("FundTransactionCreator")
 
@@ -250,18 +249,26 @@ model Club {
   @@map("clubs")
 }
 
+// Thành viên CLB trong hệ thống: luôn gắn một User đã đăng ký (một user — tối đa một membership / club).
 model ClubMember {
-  clubId   String
-  userId   String
-  role     ClubMemberRole   @default(member)
-  status   ClubMemberStatus @default(active)
-  joinedAt DateTime         @default(now())
-  leftAt   DateTime?
+  id          String   @id @default(cuid())
+  clubId      String
+  userId      String
+  displayName String
+  email       String?
+  phone       String?
+  note        String?
+  role        ClubMemberRole   @default(member)
+  status      ClubMemberStatus @default(active)
+  joinedAt    DateTime         @default(now())
+  leftAt      DateTime?
 
-  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club              Club               @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fundContributions FundContribution[]
 
-  @@id([clubId, userId])
+  @@unique([clubId, userId])
+  @@index([clubId])
   @@map("club_members")
 }
 
@@ -340,27 +347,27 @@ enum FundContributionStatus {
 }
 
 model FundContribution {
-  id          String                 @id @default(cuid())
-  fundId      String
-  memberId    String
+  id             String                 @id @default(cuid())
+  fundId         String
+  clubMemberId   String
   // month + year thay cho period String de tranh format sai va de query theo date range
-  month       Int? // 1-12; null = dong gop 1 lan (khong theo ky)
-  year        Int? // e.g. 2025
-  amount      Float
-  note        String?
-  paidAt      DateTime
-  status      FundContributionStatus @default(pending)
-  confirmedBy String?
-  createdAt   DateTime               @default(now())
-  updatedAt   DateTime               @updatedAt
+  month          Int? // 1-12; null = dong gop 1 lan (khong theo ky)
+  year           Int? // e.g. 2025
+  amount         Float
+  note           String?
+  paidAt         DateTime
+  status         FundContributionStatus @default(pending)
+  confirmedBy    String?
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
 
-  fund            ClubFund          @relation(fields: [fundId], references: [id], onDelete: Cascade)
-  member          User              @relation("FundContributor", fields: [memberId], references: [id])
-  confirmedByUser User?             @relation("FundContributionConfirmer", fields: [confirmedBy], references: [id])
+  fund            ClubFund   @relation(fields: [fundId], references: [id], onDelete: Cascade)
+  clubMember      ClubMember @relation(fields: [clubMemberId], references: [id], onDelete: Cascade)
+  confirmedByUser User?      @relation("FundContributionConfirmer", fields: [confirmedBy], references: [id])
   transactions    FundTransaction[]
 
-  // Mot thanh vien chi dong 1 lan moi ky (khi ca month va year deu co gia tri)
-  @@unique([fundId, memberId, month, year])
+  // Mot dong member trong CLB chi dong 1 lan moi ky (khi ca month va year deu co gia tri)
+  @@unique([fundId, clubMemberId, month, year])
   @@map("fund_contributions")
 }
 

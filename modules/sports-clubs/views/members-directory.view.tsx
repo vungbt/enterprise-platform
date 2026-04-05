@@ -31,7 +31,7 @@ import { RenderIcon } from '@enterprise/ui/components/icons';
 import { Pagination } from '@enterprise/ui/components/pagination';
 import { usePageFooter } from '@enterprise/ui/layout/footer-context';
 import { useTheme } from '@enterprise/ui/theme/theme-provider';
-import { ClubMemberRole } from '@gql/graphql';
+import { ClubMemberRole, ClubMemberStatus } from '@gql/graphql';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
@@ -41,7 +41,8 @@ type OptionValue = 'existing' | 'new';
 type OptionFieldApi = { form: { state: { values: { option: OptionValue } } } };
 
 type Member = {
-  id: string; // userId is used as row id
+  id: string;
+  userId: string;
   name: string;
   email: string;
   status: MemberStatus;
@@ -49,14 +50,18 @@ type Member = {
   joinedAt: string;
 };
 
+function mapMemberRowStatus(status: ClubMemberStatus): MemberStatus {
+  if (status === ClubMemberStatus.Active) return 'active';
+  return 'inactive';
+}
+
 function mapMembers(input: ClubMember[]): Member[] {
   return input.map((member) => ({
-    id: member.userId,
+    id: member.id,
+    userId: member.userId,
     name: member.user.name,
     email: member.user.email,
-    // Backend currently returns role but not member status yet.
-    // Until ClubMember.status is exposed in GraphQL, treat all as active.
-    status: 'active',
+    status: mapMemberRowStatus(member.status),
     role: member.role,
     joinedAt: new Date(member.joinedAt).toLocaleDateString('en-US'),
   }));
@@ -242,18 +247,18 @@ export function MembersDirectoryView({
         isOpen={Boolean(editingMember)}
         mode="edit"
         clubId={club.id}
-        initialUserId={editingMember?.id}
+        initialUserId={editingMember?.userId ?? ''}
         initialRole={editingMember?.role as ClubMemberRole | undefined}
         candidateUsers={candidateUsers}
         onClose={() => setEditingMember(null)}
         onSubmit={async (payload) => {
           if (!editingMember) return;
-          if (payload.option === 'new') {
+          if (payload.option !== 'existing') {
             toastError('Edit mode only supports existing member role update');
             return;
           }
           // No update mutation yet -> emulate edit via remove + add.
-          await deleteMember(club.id, editingMember.id);
+          await deleteMember(editingMember.id);
           await createMember({
             clubId: payload.clubId,
             userId: payload.userId,
@@ -277,7 +282,7 @@ export function MembersDirectoryView({
         onSubmit={() => {
           if (!deletingMember) return;
           setIsDeleting(true);
-          void deleteMember(club.id, deletingMember.id)
+          void deleteMember(deletingMember.id)
             .then(() => {
               toastSuccess('Member deleted successfully');
               setDeletingMember(null);
@@ -347,7 +352,7 @@ function MemberUpsertModal({
   );
   const form = useAppForm({
     defaultValues: {
-      option: (mode === 'edit' ? 'existing' : 'existing') as 'existing' | 'new',
+      option: 'existing' as OptionValue,
       userId: initialUserId ?? '',
       role: initialRole ?? ClubMemberRole.Member,
       name: '',
@@ -387,7 +392,7 @@ function MemberUpsertModal({
   useEffect(() => {
     if (!isOpen) return;
     form.reset({
-      option: (mode === 'edit' ? 'existing' : 'existing') as 'existing' | 'new',
+      option: 'existing' as OptionValue,
       userId: initialUserId ?? '',
       role: initialRole ?? ClubMemberRole.Member,
       name: '',
@@ -395,7 +400,7 @@ function MemberUpsertModal({
       password: '',
     });
     setSubmitError('');
-  }, [isOpen, initialUserId, initialRole, mode, form.reset]);
+  }, [isOpen, initialUserId, initialRole, form.reset]);
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} className="w-full max-w-lg">
@@ -464,7 +469,7 @@ function MemberUpsertModal({
             {mode === 'create' && (
               <FormField name="option" label="Member source" required>
                 {(field) => (
-                  <RadioButtonGroup<'existing' | 'new'>
+                  <RadioButtonGroup<OptionValue>
                     size="small"
                     color="neutral"
                     value={field.state.value}
@@ -478,7 +483,7 @@ function MemberUpsertModal({
                         name: string;
                         email: string;
                         password: string;
-                        option: 'existing' | 'new';
+                        option: OptionValue;
                       };
 
                       form.reset({

@@ -1,9 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '@api/shared/database/prisma.service';
 import type { PaginationInput } from '@api/shared/graphql/pagination.types';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import type {
-  ClubMemberUncheckedCreateInput,
+  AddClubMemberInput,
   ClubUncheckedCreateInput,
   ClubUncheckedUpdateInput,
 } from './sports-clubs.types';
@@ -67,16 +67,32 @@ export class SportsClubsService {
     return true;
   }
 
-  addClubMember(input: ClubMemberUncheckedCreateInput) {
+  async addClubMember(input: AddClubMemberInput) {
+    const userId = input.userId?.trim();
+    if (!userId) {
+      throw new BadRequestException('userId is required');
+    }
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException(`User with id "${userId}" not found`);
+    }
+    const displayName = input.displayName?.trim() || user.name;
     return this.prisma.clubMember.create({
-      data: input as Prisma.ClubMemberUncheckedCreateInput,
+      data: {
+        clubId: input.clubId,
+        userId,
+        displayName,
+        email: input.email?.trim() || null,
+        phone: input.phone?.trim() || null,
+        note: input.note?.trim() || null,
+        role: input.role ?? 'member',
+        status: input.status ?? 'active',
+      },
     });
   }
 
-  async removeClubMember(clubId: string, userId: string) {
-    await this.prisma.clubMember.delete({
-      where: { clubId_userId: { clubId, userId } },
-    });
+  async removeClubMember(memberId: string) {
+    await this.prisma.clubMember.delete({ where: { id: memberId } });
     return true;
   }
 

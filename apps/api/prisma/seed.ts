@@ -146,17 +146,48 @@ async function main() {
 
   await prisma.clubMember.createMany({
     data: [
-      { clubId: footballClub.id, userId: footballCaptain.id, role: 'captain', status: 'active' },
-      { clubId: footballClub.id, userId: manager.id, role: 'member', status: 'active' },
-      { clubId: badmintonClub.id, userId: badmintonCaptain.id, role: 'captain', status: 'active' },
-      { clubId: badmintonClub.id, userId: staff.id, role: 'member', status: 'active' },
       {
-        clubId: pickleballClub.id,
-        userId: pickleballCaptain.id,
+        clubId: footballClub.id,
+        userId: footballCaptain.id,
+        displayName: 'Bùi Thanh Vững',
         role: 'captain',
         status: 'active',
       },
-      { clubId: pickleballClub.id, userId: admin.id, role: 'member', status: 'active' },
+      {
+        clubId: footballClub.id,
+        userId: manager.id,
+        displayName: 'Manager',
+        role: 'member',
+        status: 'active',
+      },
+      {
+        clubId: badmintonClub.id,
+        userId: badmintonCaptain.id,
+        displayName: 'Nguyễn Trọng Tấn',
+        role: 'captain',
+        status: 'active',
+      },
+      {
+        clubId: badmintonClub.id,
+        userId: staff.id,
+        displayName: 'Staff',
+        role: 'member',
+        status: 'active',
+      },
+      {
+        clubId: pickleballClub.id,
+        userId: pickleballCaptain.id,
+        displayName: 'Phạm Phương Uyên',
+        role: 'captain',
+        status: 'active',
+      },
+      {
+        clubId: pickleballClub.id,
+        userId: admin.id,
+        displayName: 'Admin',
+        role: 'member',
+        status: 'active',
+      },
     ],
   });
 

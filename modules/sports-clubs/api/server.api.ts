@@ -74,12 +74,8 @@ export async function addClubMemberApi(
   return true;
 }
 
-export async function removeClubMemberApi(
-  clubId: string,
-  userId: string,
-  token?: string,
-): Promise<boolean> {
-  const data = await gqlFetch(RemoveClubMemberDocument, { clubId, userId }, token);
+export async function removeClubMemberApi(memberId: string, token?: string): Promise<boolean> {
+  const data = await gqlFetch(RemoveClubMemberDocument, { memberId }, token);
   return data.removeClubMember;
 }
 

@@ -1,21 +1,21 @@
-import { UseGuards } from '@nestjs/common';
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from '@api/shared/auth/current-user.decorator';
 import { JwtAuthGuard } from '@api/shared/auth/jwt-auth.guard';
 import { PaginatedClub } from '@api/shared/graphql/graphql-pagination';
 import { PaginationInput } from '@api/shared/graphql/pagination.types';
 import { CaslAbilityGuard } from '@api/shared/permissions/casl-ability.guard';
 import { CheckAbility } from '@api/shared/permissions/check-ability.decorator';
+import { UseGuards } from '@nestjs/common';
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { SportsClubsService } from './sports-clubs.service';
 import {
+  AddClubMemberInput,
   Club,
   ClubMember,
-  ClubMemberUncheckedCreateInput,
   ClubUncheckedCreateInput,
   ClubUncheckedUpdateInput,
   Expense,
   User,
 } from './sports-clubs.types';
-import { SportsClubsService } from './sports-clubs.service';
 
 @Resolver(() => Club)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
@@ -41,19 +41,13 @@ export class SportsClubsResolver {
 
   @Mutation(() => Club)
   @CheckAbility({ action: 'create', subject: 'Club' })
-  createClub(
-    @Args('input') input: ClubUncheckedCreateInput,
-    @CurrentUser() user: { id: string },
-  ) {
+  createClub(@Args('input') input: ClubUncheckedCreateInput, @CurrentUser() user: { id: string }) {
     return this.sportsClubsService.createClub(input, user.id);
   }
 
   @Mutation(() => Club)
   @CheckAbility({ action: 'update', subject: 'Club' })
-  updateClub(
-    @Args('id') id: string,
-    @Args('input') input: ClubUncheckedUpdateInput,
-  ) {
+  updateClub(@Args('id') id: string, @Args('input') input: ClubUncheckedUpdateInput) {
     return this.sportsClubsService.updateClub(id, input);
   }
 
@@ -65,14 +59,14 @@ export class SportsClubsResolver {
 
   @Mutation(() => ClubMember)
   @CheckAbility({ action: 'create', subject: 'ClubMember' })
-  addClubMember(@Args('input') input: ClubMemberUncheckedCreateInput) {
+  addClubMember(@Args('input') input: AddClubMemberInput) {
     return this.sportsClubsService.addClubMember(input);
   }
 
   @Mutation(() => Boolean)
   @CheckAbility({ action: 'delete', subject: 'ClubMember' })
-  removeClubMember(@Args('clubId') clubId: string, @Args('userId') userId: string) {
-    return this.sportsClubsService.removeClubMember(clubId, userId);
+  removeClubMember(@Args('memberId') memberId: string) {
+    return this.sportsClubsService.removeClubMember(memberId);
   }
 
   @ResolveField(() => [ClubMember])

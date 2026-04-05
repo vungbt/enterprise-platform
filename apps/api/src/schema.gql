@@ -4,7 +4,12 @@
 
 input AddClubMemberInput {
   clubId: String!
-  role: ClubMemberRole! = member
+  displayName: String
+  email: String
+  note: String
+  phone: String
+  role: ClubMemberRole
+  status: ClubMemberStatus
   userId: String!
 }
 
@@ -32,8 +37,15 @@ type ClubEntity {
 type ClubMemberEntity {
   club: ClubEntity!
   clubId: String!
+  displayName: String!
+  email: String
+  id: ID!
   joinedAt: DateTime!
+  leftAt: DateTime
+  note: String
+  phone: String
   role: ClubMemberRole!
+  status: ClubMemberStatus!
   user: UserEntity!
   userId: String!
 }
@@ -42,6 +54,12 @@ enum ClubMemberRole {
   captain
   coach
   member
+}
+
+enum ClubMemberStatus {
+  active
+  banned
+  left
 }
 
 enum ClubStatus {
@@ -300,7 +318,7 @@ type Mutation {
   login(input: LoginInput!): AuthPayload!
   loginWithOAuth(email: String!, name: String!): AuthPayload!
   register(input: RegisterInput!): AuthPayload!
-  removeClubMember(clubId: String!, userId: String!): Boolean!
+  removeClubMember(memberId: String!): Boolean!
   updateClub(id: String!, input: UpdateClubInput!): ClubEntity!
   updateCustomer(id: String!, input: UpdateCustomerInput!): CustomerEntity!
   updateDepartment(id: String!, input: UpdateDepartmentInput!): DepartmentEntity!

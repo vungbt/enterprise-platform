@@ -19,8 +19,13 @@ query GetClubMembers($id: String!) {
     id
     name
     members {
+      id
+      clubId
       userId
+      displayName
+      email
       role
+      status
       joinedAt
       user {
         id
@@ -74,15 +79,19 @@ mutation DeleteClub($id: String!) {
 
 mutation AddClubMember($input: AddClubMemberInput!) {
   addClubMember(input: $input) {
+    id
     clubId
     userId
+    displayName
+    email
     role
+    status
     joinedAt
   }
 }
 
-mutation RemoveClubMember($clubId: String!, $userId: String!) {
-  removeClubMember(clubId: $clubId, userId: $userId)
+mutation RemoveClubMember($memberId: String!) {
+  removeClubMember(memberId: $memberId)
 }
 
 mutation RegisterMemberUser($input: RegisterInput!) {

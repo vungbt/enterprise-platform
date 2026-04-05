@@ -10,7 +10,11 @@
       "options": {
         "cwd": "{workspaceRoot}",
         "parallel": false,
+        "env": {
+          "DATABASE_URL": "postgresql://u:p@localhost:5432/db"
+        },
         "commands": [
+          "pnpm exec prisma generate --schema apps/api/prisma/schema.prisma",
           "pnpm exec tsc --project apps/api/tsconfig.app.json",
           "pnpm exec tsc-alias -p apps/api/tsconfig.app.json",
           "mkdir -p dist/apps/api/prisma && cp apps/api/prisma/schema.prisma dist/apps/api/prisma/schema.prisma"
