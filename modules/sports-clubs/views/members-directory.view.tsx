@@ -31,23 +31,22 @@ import { RenderIcon } from '@enterprise/ui/components/icons';
 import { Pagination } from '@enterprise/ui/components/pagination';
 import { usePageFooter } from '@enterprise/ui/layout/footer-context';
 import { useTheme } from '@enterprise/ui/theme/theme-provider';
-import { ClubMemberRole, ClubMemberStatus } from '@gql/graphql';
+import { ClubMemberStatus } from '@gql/graphql';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 type MemberStatus = 'active' | 'inactive';
 type OptionValue = 'existing' | 'new';
-type OptionFieldApi = { form: { state: { values: { option: OptionValue } } } };
 
 type Member = {
   id: string;
-  userId: string;
+  userId: string | null;
   name: string;
   email: string;
+  phone: string;
   status: MemberStatus;
-  role: string;
-  joinedAt: string;
+  createdAt: string;
 };
 
 function mapMemberRowStatus(status: ClubMemberStatus): MemberStatus {
@@ -58,19 +57,13 @@ function mapMemberRowStatus(status: ClubMemberStatus): MemberStatus {
 function mapMembers(input: ClubMember[]): Member[] {
   return input.map((member) => ({
     id: member.id,
-    userId: member.userId,
-    name: member.user.name,
-    email: member.user.email,
+    userId: member.userId ?? null,
+    name: member.displayName,
+    email: member.email ?? '',
+    phone: member.phone ?? '',
     status: mapMemberRowStatus(member.status),
-    role: member.role,
-    joinedAt: new Date(member.joinedAt).toLocaleDateString('en-US'),
+    createdAt: new Date(member.createdAt).toLocaleDateString('en-US'),
   }));
-}
-
-function roleLabel(role: ClubMemberRole): string {
-  if (role === ClubMemberRole.Captain) return 'Captain';
-  if (role === ClubMemberRole.Coach) return 'Coach';
-  return 'Member';
 }
 
 export function MembersDirectoryView({
@@ -84,11 +77,10 @@ export function MembersDirectoryView({
 }) {
   const router = useRouter();
   const { resolvedTokens } = useTheme();
-  const { createMember, createUser, deleteMember } = useMembersApi();
+  const { createMember, deleteMember } = useMembersApi();
   const [tab, setTab] = useState<'all' | MemberStatus>('all');
   const [page, setPage] = useState(1);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [deletingMember, setDeletingMember] = useState<Member | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const limit = 10;
@@ -115,11 +107,7 @@ export function MembersDirectoryView({
       },
       { header: 'Name', accessorKey: 'name', enableSorting: true },
       { header: 'Email', accessorKey: 'email' },
-      {
-        header: 'Role',
-        accessorKey: 'role',
-        cell: ({ getValue }) => roleLabel(getValue() as ClubMemberRole),
-      },
+      { header: 'Phone', accessorKey: 'phone' },
       {
         header: 'Status',
         accessorKey: 'status',
@@ -133,18 +121,12 @@ export function MembersDirectoryView({
           );
         },
       },
-      { header: 'Join Date', accessorKey: 'joinedAt' },
+      { header: 'Created', accessorKey: 'createdAt' },
       {
         header: 'Actions',
         id: 'actions',
         cell: ({ row }) => (
           <div className="flex gap-1">
-            <Button
-              size="small"
-              variant="ghost"
-              icon="pencil-square"
-              onClick={() => setEditingMember(row.original)}
-            />
             <Button
               size="small"
               variant="ghost"
@@ -192,11 +174,11 @@ export function MembersDirectoryView({
               { value: 'all', label: `All (${members.length})` },
               {
                 value: 'active',
-                label: `Active (${members.filter((member) => member.status === 'active').length})`,
+                label: `Active (${members.filter((m) => m.status === 'active').length})`,
               },
               {
                 value: 'inactive',
-                label: `Inactive (${members.filter((member) => member.status === 'inactive').length})`,
+                label: `Inactive (${members.filter((m) => m.status === 'inactive').length})`,
               },
             ]}
           />
@@ -212,60 +194,15 @@ export function MembersDirectoryView({
         <Table columns={columns} data={pageData} rowKey="id" />
       )}
 
-      <MemberUpsertModal
+      <MemberCreateModal
         isOpen={isCreateOpen}
-        mode="create"
         clubId={club.id}
         candidateUsers={candidateUsers}
         onClose={() => setIsCreateOpen(false)}
         onSubmit={async (payload) => {
-          if (payload.option === 'existing') {
-            await createMember({
-              clubId: payload.clubId,
-              userId: payload.userId,
-              role: payload.role,
-            });
-          } else {
-            const user = await createUser({
-              name: payload.name,
-              email: payload.email,
-              password: payload.password,
-            });
-            await createMember({
-              clubId: payload.clubId,
-              userId: user.id,
-              role: payload.role,
-            });
-          }
+          await createMember(payload);
           toastSuccess('Member added successfully');
           setIsCreateOpen(false);
-          router.refresh();
-        }}
-      />
-
-      <MemberUpsertModal
-        isOpen={Boolean(editingMember)}
-        mode="edit"
-        clubId={club.id}
-        initialUserId={editingMember?.userId ?? ''}
-        initialRole={editingMember?.role as ClubMemberRole | undefined}
-        candidateUsers={candidateUsers}
-        onClose={() => setEditingMember(null)}
-        onSubmit={async (payload) => {
-          if (!editingMember) return;
-          if (payload.option !== 'existing') {
-            toastError('Edit mode only supports existing member role update');
-            return;
-          }
-          // No update mutation yet -> emulate edit via remove + add.
-          await deleteMember(editingMember.id);
-          await createMember({
-            clubId: payload.clubId,
-            userId: payload.userId,
-            role: payload.role,
-          });
-          toastSuccess('Member updated successfully');
-          setEditingMember(null);
           router.refresh();
         }}
       />
@@ -300,47 +237,37 @@ export function MembersDirectoryView({
   );
 }
 
-type MemberUpsertModalProps = {
-  isOpen: boolean;
-  mode: 'create' | 'edit';
+type MemberCreatePayload = {
   clubId: string;
-  initialUserId?: string;
-  initialRole?: ClubMemberRole;
+  userId?: string | null;
+  displayName: string;
+  email?: string | null;
+  phone?: string | null;
+};
+
+type MemberCreateModalProps = {
+  isOpen: boolean;
+  clubId: string;
   candidateUsers: MemberCandidateUser[];
   onClose: () => void;
-  onSubmit: (
-    payload:
-      | { option: 'existing'; clubId: string; userId: string; role: ClubMemberRole }
-      | {
-          option: 'new';
-          clubId: string;
-          role: ClubMemberRole;
-          name: string;
-          email: string;
-          password: string;
-        },
-  ) => Promise<void>;
+  onSubmit: (payload: MemberCreatePayload) => Promise<void>;
 };
 
-const memberUpsertSchema = {
+const memberCreateSchema = {
   option: z.enum(['existing', 'new']),
   userId: z.string(),
-  role: z.enum([ClubMemberRole.Captain, ClubMemberRole.Coach, ClubMemberRole.Member]),
-  name: z.string(),
+  displayName: z.string(),
   email: z.string(),
-  password: z.string(),
+  phone: z.string(),
 };
 
-function MemberUpsertModal({
+function MemberCreateModal({
   isOpen,
-  mode,
   clubId,
-  initialUserId,
-  initialRole,
   candidateUsers,
   onClose,
   onSubmit,
-}: MemberUpsertModalProps) {
+}: MemberCreateModalProps) {
   const [submitError, setSubmitError] = useState('');
   const userOptions: SelectOption[] = useMemo(
     () =>
@@ -350,33 +277,31 @@ function MemberUpsertModal({
       })),
     [candidateUsers],
   );
+
   const form = useAppForm({
     defaultValues: {
       option: 'existing' as OptionValue,
-      userId: initialUserId ?? '',
-      role: initialRole ?? ClubMemberRole.Member,
-      name: '',
+      userId: '',
+      displayName: '',
       email: '',
-      password: '',
+      phone: '',
     },
     onSubmit: async ({ value }) => {
       setSubmitError('');
       try {
         if (value.option === 'existing') {
+          const user = candidateUsers.find((u) => u.id === value.userId.trim());
           await onSubmit({
-            option: 'existing',
             clubId,
             userId: value.userId.trim(),
-            role: value.role,
+            displayName: user?.name ?? '',
           });
         } else {
           await onSubmit({
-            option: 'new',
             clubId,
-            role: value.role,
-            name: value.name.trim(),
-            email: value.email.trim(),
-            password: value.password,
+            displayName: value.displayName.trim(),
+            email: value.email.trim() || null,
+            phone: value.phone.trim() || null,
           });
         }
       } catch (err) {
@@ -384,6 +309,7 @@ function MemberUpsertModal({
       }
     },
   });
+
   const optionValue = useStore(
     form.store,
     (state) => (state as { values: { option: OptionValue } }).values.option,
@@ -391,16 +317,9 @@ function MemberUpsertModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    form.reset({
-      option: 'existing' as OptionValue,
-      userId: initialUserId ?? '',
-      role: initialRole ?? ClubMemberRole.Member,
-      name: '',
-      email: '',
-      password: '',
-    });
+    form.reset({ option: 'existing', userId: '', displayName: '', email: '', phone: '' });
     setSubmitError('');
-  }, [isOpen, initialUserId, initialRole, form.reset]);
+  }, [isOpen, form.reset]);
 
   return (
     <ModalBase isOpen={isOpen} onClose={onClose} className="w-full max-w-lg">
@@ -408,9 +327,7 @@ function MemberUpsertModal({
         <div className="flex items-center justify-between border-b border-neutral-border px-6 py-4">
           <div className="flex items-center gap-2">
             <RenderIcon name="users" className="h-5 w-5 text-primary" />
-            <h3 className="text-base font-semibold text-neutral-black">
-              {mode === 'create' ? 'Add Member' : 'Edit Member'}
-            </h3>
+            <h3 className="text-base font-semibold text-neutral-black">Add Member</h3>
           </div>
           <IconButton
             type="button"
@@ -424,41 +341,35 @@ function MemberUpsertModal({
         </div>
         <Form
           form={form}
-          schema={memberUpsertSchema}
+          schema={memberCreateSchema}
           validators={{
             userId: {
-              onSubmit: ({ value, fieldApi }: { value: unknown; fieldApi: OptionFieldApi }) => {
-                const option = fieldApi.form.state.values.option;
-                if (option === 'existing' && !String(value ?? '').trim()) {
+              onSubmit: ({
+                value,
+                fieldApi,
+              }: {
+                value: unknown;
+                fieldApi: { form: { state: { values: { option: OptionValue } } } };
+              }) => {
+                if (
+                  fieldApi.form.state.values.option === 'existing' &&
+                  !String(value ?? '').trim()
+                ) {
                   return 'Please choose an existing user';
                 }
                 return undefined;
               },
             },
-            name: {
-              onSubmit: ({ value, fieldApi }: { value: unknown; fieldApi: OptionFieldApi }) => {
-                const option = fieldApi.form.state.values.option;
-                if (option === 'new' && !String(value ?? '').trim()) {
-                  return 'Name is required';
-                }
-                return undefined;
-              },
-            },
-            email: {
-              onSubmit: ({ value, fieldApi }: { value: unknown; fieldApi: OptionFieldApi }) => {
-                const option = fieldApi.form.state.values.option;
-                if (option !== 'new') return undefined;
-                const email = String(value ?? '').trim();
-                if (!email) return 'Email is required';
-                if (!z.string().email().safeParse(email).success) return 'Invalid email';
-                return undefined;
-              },
-            },
-            password: {
-              onSubmit: ({ value, fieldApi }: { value: unknown; fieldApi: OptionFieldApi }) => {
-                const option = fieldApi.form.state.values.option;
-                if (option === 'new' && String(value ?? '').length < 6) {
-                  return 'Password must be at least 6 characters';
+            displayName: {
+              onSubmit: ({
+                value,
+                fieldApi,
+              }: {
+                value: unknown;
+                fieldApi: { form: { state: { values: { option: OptionValue } } } };
+              }) => {
+                if (fieldApi.form.state.values.option === 'new' && !String(value ?? '').trim()) {
+                  return 'Display name is required';
                 }
                 return undefined;
               },
@@ -466,124 +377,76 @@ function MemberUpsertModal({
           }}
         >
           <div className="space-y-2 px-6 py-5">
-            {mode === 'create' && (
-              <FormField name="option" label="Member source" required>
-                {(field) => (
-                  <RadioButtonGroup<OptionValue>
-                    size="small"
-                    color="neutral"
-                    value={field.state.value}
-                    onChange={(v) => {
-                      setSubmitError('');
-                      // Reset hidden fields to avoid stale validation blocking submit.
-                      // TanStack Form may keep errors even when fields are unmounted.
-                      const current = form.state.values as unknown as {
-                        userId: string;
-                        role: ClubMemberRole;
-                        name: string;
-                        email: string;
-                        password: string;
-                        option: OptionValue;
-                      };
-
-                      form.reset({
-                        ...current,
-                        option: v,
-                        userId: v === 'existing' ? current.userId : '',
-                        name: v === 'new' ? current.name : '',
-                        email: v === 'new' ? current.email : '',
-                        password: v === 'new' ? current.password : '',
-                      });
-
-                      field.handleBlur();
-                    }}
-                    options={[
-                      { value: 'existing', label: 'Choose existing user' },
-                      { value: 'new', label: 'Create new user' },
-                    ]}
-                  />
-                )}
-              </FormField>
-            )}
-
-            {(() => {
-              const isCreate = mode === 'create';
-              const showExistingUser = mode === 'edit' || (isCreate && optionValue === 'existing');
-              const showNewUserFields = isCreate && optionValue === 'new';
-
-              return (
-                <>
-                  {showExistingUser && (
-                    <FormField name="userId" label="User" required>
-                      {(field) => {
-                        const hasSubmitted = field.form.state.submissionAttempts > 0;
-                        const fieldError =
-                          (field.state.meta.isTouched || hasSubmitted) &&
-                          field.state.meta.errors.length > 0
-                            ? String(field.state.meta.errors[0])
-                            : undefined;
-
-                        return (
-                          <Select
-                            placeholder="Select existing user"
-                            options={userOptions}
-                            isClearable={false}
-                            isSearchable
-                            inputId={field.name}
-                            name={field.name}
-                            value={
-                              userOptions.find((o) => String(o.value) === field.state.value) ?? null
-                            }
-                            onChange={(opt) => {
-                              const o = opt as SelectOption | null;
-                              field.handleChange(o ? String(o.value) : '');
-                            }}
-                            onBlur={() => field.handleBlur()}
-                            isDisabled={mode === 'edit'}
-                            error={fieldError}
-                          />
-                        );
-                      }}
-                    </FormField>
-                  )}
-
-                  {showNewUserFields && (
-                    <>
-                      <FormField name="name" label="Name" required>
-                        <Input size="small" placeholder="Enter full name" />
-                      </FormField>
-
-                      <FormField name="email" label="Email" required>
-                        <Input size="small" type="email" placeholder="Enter email" />
-                      </FormField>
-
-                      <FormField name="password" label="Password" required>
-                        <Input size="small" type="password" placeholder="At least 6 characters" />
-                      </FormField>
-                    </>
-                  )}
-                </>
-              );
-            })()}
-
-            <FormField name="role" label="Role">
+            <FormField name="option" label="Member source" required>
               {(field) => (
-                <RadioButtonGroup<ClubMemberRole>
+                <RadioButtonGroup<OptionValue>
                   size="small"
                   color="neutral"
                   value={field.state.value}
                   onChange={(v) => {
-                    field.handleChange(v);
+                    setSubmitError('');
+                    form.reset({
+                      ...form.state.values,
+                      option: v,
+                      userId: v === 'existing' ? form.state.values.userId : '',
+                      displayName: v === 'new' ? form.state.values.displayName : '',
+                      email: v === 'new' ? form.state.values.email : '',
+                      phone: v === 'new' ? form.state.values.phone : '',
+                    });
                     field.handleBlur();
                   }}
                   options={[
-                    { value: ClubMemberRole.Member, label: 'Member' },
-                    { value: ClubMemberRole.Coach, label: 'Coach' },
-                    { value: ClubMemberRole.Captain, label: 'Captain' },
+                    { value: 'existing', label: 'Select existing user' },
+                    { value: 'new', label: 'Add new member' },
                   ]}
                 />
               )}
             </FormField>
+
+            {optionValue === 'existing' && (
+              <FormField name="userId" label="User" required>
+                {(field) => {
+                  const hasSubmitted = field.form.state.submissionAttempts > 0;
+                  const fieldError =
+                    (field.state.meta.isTouched || hasSubmitted) &&
+                    field.state.meta.errors.length > 0
+                      ? String(field.state.meta.errors[0])
+                      : undefined;
+                  return (
+                    <Select
+                      placeholder="Select existing user"
+                      options={userOptions}
+                      isClearable={false}
+                      isSearchable
+                      inputId={field.name}
+                      name={field.name}
+                      value={userOptions.find((o) => String(o.value) === field.state.value) ?? null}
+                      onChange={(opt) => {
+                        const o = opt as SelectOption | null;
+                        field.handleChange(o ? String(o.value) : '');
+                      }}
+                      onBlur={() => field.handleBlur()}
+                      error={fieldError}
+                    />
+                  );
+                }}
+              </FormField>
+            )}
+
+            {optionValue === 'new' && (
+              <>
+                <FormField name="displayName" label="Display Name" required>
+                  <Input size="small" placeholder="Enter display name" />
+                </FormField>
+                <FormField name="email" label="Email">
+                  <Input size="small" type="email" placeholder="Enter email (optional)" />
+                </FormField>
+                <FormField name="phone" label="Phone">
+                  <Input size="small" placeholder="Enter phone (optional)" />
+                </FormField>
+              </>
+            )}
+
             {submitError && <p className="text-xs text-error">{submitError}</p>}
           </div>
           <div className="flex justify-end gap-2 border-t border-neutral-border px-6 py-4">
@@ -593,7 +456,7 @@ function MemberUpsertModal({
             <FormSubmit form={form}>
               {(isSubmitting) => (
                 <Button type="submit" size="small" loading={isSubmitting}>
-                  {mode === 'create' ? 'Add Member' : 'Save Changes'}
+                  Add Member
                 </Button>
               )}
             </FormSubmit>

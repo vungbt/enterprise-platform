@@ -85,15 +85,22 @@ export class SportsClubsService {
   }
 
   async addClubMember(input: AddClubMemberInput) {
-    const userId = input.userId?.trim();
-    if (!userId) {
-      throw new BadRequestException('userId is required');
+    const userId = input.userId?.trim() || null;
+
+    // If userId provided, verify user exists and default displayName
+    let displayName = input.displayName.trim();
+    if (userId) {
+      const user = await this.prisma.user.findUnique({ where: { id: userId } });
+      if (!user) {
+        throw new NotFoundException(`User with id "${userId}" not found`);
+      }
+      if (!displayName) displayName = user.name;
     }
-    const user = await this.prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException(`User with id "${userId}" not found`);
+
+    if (!displayName) {
+      throw new BadRequestException('displayName is required');
     }
-    const displayName = input.displayName?.trim() || user.name;
+
     return this.prisma.clubMember.create({
       data: {
         clubId: input.clubId,
@@ -102,7 +109,6 @@ export class SportsClubsService {
         email: input.email?.trim() || null,
         phone: input.phone?.trim() || null,
         note: input.note?.trim() || null,
-        role: input.role ?? 'member',
         status: input.status ?? 'active',
       },
     });
@@ -122,11 +128,12 @@ export class SportsClubsService {
   }
 
   async getCaptainName(clubId: string): Promise<string | null> {
+    // With role removed, return the first member's displayName as a fallback
     const member = await this.prisma.clubMember.findFirst({
-      where: { clubId, role: 'captain' },
-      include: { user: { select: { name: true } } },
+      where: { clubId, status: 'active' },
+      orderBy: { createdAt: 'asc' },
     });
-    return member?.user?.name ?? null;
+    return member?.displayName ?? null;
   }
 
   async getFundBalance(clubId: string): Promise<number> {

@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { BaseFilterInput } from '@api/shared/graphql/base-filter.types';
-import { ExpenseStatus } from '@/prisma/graphql/prisma/expense-status.enum';
+import { ExpenseStatus } from '@/prisma/graphql';
 
 export {
   Club,

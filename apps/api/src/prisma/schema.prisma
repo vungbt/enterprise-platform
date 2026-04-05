@@ -4,9 +4,9 @@ generator client {
 
 generator nestgraphql {
   provider = "node node_modules/prisma-nestjs-graphql"
-  output   = "../src/prisma/graphql"
+  output   = "./graphql"
   purgeOutput = true
-  reExport = Single
+  emitSingle = true
   noAtomicOperations = true
   tsConfigFilePath = "apps/api/tsconfig.app.json"
 }
@@ -217,12 +217,6 @@ enum ClubStatus {
   inactive
 }
 
-enum ClubMemberRole {
-  captain
-  coach
-  member
-}
-
 enum ClubMemberStatus {
   active
   left
@@ -249,22 +243,21 @@ model Club {
   @@map("clubs")
 }
 
-// Thành viên CLB trong hệ thống: luôn gắn một User đã đăng ký (một user — tối đa một membership / club).
+// Thành viên CLB: có thể gắn User (optional) hoặc chỉ lưu thông tin liên hệ.
 model ClubMember {
-  id          String   @id @default(cuid())
+  id          String           @id @default(cuid())
   clubId      String
-  userId      String
+  userId      String?
   displayName String
   email       String?
   phone       String?
   note        String?
-  role        ClubMemberRole   @default(member)
   status      ClubMemberStatus @default(active)
-  joinedAt    DateTime         @default(now())
-  leftAt      DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   club              Club               @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User?              @relation(fields: [userId], references: [id], onDelete: SetNull)
   fundContributions FundContribution[]
 
   @@unique([clubId, userId])

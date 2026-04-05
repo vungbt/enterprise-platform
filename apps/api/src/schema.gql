@@ -4,29 +4,38 @@
 
 input AddClubMemberInput {
   clubId: String!
-  displayName: String
+  displayName: String!
   email: String
   note: String
   phone: String
-  role: ClubMemberRole
   status: ClubMemberStatus
-  userId: String!
+  userId: String
 }
 
 type AuthPayload {
   accessToken: String!
-  user: UserEntity!
+  user: User!
 }
 
-type ClubEntity {
+input BoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+type Club {
+  _count: ClubCount!
   captainName: String
   createdAt: DateTime!
+  createdBy: User!
+  createdById: String!
+  deletedAt: DateTime
   description: String
-  expenses: [ExpenseEntity!]!
+  expenses: [Expense!]
   foundedAt: DateTime
+  fund: ClubFund
   fundBalance: Int!
   id: ID!
-  members: [ClubMemberEntity!]!
+  members: [ClubMember!]
   membersCount: Int!
   name: String!
   sport: String!
@@ -34,26 +43,719 @@ type ClubEntity {
   updatedAt: DateTime!
 }
 
-type ClubMemberEntity {
-  club: ClubEntity!
+type ClubCount {
+  expenses: Int!
+  members: Int!
+}
+
+type ClubCountAggregate {
+  _all: Int!
+  createdAt: Int!
+  createdById: Int!
+  deletedAt: Int!
+  description: Int!
+  foundedAt: Int!
+  id: Int!
+  name: Int!
+  sport: Int!
+  status: Int!
+  updatedAt: Int!
+}
+
+input ClubCreateManyCreatedByInput {
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  foundedAt: DateTime
+  id: String
+  name: String!
+  sport: String!
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubCreateManyCreatedByInputEnvelope {
+  data: [ClubCreateManyCreatedByInput!]!
+  skipDuplicates: Boolean
+}
+
+input ClubCreateNestedManyWithoutCreatedByInput {
+  connect: [ClubWhereUniqueInput!]
+  connectOrCreate: [ClubCreateOrConnectWithoutCreatedByInput!]
+  create: [ClubCreateWithoutCreatedByInput!]
+  createMany: ClubCreateManyCreatedByInputEnvelope
+}
+
+input ClubCreateNestedOneWithoutExpensesInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutExpensesInput
+  create: ClubCreateWithoutExpensesInput
+}
+
+input ClubCreateNestedOneWithoutFundInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutFundInput
+  create: ClubCreateWithoutFundInput
+}
+
+input ClubCreateNestedOneWithoutMembersInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutMembersInput
+  create: ClubCreateWithoutMembersInput
+}
+
+input ClubCreateOrConnectWithoutCreatedByInput {
+  create: ClubCreateWithoutCreatedByInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubCreateOrConnectWithoutExpensesInput {
+  create: ClubCreateWithoutExpensesInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubCreateOrConnectWithoutFundInput {
+  create: ClubCreateWithoutFundInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubCreateOrConnectWithoutMembersInput {
+  create: ClubCreateWithoutMembersInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubCreateWithoutCreatedByInput {
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutClubInput
+  foundedAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutClubInput
+  id: String
+  members: ClubMemberCreateNestedManyWithoutClubInput
+  name: String!
+  sport: String!
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubCreateWithoutExpensesInput {
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutOwnedClubsInput!
+  deletedAt: DateTime
+  description: String
+  foundedAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutClubInput
+  id: String
+  members: ClubMemberCreateNestedManyWithoutClubInput
+  name: String!
+  sport: String!
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubCreateWithoutFundInput {
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutOwnedClubsInput!
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutClubInput
+  foundedAt: DateTime
+  id: String
+  members: ClubMemberCreateNestedManyWithoutClubInput
+  name: String!
+  sport: String!
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubCreateWithoutMembersInput {
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutOwnedClubsInput!
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutClubInput
+  foundedAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutClubInput
+  id: String
+  name: String!
+  sport: String!
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+type ClubFund {
+  _count: ClubFundCount!
+  club: Club!
   clubId: String!
+  contributions: [FundContribution!]
+  createdAt: DateTime!
+  deletedAt: DateTime
+  description: String
+  expenses: [Expense!]
+  id: ID!
+  initialBalance: Float!
+  name: String!
+  transactions: [FundTransaction!]
+  updatedAt: DateTime!
+}
+
+type ClubFundAvgAggregate {
+  initialBalance: Float
+}
+
+type ClubFundCount {
+  contributions: Int!
+  expenses: Int!
+  transactions: Int!
+}
+
+type ClubFundCountAggregate {
+  _all: Int!
+  clubId: Int!
+  createdAt: Int!
+  deletedAt: Int!
+  description: Int!
+  id: Int!
+  initialBalance: Int!
+  name: Int!
+  updatedAt: Int!
+}
+
+input ClubFundCreateNestedOneWithoutClubInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutClubInput
+  create: ClubFundCreateWithoutClubInput
+}
+
+input ClubFundCreateNestedOneWithoutContributionsInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutContributionsInput
+  create: ClubFundCreateWithoutContributionsInput
+}
+
+input ClubFundCreateNestedOneWithoutExpensesInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutExpensesInput
+  create: ClubFundCreateWithoutExpensesInput
+}
+
+input ClubFundCreateNestedOneWithoutTransactionsInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutTransactionsInput
+  create: ClubFundCreateWithoutTransactionsInput
+}
+
+input ClubFundCreateOrConnectWithoutClubInput {
+  create: ClubFundCreateWithoutClubInput!
+  where: ClubFundWhereUniqueInput!
+}
+
+input ClubFundCreateOrConnectWithoutContributionsInput {
+  create: ClubFundCreateWithoutContributionsInput!
+  where: ClubFundWhereUniqueInput!
+}
+
+input ClubFundCreateOrConnectWithoutExpensesInput {
+  create: ClubFundCreateWithoutExpensesInput!
+  where: ClubFundWhereUniqueInput!
+}
+
+input ClubFundCreateOrConnectWithoutTransactionsInput {
+  create: ClubFundCreateWithoutTransactionsInput!
+  where: ClubFundWhereUniqueInput!
+}
+
+input ClubFundCreateWithoutClubInput {
+  contributions: FundContributionCreateNestedManyWithoutFundInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutFundInput
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionCreateNestedManyWithoutFundInput
+  updatedAt: DateTime
+}
+
+input ClubFundCreateWithoutContributionsInput {
+  club: ClubCreateNestedOneWithoutFundInput!
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutFundInput
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionCreateNestedManyWithoutFundInput
+  updatedAt: DateTime
+}
+
+input ClubFundCreateWithoutExpensesInput {
+  club: ClubCreateNestedOneWithoutFundInput!
+  contributions: FundContributionCreateNestedManyWithoutFundInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionCreateNestedManyWithoutFundInput
+  updatedAt: DateTime
+}
+
+input ClubFundCreateWithoutTransactionsInput {
+  club: ClubCreateNestedOneWithoutFundInput!
+  contributions: FundContributionCreateNestedManyWithoutFundInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseCreateNestedManyWithoutFundInput
+  id: String
+  initialBalance: Float
+  name: String
+  updatedAt: DateTime
+}
+
+type ClubFundMaxAggregate {
+  clubId: String
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: String
+  initialBalance: Float
+  name: String
+  updatedAt: DateTime
+}
+
+type ClubFundMinAggregate {
+  clubId: String
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: String
+  initialBalance: Float
+  name: String
+  updatedAt: DateTime
+}
+
+input ClubFundNullableScalarRelationFilter {
+  is: ClubFundWhereInput
+  isNot: ClubFundWhereInput
+}
+
+input ClubFundScalarRelationFilter {
+  is: ClubFundWhereInput
+  isNot: ClubFundWhereInput
+}
+
+type ClubFundSumAggregate {
+  initialBalance: Float
+}
+
+input ClubFundUncheckedCreateNestedOneWithoutClubInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutClubInput
+  create: ClubFundCreateWithoutClubInput
+}
+
+input ClubFundUncheckedUpdateOneWithoutClubNestedInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutClubInput
+  create: ClubFundCreateWithoutClubInput
+  delete: ClubFundWhereInput
+  disconnect: ClubFundWhereInput
+  update: ClubFundUpdateToOneWithWhereWithoutClubInput
+  upsert: ClubFundUpsertWithoutClubInput
+}
+
+input ClubFundUpdateOneRequiredWithoutContributionsNestedInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutContributionsInput
+  create: ClubFundCreateWithoutContributionsInput
+  update: ClubFundUpdateToOneWithWhereWithoutContributionsInput
+  upsert: ClubFundUpsertWithoutContributionsInput
+}
+
+input ClubFundUpdateOneRequiredWithoutTransactionsNestedInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutTransactionsInput
+  create: ClubFundCreateWithoutTransactionsInput
+  update: ClubFundUpdateToOneWithWhereWithoutTransactionsInput
+  upsert: ClubFundUpsertWithoutTransactionsInput
+}
+
+input ClubFundUpdateOneWithoutClubNestedInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutClubInput
+  create: ClubFundCreateWithoutClubInput
+  delete: ClubFundWhereInput
+  disconnect: ClubFundWhereInput
+  update: ClubFundUpdateToOneWithWhereWithoutClubInput
+  upsert: ClubFundUpsertWithoutClubInput
+}
+
+input ClubFundUpdateOneWithoutExpensesNestedInput {
+  connect: ClubFundWhereUniqueInput
+  connectOrCreate: ClubFundCreateOrConnectWithoutExpensesInput
+  create: ClubFundCreateWithoutExpensesInput
+  delete: ClubFundWhereInput
+  disconnect: ClubFundWhereInput
+  update: ClubFundUpdateToOneWithWhereWithoutExpensesInput
+  upsert: ClubFundUpsertWithoutExpensesInput
+}
+
+input ClubFundUpdateToOneWithWhereWithoutClubInput {
+  data: ClubFundUpdateWithoutClubInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpdateToOneWithWhereWithoutContributionsInput {
+  data: ClubFundUpdateWithoutContributionsInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpdateToOneWithWhereWithoutExpensesInput {
+  data: ClubFundUpdateWithoutExpensesInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpdateToOneWithWhereWithoutTransactionsInput {
+  data: ClubFundUpdateWithoutTransactionsInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpdateWithoutClubInput {
+  contributions: FundContributionUpdateManyWithoutFundNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutFundNestedInput
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionUpdateManyWithoutFundNestedInput
+  updatedAt: DateTime
+}
+
+input ClubFundUpdateWithoutContributionsInput {
+  club: ClubUpdateOneRequiredWithoutFundNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutFundNestedInput
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionUpdateManyWithoutFundNestedInput
+  updatedAt: DateTime
+}
+
+input ClubFundUpdateWithoutExpensesInput {
+  club: ClubUpdateOneRequiredWithoutFundNestedInput
+  contributions: FundContributionUpdateManyWithoutFundNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  id: String
+  initialBalance: Float
+  name: String
+  transactions: FundTransactionUpdateManyWithoutFundNestedInput
+  updatedAt: DateTime
+}
+
+input ClubFundUpdateWithoutTransactionsInput {
+  club: ClubUpdateOneRequiredWithoutFundNestedInput
+  contributions: FundContributionUpdateManyWithoutFundNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutFundNestedInput
+  id: String
+  initialBalance: Float
+  name: String
+  updatedAt: DateTime
+}
+
+input ClubFundUpsertWithoutClubInput {
+  create: ClubFundCreateWithoutClubInput!
+  update: ClubFundUpdateWithoutClubInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpsertWithoutContributionsInput {
+  create: ClubFundCreateWithoutContributionsInput!
+  update: ClubFundUpdateWithoutContributionsInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpsertWithoutExpensesInput {
+  create: ClubFundCreateWithoutExpensesInput!
+  update: ClubFundUpdateWithoutExpensesInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundUpsertWithoutTransactionsInput {
+  create: ClubFundCreateWithoutTransactionsInput!
+  update: ClubFundUpdateWithoutTransactionsInput!
+  where: ClubFundWhereInput
+}
+
+input ClubFundWhereInput {
+  AND: [ClubFundWhereInput!]
+  NOT: [ClubFundWhereInput!]
+  OR: [ClubFundWhereInput!]
+  club: ClubScalarRelationFilter
+  clubId: StringFilter
+  contributions: FundContributionListRelationFilter
+  createdAt: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  id: StringFilter
+  initialBalance: FloatFilter
+  name: StringFilter
+  transactions: FundTransactionListRelationFilter
+  updatedAt: DateTimeFilter
+}
+
+input ClubFundWhereUniqueInput {
+  AND: [ClubFundWhereInput!]
+  NOT: [ClubFundWhereInput!]
+  OR: [ClubFundWhereInput!]
+  club: ClubScalarRelationFilter
+  clubId: String
+  contributions: FundContributionListRelationFilter
+  createdAt: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  id: String
+  initialBalance: FloatFilter
+  name: StringFilter
+  transactions: FundTransactionListRelationFilter
+  updatedAt: DateTimeFilter
+}
+
+input ClubListRelationFilter {
+  every: ClubWhereInput
+  none: ClubWhereInput
+  some: ClubWhereInput
+}
+
+type ClubMaxAggregate {
+  createdAt: DateTime
+  createdById: String
+  deletedAt: DateTime
+  description: String
+  foundedAt: DateTime
+  id: String
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+type ClubMember {
+  _count: ClubMemberCount!
+  club: Club!
+  clubId: String!
+  createdAt: DateTime!
   displayName: String!
   email: String
+  fundContributions: [FundContribution!]
   id: ID!
-  joinedAt: DateTime!
-  leftAt: DateTime
   note: String
   phone: String
-  role: ClubMemberRole!
   status: ClubMemberStatus!
-  user: UserEntity!
+  updatedAt: DateTime!
+  user: User
+  userId: String
+}
+
+input ClubMemberClubIdUserIdCompoundUniqueInput {
+  clubId: String!
   userId: String!
 }
 
-enum ClubMemberRole {
-  captain
-  coach
-  member
+type ClubMemberCount {
+  fundContributions: Int!
+}
+
+type ClubMemberCountAggregate {
+  _all: Int!
+  clubId: Int!
+  createdAt: Int!
+  displayName: Int!
+  email: Int!
+  id: Int!
+  note: Int!
+  phone: Int!
+  status: Int!
+  updatedAt: Int!
+  userId: Int!
+}
+
+input ClubMemberCreateManyClubInput {
+  createdAt: DateTime
+  displayName: String!
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input ClubMemberCreateManyClubInputEnvelope {
+  data: [ClubMemberCreateManyClubInput!]!
+  skipDuplicates: Boolean
+}
+
+input ClubMemberCreateManyUserInput {
+  clubId: String!
+  createdAt: DateTime
+  displayName: String!
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+}
+
+input ClubMemberCreateManyUserInputEnvelope {
+  data: [ClubMemberCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input ClubMemberCreateNestedManyWithoutClubInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutClubInput!]
+  create: [ClubMemberCreateWithoutClubInput!]
+  createMany: ClubMemberCreateManyClubInputEnvelope
+}
+
+input ClubMemberCreateNestedManyWithoutUserInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutUserInput!]
+  create: [ClubMemberCreateWithoutUserInput!]
+  createMany: ClubMemberCreateManyUserInputEnvelope
+}
+
+input ClubMemberCreateNestedOneWithoutFundContributionsInput {
+  connect: ClubMemberWhereUniqueInput
+  connectOrCreate: ClubMemberCreateOrConnectWithoutFundContributionsInput
+  create: ClubMemberCreateWithoutFundContributionsInput
+}
+
+input ClubMemberCreateOrConnectWithoutClubInput {
+  create: ClubMemberCreateWithoutClubInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberCreateOrConnectWithoutFundContributionsInput {
+  create: ClubMemberCreateWithoutFundContributionsInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberCreateOrConnectWithoutUserInput {
+  create: ClubMemberCreateWithoutUserInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberCreateWithoutClubInput {
+  createdAt: DateTime
+  displayName: String!
+  email: String
+  fundContributions: FundContributionCreateNestedManyWithoutClubMemberInput
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutClubMembershipsInput
+}
+
+input ClubMemberCreateWithoutFundContributionsInput {
+  club: ClubCreateNestedOneWithoutMembersInput!
+  createdAt: DateTime
+  displayName: String!
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutClubMembershipsInput
+}
+
+input ClubMemberCreateWithoutUserInput {
+  club: ClubCreateNestedOneWithoutMembersInput!
+  createdAt: DateTime
+  displayName: String!
+  email: String
+  fundContributions: FundContributionCreateNestedManyWithoutClubMemberInput
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+}
+
+input ClubMemberListRelationFilter {
+  every: ClubMemberWhereInput
+  none: ClubMemberWhereInput
+  some: ClubMemberWhereInput
+}
+
+type ClubMemberMaxAggregate {
+  clubId: String
+  createdAt: DateTime
+  displayName: String
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+type ClubMemberMinAggregate {
+  clubId: String
+  createdAt: DateTime
+  displayName: String
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input ClubMemberScalarRelationFilter {
+  is: ClubMemberWhereInput
+  isNot: ClubMemberWhereInput
+}
+
+input ClubMemberScalarWhereInput {
+  AND: [ClubMemberScalarWhereInput!]
+  NOT: [ClubMemberScalarWhereInput!]
+  OR: [ClubMemberScalarWhereInput!]
+  clubId: StringFilter
+  createdAt: DateTimeFilter
+  displayName: StringFilter
+  email: StringNullableFilter
+  id: StringFilter
+  note: StringNullableFilter
+  phone: StringNullableFilter
+  status: EnumClubMemberStatusFilter
+  updatedAt: DateTimeFilter
+  userId: StringNullableFilter
 }
 
 enum ClubMemberStatus {
@@ -62,97 +764,592 @@ enum ClubMemberStatus {
   left
 }
 
+input ClubMemberUncheckedCreateNestedManyWithoutClubInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutClubInput!]
+  create: [ClubMemberCreateWithoutClubInput!]
+  createMany: ClubMemberCreateManyClubInputEnvelope
+}
+
+input ClubMemberUncheckedUpdateManyWithoutClubNestedInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutClubInput!]
+  create: [ClubMemberCreateWithoutClubInput!]
+  createMany: ClubMemberCreateManyClubInputEnvelope
+  delete: [ClubMemberWhereUniqueInput!]
+  deleteMany: [ClubMemberScalarWhereInput!]
+  disconnect: [ClubMemberWhereUniqueInput!]
+  set: [ClubMemberWhereUniqueInput!]
+  update: [ClubMemberUpdateWithWhereUniqueWithoutClubInput!]
+  updateMany: [ClubMemberUpdateManyWithWhereWithoutClubInput!]
+  upsert: [ClubMemberUpsertWithWhereUniqueWithoutClubInput!]
+}
+
+input ClubMemberUpdateManyMutationInput {
+  createdAt: DateTime
+  displayName: String
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+}
+
+input ClubMemberUpdateManyWithWhereWithoutClubInput {
+  data: ClubMemberUpdateManyMutationInput!
+  where: ClubMemberScalarWhereInput!
+}
+
+input ClubMemberUpdateManyWithWhereWithoutUserInput {
+  data: ClubMemberUpdateManyMutationInput!
+  where: ClubMemberScalarWhereInput!
+}
+
+input ClubMemberUpdateManyWithoutClubNestedInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutClubInput!]
+  create: [ClubMemberCreateWithoutClubInput!]
+  createMany: ClubMemberCreateManyClubInputEnvelope
+  delete: [ClubMemberWhereUniqueInput!]
+  deleteMany: [ClubMemberScalarWhereInput!]
+  disconnect: [ClubMemberWhereUniqueInput!]
+  set: [ClubMemberWhereUniqueInput!]
+  update: [ClubMemberUpdateWithWhereUniqueWithoutClubInput!]
+  updateMany: [ClubMemberUpdateManyWithWhereWithoutClubInput!]
+  upsert: [ClubMemberUpsertWithWhereUniqueWithoutClubInput!]
+}
+
+input ClubMemberUpdateManyWithoutUserNestedInput {
+  connect: [ClubMemberWhereUniqueInput!]
+  connectOrCreate: [ClubMemberCreateOrConnectWithoutUserInput!]
+  create: [ClubMemberCreateWithoutUserInput!]
+  createMany: ClubMemberCreateManyUserInputEnvelope
+  delete: [ClubMemberWhereUniqueInput!]
+  deleteMany: [ClubMemberScalarWhereInput!]
+  disconnect: [ClubMemberWhereUniqueInput!]
+  set: [ClubMemberWhereUniqueInput!]
+  update: [ClubMemberUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [ClubMemberUpdateManyWithWhereWithoutUserInput!]
+  upsert: [ClubMemberUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ClubMemberUpdateOneRequiredWithoutFundContributionsNestedInput {
+  connect: ClubMemberWhereUniqueInput
+  connectOrCreate: ClubMemberCreateOrConnectWithoutFundContributionsInput
+  create: ClubMemberCreateWithoutFundContributionsInput
+  update: ClubMemberUpdateToOneWithWhereWithoutFundContributionsInput
+  upsert: ClubMemberUpsertWithoutFundContributionsInput
+}
+
+input ClubMemberUpdateToOneWithWhereWithoutFundContributionsInput {
+  data: ClubMemberUpdateWithoutFundContributionsInput!
+  where: ClubMemberWhereInput
+}
+
+input ClubMemberUpdateWithWhereUniqueWithoutClubInput {
+  data: ClubMemberUpdateWithoutClubInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberUpdateWithWhereUniqueWithoutUserInput {
+  data: ClubMemberUpdateWithoutUserInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberUpdateWithoutClubInput {
+  createdAt: DateTime
+  displayName: String
+  email: String
+  fundContributions: FundContributionUpdateManyWithoutClubMemberNestedInput
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  user: UserUpdateOneWithoutClubMembershipsNestedInput
+}
+
+input ClubMemberUpdateWithoutFundContributionsInput {
+  club: ClubUpdateOneRequiredWithoutMembersNestedInput
+  createdAt: DateTime
+  displayName: String
+  email: String
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+  user: UserUpdateOneWithoutClubMembershipsNestedInput
+}
+
+input ClubMemberUpdateWithoutUserInput {
+  club: ClubUpdateOneRequiredWithoutMembersNestedInput
+  createdAt: DateTime
+  displayName: String
+  email: String
+  fundContributions: FundContributionUpdateManyWithoutClubMemberNestedInput
+  id: String
+  note: String
+  phone: String
+  status: ClubMemberStatus
+  updatedAt: DateTime
+}
+
+input ClubMemberUpsertWithWhereUniqueWithoutClubInput {
+  create: ClubMemberCreateWithoutClubInput!
+  update: ClubMemberUpdateWithoutClubInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberUpsertWithWhereUniqueWithoutUserInput {
+  create: ClubMemberCreateWithoutUserInput!
+  update: ClubMemberUpdateWithoutUserInput!
+  where: ClubMemberWhereUniqueInput!
+}
+
+input ClubMemberUpsertWithoutFundContributionsInput {
+  create: ClubMemberCreateWithoutFundContributionsInput!
+  update: ClubMemberUpdateWithoutFundContributionsInput!
+  where: ClubMemberWhereInput
+}
+
+input ClubMemberWhereInput {
+  AND: [ClubMemberWhereInput!]
+  NOT: [ClubMemberWhereInput!]
+  OR: [ClubMemberWhereInput!]
+  club: ClubScalarRelationFilter
+  clubId: StringFilter
+  createdAt: DateTimeFilter
+  displayName: StringFilter
+  email: StringNullableFilter
+  fundContributions: FundContributionListRelationFilter
+  id: StringFilter
+  note: StringNullableFilter
+  phone: StringNullableFilter
+  status: EnumClubMemberStatusFilter
+  updatedAt: DateTimeFilter
+  user: UserNullableScalarRelationFilter
+  userId: StringNullableFilter
+}
+
+input ClubMemberWhereUniqueInput {
+  AND: [ClubMemberWhereInput!]
+  NOT: [ClubMemberWhereInput!]
+  OR: [ClubMemberWhereInput!]
+  club: ClubScalarRelationFilter
+  clubId: StringFilter
+  clubId_userId: ClubMemberClubIdUserIdCompoundUniqueInput
+  createdAt: DateTimeFilter
+  displayName: StringFilter
+  email: StringNullableFilter
+  fundContributions: FundContributionListRelationFilter
+  id: String
+  note: StringNullableFilter
+  phone: StringNullableFilter
+  status: EnumClubMemberStatusFilter
+  updatedAt: DateTimeFilter
+  user: UserNullableScalarRelationFilter
+  userId: StringNullableFilter
+}
+
+type ClubMinAggregate {
+  createdAt: DateTime
+  createdById: String
+  deletedAt: DateTime
+  description: String
+  foundedAt: DateTime
+  id: String
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubNullableScalarRelationFilter {
+  is: ClubWhereInput
+  isNot: ClubWhereInput
+}
+
+input ClubScalarRelationFilter {
+  is: ClubWhereInput
+  isNot: ClubWhereInput
+}
+
+input ClubScalarWhereInput {
+  AND: [ClubScalarWhereInput!]
+  NOT: [ClubScalarWhereInput!]
+  OR: [ClubScalarWhereInput!]
+  createdAt: DateTimeFilter
+  createdById: StringFilter
+  deletedAt: DateTimeNullableFilter
+  description: StringNullableFilter
+  foundedAt: DateTimeNullableFilter
+  id: StringFilter
+  name: StringFilter
+  sport: StringFilter
+  status: EnumClubStatusFilter
+  updatedAt: DateTimeFilter
+}
+
 enum ClubStatus {
   active
   inactive
 }
 
-input CreateClubInput {
+input ClubUncheckedCreateInput {
+  createdAt: DateTime
+  createdById: String!
+  deletedAt: DateTime
   description: String
+  expenses: ExpenseUncheckedCreateNestedManyWithoutClubInput
   foundedAt: DateTime
+  fund: ClubFundUncheckedCreateNestedOneWithoutClubInput
+  id: String
+  members: ClubMemberUncheckedCreateNestedManyWithoutClubInput
   name: String!
   sport: String!
-  status: ClubStatus! = active
+  status: ClubStatus
+  updatedAt: DateTime
 }
 
-input CreateCustomerInput {
-  company: String
-  email: String
-  name: String!
-  ownerId: String!
-  phone: String
-  status: CustomerStatus! = active
-}
-
-input CreateDepartmentInput {
-  name: String!
-  parentId: String
-}
-
-input CreateEmployeeInput {
-  code: String!
-  departmentId: String!
-  email: String!
-  hireDate: DateTime!
-  managerId: String
-  name: String!
-  phone: String
-  position: String!
-  status: EmployeeStatus! = active
-  userId: String
-}
-
-input CreateExpenseCategoryInput {
+input ClubUncheckedUpdateInput {
+  createdAt: DateTime
+  createdById: String
+  deletedAt: DateTime
   description: String
-  name: String!
+  expenses: ExpenseUncheckedUpdateManyWithoutClubNestedInput
+  foundedAt: DateTime
+  fund: ClubFundUncheckedUpdateOneWithoutClubNestedInput
+  id: String
+  members: ClubMemberUncheckedUpdateManyWithoutClubNestedInput
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
 }
 
-input CreateExpenseInput {
-  amount: Float!
-  categoryId: String!
-  clubId: String
-  createdById: String!
-  date: DateTime!
-  departmentId: String
+input ClubUpdateManyMutationInput {
+  createdAt: DateTime
+  deletedAt: DateTime
   description: String
-  status: ExpenseStatus! = pending
-  title: String!
+  foundedAt: DateTime
+  id: String
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
 }
 
-input CreateInventoryItemInput {
-  category: String
-  minStock: Int!
-  name: String!
-  price: Float!
-  sku: String!
-  status: InventoryItemStatus! = available
-  stock: Int!
-  unit: String!
+input ClubUpdateManyWithWhereWithoutCreatedByInput {
+  data: ClubUpdateManyMutationInput!
+  where: ClubScalarWhereInput!
 }
 
-input CreateInvoiceInput {
-  amount: Float!
-  code: String!
-  customerId: String
-  dueDate: DateTime
-  issuedAt: DateTime
-  status: InvoiceStatus! = pending
-  tax: Float!
-  total: Float!
+input ClubUpdateManyWithoutCreatedByNestedInput {
+  connect: [ClubWhereUniqueInput!]
+  connectOrCreate: [ClubCreateOrConnectWithoutCreatedByInput!]
+  create: [ClubCreateWithoutCreatedByInput!]
+  createMany: ClubCreateManyCreatedByInputEnvelope
+  delete: [ClubWhereUniqueInput!]
+  deleteMany: [ClubScalarWhereInput!]
+  disconnect: [ClubWhereUniqueInput!]
+  set: [ClubWhereUniqueInput!]
+  update: [ClubUpdateWithWhereUniqueWithoutCreatedByInput!]
+  updateMany: [ClubUpdateManyWithWhereWithoutCreatedByInput!]
+  upsert: [ClubUpsertWithWhereUniqueWithoutCreatedByInput!]
 }
 
-type CustomerEntity {
+input ClubUpdateOneRequiredWithoutFundNestedInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutFundInput
+  create: ClubCreateWithoutFundInput
+  update: ClubUpdateToOneWithWhereWithoutFundInput
+  upsert: ClubUpsertWithoutFundInput
+}
+
+input ClubUpdateOneRequiredWithoutMembersNestedInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutMembersInput
+  create: ClubCreateWithoutMembersInput
+  update: ClubUpdateToOneWithWhereWithoutMembersInput
+  upsert: ClubUpsertWithoutMembersInput
+}
+
+input ClubUpdateOneWithoutExpensesNestedInput {
+  connect: ClubWhereUniqueInput
+  connectOrCreate: ClubCreateOrConnectWithoutExpensesInput
+  create: ClubCreateWithoutExpensesInput
+  delete: ClubWhereInput
+  disconnect: ClubWhereInput
+  update: ClubUpdateToOneWithWhereWithoutExpensesInput
+  upsert: ClubUpsertWithoutExpensesInput
+}
+
+input ClubUpdateToOneWithWhereWithoutExpensesInput {
+  data: ClubUpdateWithoutExpensesInput!
+  where: ClubWhereInput
+}
+
+input ClubUpdateToOneWithWhereWithoutFundInput {
+  data: ClubUpdateWithoutFundInput!
+  where: ClubWhereInput
+}
+
+input ClubUpdateToOneWithWhereWithoutMembersInput {
+  data: ClubUpdateWithoutMembersInput!
+  where: ClubWhereInput
+}
+
+input ClubUpdateWithWhereUniqueWithoutCreatedByInput {
+  data: ClubUpdateWithoutCreatedByInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubUpdateWithoutCreatedByInput {
+  createdAt: DateTime
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutClubNestedInput
+  foundedAt: DateTime
+  fund: ClubFundUpdateOneWithoutClubNestedInput
+  id: String
+  members: ClubMemberUpdateManyWithoutClubNestedInput
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubUpdateWithoutExpensesInput {
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutOwnedClubsNestedInput
+  deletedAt: DateTime
+  description: String
+  foundedAt: DateTime
+  fund: ClubFundUpdateOneWithoutClubNestedInput
+  id: String
+  members: ClubMemberUpdateManyWithoutClubNestedInput
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubUpdateWithoutFundInput {
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutOwnedClubsNestedInput
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutClubNestedInput
+  foundedAt: DateTime
+  id: String
+  members: ClubMemberUpdateManyWithoutClubNestedInput
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubUpdateWithoutMembersInput {
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutOwnedClubsNestedInput
+  deletedAt: DateTime
+  description: String
+  expenses: ExpenseUpdateManyWithoutClubNestedInput
+  foundedAt: DateTime
+  fund: ClubFundUpdateOneWithoutClubNestedInput
+  id: String
+  name: String
+  sport: String
+  status: ClubStatus
+  updatedAt: DateTime
+}
+
+input ClubUpsertWithWhereUniqueWithoutCreatedByInput {
+  create: ClubCreateWithoutCreatedByInput!
+  update: ClubUpdateWithoutCreatedByInput!
+  where: ClubWhereUniqueInput!
+}
+
+input ClubUpsertWithoutExpensesInput {
+  create: ClubCreateWithoutExpensesInput!
+  update: ClubUpdateWithoutExpensesInput!
+  where: ClubWhereInput
+}
+
+input ClubUpsertWithoutFundInput {
+  create: ClubCreateWithoutFundInput!
+  update: ClubUpdateWithoutFundInput!
+  where: ClubWhereInput
+}
+
+input ClubUpsertWithoutMembersInput {
+  create: ClubCreateWithoutMembersInput!
+  update: ClubUpdateWithoutMembersInput!
+  where: ClubWhereInput
+}
+
+input ClubWhereInput {
+  AND: [ClubWhereInput!]
+  NOT: [ClubWhereInput!]
+  OR: [ClubWhereInput!]
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  deletedAt: DateTimeNullableFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  foundedAt: DateTimeNullableFilter
+  fund: ClubFundNullableScalarRelationFilter
+  id: StringFilter
+  members: ClubMemberListRelationFilter
+  name: StringFilter
+  sport: StringFilter
+  status: EnumClubStatusFilter
+  updatedAt: DateTimeFilter
+}
+
+input ClubWhereUniqueInput {
+  AND: [ClubWhereInput!]
+  NOT: [ClubWhereInput!]
+  OR: [ClubWhereInput!]
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  deletedAt: DateTimeNullableFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  foundedAt: DateTimeNullableFilter
+  fund: ClubFundNullableScalarRelationFilter
+  id: String
+  members: ClubMemberListRelationFilter
+  name: StringFilter
+  sport: StringFilter
+  status: EnumClubStatusFilter
+  updatedAt: DateTimeFilter
+}
+
+type Customer {
+  _count: CustomerCount!
   company: String
   createdAt: DateTime!
   email: String
   id: ID!
-  invoices: [InvoiceEntity!]!
+  invoices: [Invoice!]
   name: String!
-  owner: UserEntity!
+  owner: User!
   ownerId: String!
   phone: String
   status: CustomerStatus!
   updatedAt: DateTime!
+}
+
+type CustomerCount {
+  invoices: Int!
+}
+
+type CustomerCountAggregate {
+  _all: Int!
+  company: Int!
+  createdAt: Int!
+  email: Int!
+  id: Int!
+  name: Int!
+  ownerId: Int!
+  phone: Int!
+  status: Int!
+  updatedAt: Int!
+}
+
+input CustomerCreateManyOwnerInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  name: String!
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerCreateManyOwnerInputEnvelope {
+  data: [CustomerCreateManyOwnerInput!]!
+  skipDuplicates: Boolean
+}
+
+input CustomerCreateNestedManyWithoutOwnerInput {
+  connect: [CustomerWhereUniqueInput!]
+  connectOrCreate: [CustomerCreateOrConnectWithoutOwnerInput!]
+  create: [CustomerCreateWithoutOwnerInput!]
+  createMany: CustomerCreateManyOwnerInputEnvelope
+}
+
+input CustomerCreateOrConnectWithoutOwnerInput {
+  create: CustomerCreateWithoutOwnerInput!
+  where: CustomerWhereUniqueInput!
+}
+
+input CustomerCreateWithoutOwnerInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  invoices: InvoiceCreateNestedManyWithoutCustomerInput
+  name: String!
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerListRelationFilter {
+  every: CustomerWhereInput
+  none: CustomerWhereInput
+  some: CustomerWhereInput
+}
+
+type CustomerMaxAggregate {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  name: String
+  ownerId: String
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+type CustomerMinAggregate {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  name: String
+  ownerId: String
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerNullableScalarRelationFilter {
+  is: CustomerWhereInput
+  isNot: CustomerWhereInput
+}
+
+input CustomerScalarWhereInput {
+  AND: [CustomerScalarWhereInput!]
+  NOT: [CustomerScalarWhereInput!]
+  OR: [CustomerScalarWhereInput!]
+  company: StringNullableFilter
+  createdAt: DateTimeFilter
+  email: StringNullableFilter
+  id: StringFilter
+  name: StringFilter
+  ownerId: StringFilter
+  phone: StringNullableFilter
+  status: EnumCustomerStatusFilter
+  updatedAt: DateTimeFilter
 }
 
 enum CustomerStatus {
@@ -162,37 +1359,760 @@ enum CustomerStatus {
   prospect
 }
 
+input CustomerUncheckedCreateInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  invoices: InvoiceUncheckedCreateNestedManyWithoutCustomerInput
+  name: String!
+  ownerId: String!
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerUncheckedUpdateInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  invoices: InvoiceUncheckedUpdateManyWithoutCustomerNestedInput
+  name: String
+  ownerId: String
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerUpdateManyMutationInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  name: String
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerUpdateManyWithWhereWithoutOwnerInput {
+  data: CustomerUpdateManyMutationInput!
+  where: CustomerScalarWhereInput!
+}
+
+input CustomerUpdateManyWithoutOwnerNestedInput {
+  connect: [CustomerWhereUniqueInput!]
+  connectOrCreate: [CustomerCreateOrConnectWithoutOwnerInput!]
+  create: [CustomerCreateWithoutOwnerInput!]
+  createMany: CustomerCreateManyOwnerInputEnvelope
+  delete: [CustomerWhereUniqueInput!]
+  deleteMany: [CustomerScalarWhereInput!]
+  disconnect: [CustomerWhereUniqueInput!]
+  set: [CustomerWhereUniqueInput!]
+  update: [CustomerUpdateWithWhereUniqueWithoutOwnerInput!]
+  updateMany: [CustomerUpdateManyWithWhereWithoutOwnerInput!]
+  upsert: [CustomerUpsertWithWhereUniqueWithoutOwnerInput!]
+}
+
+input CustomerUpdateWithWhereUniqueWithoutOwnerInput {
+  data: CustomerUpdateWithoutOwnerInput!
+  where: CustomerWhereUniqueInput!
+}
+
+input CustomerUpdateWithoutOwnerInput {
+  company: String
+  createdAt: DateTime
+  email: String
+  id: String
+  invoices: InvoiceUpdateManyWithoutCustomerNestedInput
+  name: String
+  phone: String
+  status: CustomerStatus
+  updatedAt: DateTime
+}
+
+input CustomerUpsertWithWhereUniqueWithoutOwnerInput {
+  create: CustomerCreateWithoutOwnerInput!
+  update: CustomerUpdateWithoutOwnerInput!
+  where: CustomerWhereUniqueInput!
+}
+
+input CustomerWhereInput {
+  AND: [CustomerWhereInput!]
+  NOT: [CustomerWhereInput!]
+  OR: [CustomerWhereInput!]
+  company: StringNullableFilter
+  createdAt: DateTimeFilter
+  email: StringNullableFilter
+  id: StringFilter
+  invoices: InvoiceListRelationFilter
+  name: StringFilter
+  owner: UserScalarRelationFilter
+  ownerId: StringFilter
+  phone: StringNullableFilter
+  status: EnumCustomerStatusFilter
+  updatedAt: DateTimeFilter
+}
+
+input CustomerWhereUniqueInput {
+  AND: [CustomerWhereInput!]
+  NOT: [CustomerWhereInput!]
+  OR: [CustomerWhereInput!]
+  company: StringNullableFilter
+  createdAt: DateTimeFilter
+  email: StringNullableFilter
+  id: String
+  invoices: InvoiceListRelationFilter
+  name: StringFilter
+  owner: UserScalarRelationFilter
+  ownerId: StringFilter
+  phone: StringNullableFilter
+  status: EnumCustomerStatusFilter
+  updatedAt: DateTimeFilter
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
 scalar DateTime
 
-type DepartmentEntity {
-  children: [DepartmentEntity!]!
-  employees: [EmployeeEntity!]!
+input DateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
+type Department {
+  _count: DepartmentCount!
+  children: [Department!]
+  employees: [Employee!]
+  expenses: [Expense!]
   id: ID!
   name: String!
-  parent: DepartmentEntity
+  parent: Department
   parentId: String
 }
 
-type EmployeeEntity {
+type DepartmentCount {
+  children: Int!
+  employees: Int!
+  expenses: Int!
+}
+
+type DepartmentCountAggregate {
+  _all: Int!
+  id: Int!
+  name: Int!
+  parentId: Int!
+}
+
+input DepartmentCreateManyParentInput {
+  id: String
+  name: String!
+}
+
+input DepartmentCreateManyParentInputEnvelope {
+  data: [DepartmentCreateManyParentInput!]!
+  skipDuplicates: Boolean
+}
+
+input DepartmentCreateNestedManyWithoutParentInput {
+  connect: [DepartmentWhereUniqueInput!]
+  connectOrCreate: [DepartmentCreateOrConnectWithoutParentInput!]
+  create: [DepartmentCreateWithoutParentInput!]
+  createMany: DepartmentCreateManyParentInputEnvelope
+}
+
+input DepartmentCreateNestedOneWithoutChildrenInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutChildrenInput
+  create: DepartmentCreateWithoutChildrenInput
+}
+
+input DepartmentCreateNestedOneWithoutEmployeesInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutEmployeesInput
+  create: DepartmentCreateWithoutEmployeesInput
+}
+
+input DepartmentCreateNestedOneWithoutExpensesInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutExpensesInput
+  create: DepartmentCreateWithoutExpensesInput
+}
+
+input DepartmentCreateOrConnectWithoutChildrenInput {
+  create: DepartmentCreateWithoutChildrenInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentCreateOrConnectWithoutEmployeesInput {
+  create: DepartmentCreateWithoutEmployeesInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentCreateOrConnectWithoutExpensesInput {
+  create: DepartmentCreateWithoutExpensesInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentCreateOrConnectWithoutParentInput {
+  create: DepartmentCreateWithoutParentInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentCreateWithoutChildrenInput {
+  employees: EmployeeCreateNestedManyWithoutDepartmentInput
+  expenses: ExpenseCreateNestedManyWithoutDepartmentInput
+  id: String
+  name: String!
+  parent: DepartmentCreateNestedOneWithoutChildrenInput
+}
+
+input DepartmentCreateWithoutEmployeesInput {
+  children: DepartmentCreateNestedManyWithoutParentInput
+  expenses: ExpenseCreateNestedManyWithoutDepartmentInput
+  id: String
+  name: String!
+  parent: DepartmentCreateNestedOneWithoutChildrenInput
+}
+
+input DepartmentCreateWithoutExpensesInput {
+  children: DepartmentCreateNestedManyWithoutParentInput
+  employees: EmployeeCreateNestedManyWithoutDepartmentInput
+  id: String
+  name: String!
+  parent: DepartmentCreateNestedOneWithoutChildrenInput
+}
+
+input DepartmentCreateWithoutParentInput {
+  children: DepartmentCreateNestedManyWithoutParentInput
+  employees: EmployeeCreateNestedManyWithoutDepartmentInput
+  expenses: ExpenseCreateNestedManyWithoutDepartmentInput
+  id: String
+  name: String!
+}
+
+input DepartmentListRelationFilter {
+  every: DepartmentWhereInput
+  none: DepartmentWhereInput
+  some: DepartmentWhereInput
+}
+
+type DepartmentMaxAggregate {
+  id: String
+  name: String
+  parentId: String
+}
+
+type DepartmentMinAggregate {
+  id: String
+  name: String
+  parentId: String
+}
+
+input DepartmentNullableScalarRelationFilter {
+  is: DepartmentWhereInput
+  isNot: DepartmentWhereInput
+}
+
+input DepartmentScalarRelationFilter {
+  is: DepartmentWhereInput
+  isNot: DepartmentWhereInput
+}
+
+input DepartmentScalarWhereInput {
+  AND: [DepartmentScalarWhereInput!]
+  NOT: [DepartmentScalarWhereInput!]
+  OR: [DepartmentScalarWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  parentId: StringNullableFilter
+}
+
+input DepartmentUncheckedCreateInput {
+  children: DepartmentUncheckedCreateNestedManyWithoutParentInput
+  employees: EmployeeUncheckedCreateNestedManyWithoutDepartmentInput
+  expenses: ExpenseUncheckedCreateNestedManyWithoutDepartmentInput
+  id: String
+  name: String!
+  parentId: String
+}
+
+input DepartmentUncheckedCreateNestedManyWithoutParentInput {
+  connect: [DepartmentWhereUniqueInput!]
+  connectOrCreate: [DepartmentCreateOrConnectWithoutParentInput!]
+  create: [DepartmentCreateWithoutParentInput!]
+  createMany: DepartmentCreateManyParentInputEnvelope
+}
+
+input DepartmentUncheckedUpdateInput {
+  children: DepartmentUncheckedUpdateManyWithoutParentNestedInput
+  employees: EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput
+  expenses: ExpenseUncheckedUpdateManyWithoutDepartmentNestedInput
+  id: String
+  name: String
+  parentId: String
+}
+
+input DepartmentUncheckedUpdateManyWithoutParentNestedInput {
+  connect: [DepartmentWhereUniqueInput!]
+  connectOrCreate: [DepartmentCreateOrConnectWithoutParentInput!]
+  create: [DepartmentCreateWithoutParentInput!]
+  createMany: DepartmentCreateManyParentInputEnvelope
+  delete: [DepartmentWhereUniqueInput!]
+  deleteMany: [DepartmentScalarWhereInput!]
+  disconnect: [DepartmentWhereUniqueInput!]
+  set: [DepartmentWhereUniqueInput!]
+  update: [DepartmentUpdateWithWhereUniqueWithoutParentInput!]
+  updateMany: [DepartmentUpdateManyWithWhereWithoutParentInput!]
+  upsert: [DepartmentUpsertWithWhereUniqueWithoutParentInput!]
+}
+
+input DepartmentUpdateManyMutationInput {
+  id: String
+  name: String
+}
+
+input DepartmentUpdateManyWithWhereWithoutParentInput {
+  data: DepartmentUpdateManyMutationInput!
+  where: DepartmentScalarWhereInput!
+}
+
+input DepartmentUpdateManyWithoutParentNestedInput {
+  connect: [DepartmentWhereUniqueInput!]
+  connectOrCreate: [DepartmentCreateOrConnectWithoutParentInput!]
+  create: [DepartmentCreateWithoutParentInput!]
+  createMany: DepartmentCreateManyParentInputEnvelope
+  delete: [DepartmentWhereUniqueInput!]
+  deleteMany: [DepartmentScalarWhereInput!]
+  disconnect: [DepartmentWhereUniqueInput!]
+  set: [DepartmentWhereUniqueInput!]
+  update: [DepartmentUpdateWithWhereUniqueWithoutParentInput!]
+  updateMany: [DepartmentUpdateManyWithWhereWithoutParentInput!]
+  upsert: [DepartmentUpsertWithWhereUniqueWithoutParentInput!]
+}
+
+input DepartmentUpdateOneRequiredWithoutEmployeesNestedInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutEmployeesInput
+  create: DepartmentCreateWithoutEmployeesInput
+  update: DepartmentUpdateToOneWithWhereWithoutEmployeesInput
+  upsert: DepartmentUpsertWithoutEmployeesInput
+}
+
+input DepartmentUpdateOneWithoutChildrenNestedInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutChildrenInput
+  create: DepartmentCreateWithoutChildrenInput
+  delete: DepartmentWhereInput
+  disconnect: DepartmentWhereInput
+  update: DepartmentUpdateToOneWithWhereWithoutChildrenInput
+  upsert: DepartmentUpsertWithoutChildrenInput
+}
+
+input DepartmentUpdateOneWithoutExpensesNestedInput {
+  connect: DepartmentWhereUniqueInput
+  connectOrCreate: DepartmentCreateOrConnectWithoutExpensesInput
+  create: DepartmentCreateWithoutExpensesInput
+  delete: DepartmentWhereInput
+  disconnect: DepartmentWhereInput
+  update: DepartmentUpdateToOneWithWhereWithoutExpensesInput
+  upsert: DepartmentUpsertWithoutExpensesInput
+}
+
+input DepartmentUpdateToOneWithWhereWithoutChildrenInput {
+  data: DepartmentUpdateWithoutChildrenInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentUpdateToOneWithWhereWithoutEmployeesInput {
+  data: DepartmentUpdateWithoutEmployeesInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentUpdateToOneWithWhereWithoutExpensesInput {
+  data: DepartmentUpdateWithoutExpensesInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentUpdateWithWhereUniqueWithoutParentInput {
+  data: DepartmentUpdateWithoutParentInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentUpdateWithoutChildrenInput {
+  employees: EmployeeUpdateManyWithoutDepartmentNestedInput
+  expenses: ExpenseUpdateManyWithoutDepartmentNestedInput
+  id: String
+  name: String
+  parent: DepartmentUpdateOneWithoutChildrenNestedInput
+}
+
+input DepartmentUpdateWithoutEmployeesInput {
+  children: DepartmentUpdateManyWithoutParentNestedInput
+  expenses: ExpenseUpdateManyWithoutDepartmentNestedInput
+  id: String
+  name: String
+  parent: DepartmentUpdateOneWithoutChildrenNestedInput
+}
+
+input DepartmentUpdateWithoutExpensesInput {
+  children: DepartmentUpdateManyWithoutParentNestedInput
+  employees: EmployeeUpdateManyWithoutDepartmentNestedInput
+  id: String
+  name: String
+  parent: DepartmentUpdateOneWithoutChildrenNestedInput
+}
+
+input DepartmentUpdateWithoutParentInput {
+  children: DepartmentUpdateManyWithoutParentNestedInput
+  employees: EmployeeUpdateManyWithoutDepartmentNestedInput
+  expenses: ExpenseUpdateManyWithoutDepartmentNestedInput
+  id: String
+  name: String
+}
+
+input DepartmentUpsertWithWhereUniqueWithoutParentInput {
+  create: DepartmentCreateWithoutParentInput!
+  update: DepartmentUpdateWithoutParentInput!
+  where: DepartmentWhereUniqueInput!
+}
+
+input DepartmentUpsertWithoutChildrenInput {
+  create: DepartmentCreateWithoutChildrenInput!
+  update: DepartmentUpdateWithoutChildrenInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentUpsertWithoutEmployeesInput {
+  create: DepartmentCreateWithoutEmployeesInput!
+  update: DepartmentUpdateWithoutEmployeesInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentUpsertWithoutExpensesInput {
+  create: DepartmentCreateWithoutExpensesInput!
+  update: DepartmentUpdateWithoutExpensesInput!
+  where: DepartmentWhereInput
+}
+
+input DepartmentWhereInput {
+  AND: [DepartmentWhereInput!]
+  NOT: [DepartmentWhereInput!]
+  OR: [DepartmentWhereInput!]
+  children: DepartmentListRelationFilter
+  employees: EmployeeListRelationFilter
+  expenses: ExpenseListRelationFilter
+  id: StringFilter
+  name: StringFilter
+  parent: DepartmentNullableScalarRelationFilter
+  parentId: StringNullableFilter
+}
+
+input DepartmentWhereUniqueInput {
+  AND: [DepartmentWhereInput!]
+  NOT: [DepartmentWhereInput!]
+  OR: [DepartmentWhereInput!]
+  children: DepartmentListRelationFilter
+  employees: EmployeeListRelationFilter
+  expenses: ExpenseListRelationFilter
+  id: String
+  name: String
+  parent: DepartmentNullableScalarRelationFilter
+  parentId: StringNullableFilter
+}
+
+type Employee {
+  _count: EmployeeCount!
   code: String!
   createdAt: DateTime!
-  department: DepartmentEntity
+  department: Department!
   departmentId: String!
   email: String!
   hireDate: DateTime!
   id: ID!
-  manager: EmployeeEntity
+  manager: Employee
   managerId: String
   name: String!
   phone: String
   position: String!
-  reports: [EmployeeEntity!]!
+  reports: [Employee!]
   status: EmployeeStatus!
   updatedAt: DateTime!
+  user: User
   userId: String
+}
+
+type EmployeeCount {
+  reports: Int!
+}
+
+type EmployeeCountAggregate {
+  _all: Int!
+  code: Int!
+  createdAt: Int!
+  departmentId: Int!
+  email: Int!
+  hireDate: Int!
+  id: Int!
+  managerId: Int!
+  name: Int!
+  phone: Int!
+  position: Int!
+  status: Int!
+  updatedAt: Int!
+  userId: Int!
+}
+
+input EmployeeCreateManyDepartmentInput {
+  code: String!
+  createdAt: DateTime
+  email: String!
+  hireDate: DateTime!
+  id: String
+  managerId: String
+  name: String!
+  phone: String
+  position: String!
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input EmployeeCreateManyDepartmentInputEnvelope {
+  data: [EmployeeCreateManyDepartmentInput!]!
+  skipDuplicates: Boolean
+}
+
+input EmployeeCreateManyManagerInput {
+  code: String!
+  createdAt: DateTime
+  departmentId: String!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  name: String!
+  phone: String
+  position: String!
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input EmployeeCreateManyManagerInputEnvelope {
+  data: [EmployeeCreateManyManagerInput!]!
+  skipDuplicates: Boolean
+}
+
+input EmployeeCreateManyUserInput {
+  code: String!
+  createdAt: DateTime
+  departmentId: String!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  managerId: String
+  name: String!
+  phone: String
+  position: String!
+  status: EmployeeStatus
+  updatedAt: DateTime
+}
+
+input EmployeeCreateManyUserInputEnvelope {
+  data: [EmployeeCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input EmployeeCreateNestedManyWithoutDepartmentInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutDepartmentInput!]
+  create: [EmployeeCreateWithoutDepartmentInput!]
+  createMany: EmployeeCreateManyDepartmentInputEnvelope
+}
+
+input EmployeeCreateNestedManyWithoutManagerInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutManagerInput!]
+  create: [EmployeeCreateWithoutManagerInput!]
+  createMany: EmployeeCreateManyManagerInputEnvelope
+}
+
+input EmployeeCreateNestedManyWithoutUserInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutUserInput!]
+  create: [EmployeeCreateWithoutUserInput!]
+  createMany: EmployeeCreateManyUserInputEnvelope
+}
+
+input EmployeeCreateNestedOneWithoutReportsInput {
+  connect: EmployeeWhereUniqueInput
+  connectOrCreate: EmployeeCreateOrConnectWithoutReportsInput
+  create: EmployeeCreateWithoutReportsInput
+}
+
+input EmployeeCreateOrConnectWithoutDepartmentInput {
+  create: EmployeeCreateWithoutDepartmentInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeCreateOrConnectWithoutManagerInput {
+  create: EmployeeCreateWithoutManagerInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeCreateOrConnectWithoutReportsInput {
+  create: EmployeeCreateWithoutReportsInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeCreateOrConnectWithoutUserInput {
+  create: EmployeeCreateWithoutUserInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeCreateWithoutDepartmentInput {
+  code: String!
+  createdAt: DateTime
+  email: String!
+  hireDate: DateTime!
+  id: String
+  manager: EmployeeCreateNestedOneWithoutReportsInput
+  name: String!
+  phone: String
+  position: String!
+  reports: EmployeeCreateNestedManyWithoutManagerInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutEmployeesInput
+}
+
+input EmployeeCreateWithoutManagerInput {
+  code: String!
+  createdAt: DateTime
+  department: DepartmentCreateNestedOneWithoutEmployeesInput!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  name: String!
+  phone: String
+  position: String!
+  reports: EmployeeCreateNestedManyWithoutManagerInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutEmployeesInput
+}
+
+input EmployeeCreateWithoutReportsInput {
+  code: String!
+  createdAt: DateTime
+  department: DepartmentCreateNestedOneWithoutEmployeesInput!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  manager: EmployeeCreateNestedOneWithoutReportsInput
+  name: String!
+  phone: String
+  position: String!
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserCreateNestedOneWithoutEmployeesInput
+}
+
+input EmployeeCreateWithoutUserInput {
+  code: String!
+  createdAt: DateTime
+  department: DepartmentCreateNestedOneWithoutEmployeesInput!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  manager: EmployeeCreateNestedOneWithoutReportsInput
+  name: String!
+  phone: String
+  position: String!
+  reports: EmployeeCreateNestedManyWithoutManagerInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+}
+
+input EmployeeListRelationFilter {
+  every: EmployeeWhereInput
+  none: EmployeeWhereInput
+  some: EmployeeWhereInput
+}
+
+type EmployeeMaxAggregate {
+  code: String
+  createdAt: DateTime
+  departmentId: String
+  email: String
+  hireDate: DateTime
+  id: String
+  managerId: String
+  name: String
+  phone: String
+  position: String
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+type EmployeeMinAggregate {
+  code: String
+  createdAt: DateTime
+  departmentId: String
+  email: String
+  hireDate: DateTime
+  id: String
+  managerId: String
+  name: String
+  phone: String
+  position: String
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input EmployeeNullableScalarRelationFilter {
+  is: EmployeeWhereInput
+  isNot: EmployeeWhereInput
+}
+
+input EmployeeScalarWhereInput {
+  AND: [EmployeeScalarWhereInput!]
+  NOT: [EmployeeScalarWhereInput!]
+  OR: [EmployeeScalarWhereInput!]
+  code: StringFilter
+  createdAt: DateTimeFilter
+  departmentId: StringFilter
+  email: StringFilter
+  hireDate: DateTimeFilter
+  id: StringFilter
+  managerId: StringNullableFilter
+  name: StringFilter
+  phone: StringNullableFilter
+  position: StringFilter
+  status: EnumEmployeeStatusFilter
+  updatedAt: DateTimeFilter
+  userId: StringNullableFilter
 }
 
 enum EmployeeStatus {
@@ -202,31 +2122,830 @@ enum EmployeeStatus {
   terminated
 }
 
-type ExpenseCategoryEntity {
+input EmployeeUncheckedCreateInput {
+  code: String!
+  createdAt: DateTime
+  departmentId: String!
+  email: String!
+  hireDate: DateTime!
+  id: String
+  managerId: String
+  name: String!
+  phone: String
+  position: String!
+  reports: EmployeeUncheckedCreateNestedManyWithoutManagerInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input EmployeeUncheckedCreateNestedManyWithoutDepartmentInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutDepartmentInput!]
+  create: [EmployeeCreateWithoutDepartmentInput!]
+  createMany: EmployeeCreateManyDepartmentInputEnvelope
+}
+
+input EmployeeUncheckedCreateNestedManyWithoutManagerInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutManagerInput!]
+  create: [EmployeeCreateWithoutManagerInput!]
+  createMany: EmployeeCreateManyManagerInputEnvelope
+}
+
+input EmployeeUncheckedUpdateInput {
+  code: String
+  createdAt: DateTime
+  departmentId: String
+  email: String
+  hireDate: DateTime
+  id: String
+  managerId: String
+  name: String
+  phone: String
+  position: String
+  reports: EmployeeUncheckedUpdateManyWithoutManagerNestedInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  userId: String
+}
+
+input EmployeeUncheckedUpdateManyWithoutDepartmentNestedInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutDepartmentInput!]
+  create: [EmployeeCreateWithoutDepartmentInput!]
+  createMany: EmployeeCreateManyDepartmentInputEnvelope
+  delete: [EmployeeWhereUniqueInput!]
+  deleteMany: [EmployeeScalarWhereInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  update: [EmployeeUpdateWithWhereUniqueWithoutDepartmentInput!]
+  updateMany: [EmployeeUpdateManyWithWhereWithoutDepartmentInput!]
+  upsert: [EmployeeUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input EmployeeUncheckedUpdateManyWithoutManagerNestedInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutManagerInput!]
+  create: [EmployeeCreateWithoutManagerInput!]
+  createMany: EmployeeCreateManyManagerInputEnvelope
+  delete: [EmployeeWhereUniqueInput!]
+  deleteMany: [EmployeeScalarWhereInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  update: [EmployeeUpdateWithWhereUniqueWithoutManagerInput!]
+  updateMany: [EmployeeUpdateManyWithWhereWithoutManagerInput!]
+  upsert: [EmployeeUpsertWithWhereUniqueWithoutManagerInput!]
+}
+
+input EmployeeUpdateManyMutationInput {
+  code: String
+  createdAt: DateTime
+  email: String
+  hireDate: DateTime
+  id: String
+  name: String
+  phone: String
+  position: String
+  status: EmployeeStatus
+  updatedAt: DateTime
+}
+
+input EmployeeUpdateManyWithWhereWithoutDepartmentInput {
+  data: EmployeeUpdateManyMutationInput!
+  where: EmployeeScalarWhereInput!
+}
+
+input EmployeeUpdateManyWithWhereWithoutManagerInput {
+  data: EmployeeUpdateManyMutationInput!
+  where: EmployeeScalarWhereInput!
+}
+
+input EmployeeUpdateManyWithWhereWithoutUserInput {
+  data: EmployeeUpdateManyMutationInput!
+  where: EmployeeScalarWhereInput!
+}
+
+input EmployeeUpdateManyWithoutDepartmentNestedInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutDepartmentInput!]
+  create: [EmployeeCreateWithoutDepartmentInput!]
+  createMany: EmployeeCreateManyDepartmentInputEnvelope
+  delete: [EmployeeWhereUniqueInput!]
+  deleteMany: [EmployeeScalarWhereInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  update: [EmployeeUpdateWithWhereUniqueWithoutDepartmentInput!]
+  updateMany: [EmployeeUpdateManyWithWhereWithoutDepartmentInput!]
+  upsert: [EmployeeUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input EmployeeUpdateManyWithoutManagerNestedInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutManagerInput!]
+  create: [EmployeeCreateWithoutManagerInput!]
+  createMany: EmployeeCreateManyManagerInputEnvelope
+  delete: [EmployeeWhereUniqueInput!]
+  deleteMany: [EmployeeScalarWhereInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  update: [EmployeeUpdateWithWhereUniqueWithoutManagerInput!]
+  updateMany: [EmployeeUpdateManyWithWhereWithoutManagerInput!]
+  upsert: [EmployeeUpsertWithWhereUniqueWithoutManagerInput!]
+}
+
+input EmployeeUpdateManyWithoutUserNestedInput {
+  connect: [EmployeeWhereUniqueInput!]
+  connectOrCreate: [EmployeeCreateOrConnectWithoutUserInput!]
+  create: [EmployeeCreateWithoutUserInput!]
+  createMany: EmployeeCreateManyUserInputEnvelope
+  delete: [EmployeeWhereUniqueInput!]
+  deleteMany: [EmployeeScalarWhereInput!]
+  disconnect: [EmployeeWhereUniqueInput!]
+  set: [EmployeeWhereUniqueInput!]
+  update: [EmployeeUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EmployeeUpdateManyWithWhereWithoutUserInput!]
+  upsert: [EmployeeUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EmployeeUpdateOneWithoutReportsNestedInput {
+  connect: EmployeeWhereUniqueInput
+  connectOrCreate: EmployeeCreateOrConnectWithoutReportsInput
+  create: EmployeeCreateWithoutReportsInput
+  delete: EmployeeWhereInput
+  disconnect: EmployeeWhereInput
+  update: EmployeeUpdateToOneWithWhereWithoutReportsInput
+  upsert: EmployeeUpsertWithoutReportsInput
+}
+
+input EmployeeUpdateToOneWithWhereWithoutReportsInput {
+  data: EmployeeUpdateWithoutReportsInput!
+  where: EmployeeWhereInput
+}
+
+input EmployeeUpdateWithWhereUniqueWithoutDepartmentInput {
+  data: EmployeeUpdateWithoutDepartmentInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpdateWithWhereUniqueWithoutManagerInput {
+  data: EmployeeUpdateWithoutManagerInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpdateWithWhereUniqueWithoutUserInput {
+  data: EmployeeUpdateWithoutUserInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpdateWithoutDepartmentInput {
+  code: String
+  createdAt: DateTime
+  email: String
+  hireDate: DateTime
+  id: String
+  manager: EmployeeUpdateOneWithoutReportsNestedInput
+  name: String
+  phone: String
+  position: String
+  reports: EmployeeUpdateManyWithoutManagerNestedInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserUpdateOneWithoutEmployeesNestedInput
+}
+
+input EmployeeUpdateWithoutManagerInput {
+  code: String
+  createdAt: DateTime
+  department: DepartmentUpdateOneRequiredWithoutEmployeesNestedInput
+  email: String
+  hireDate: DateTime
+  id: String
+  name: String
+  phone: String
+  position: String
+  reports: EmployeeUpdateManyWithoutManagerNestedInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserUpdateOneWithoutEmployeesNestedInput
+}
+
+input EmployeeUpdateWithoutReportsInput {
+  code: String
+  createdAt: DateTime
+  department: DepartmentUpdateOneRequiredWithoutEmployeesNestedInput
+  email: String
+  hireDate: DateTime
+  id: String
+  manager: EmployeeUpdateOneWithoutReportsNestedInput
+  name: String
+  phone: String
+  position: String
+  status: EmployeeStatus
+  updatedAt: DateTime
+  user: UserUpdateOneWithoutEmployeesNestedInput
+}
+
+input EmployeeUpdateWithoutUserInput {
+  code: String
+  createdAt: DateTime
+  department: DepartmentUpdateOneRequiredWithoutEmployeesNestedInput
+  email: String
+  hireDate: DateTime
+  id: String
+  manager: EmployeeUpdateOneWithoutReportsNestedInput
+  name: String
+  phone: String
+  position: String
+  reports: EmployeeUpdateManyWithoutManagerNestedInput
+  status: EmployeeStatus
+  updatedAt: DateTime
+}
+
+input EmployeeUpsertWithWhereUniqueWithoutDepartmentInput {
+  create: EmployeeCreateWithoutDepartmentInput!
+  update: EmployeeUpdateWithoutDepartmentInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpsertWithWhereUniqueWithoutManagerInput {
+  create: EmployeeCreateWithoutManagerInput!
+  update: EmployeeUpdateWithoutManagerInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpsertWithWhereUniqueWithoutUserInput {
+  create: EmployeeCreateWithoutUserInput!
+  update: EmployeeUpdateWithoutUserInput!
+  where: EmployeeWhereUniqueInput!
+}
+
+input EmployeeUpsertWithoutReportsInput {
+  create: EmployeeCreateWithoutReportsInput!
+  update: EmployeeUpdateWithoutReportsInput!
+  where: EmployeeWhereInput
+}
+
+input EmployeeWhereInput {
+  AND: [EmployeeWhereInput!]
+  NOT: [EmployeeWhereInput!]
+  OR: [EmployeeWhereInput!]
+  code: StringFilter
+  createdAt: DateTimeFilter
+  department: DepartmentScalarRelationFilter
+  departmentId: StringFilter
+  email: StringFilter
+  hireDate: DateTimeFilter
+  id: StringFilter
+  manager: EmployeeNullableScalarRelationFilter
+  managerId: StringNullableFilter
+  name: StringFilter
+  phone: StringNullableFilter
+  position: StringFilter
+  reports: EmployeeListRelationFilter
+  status: EnumEmployeeStatusFilter
+  updatedAt: DateTimeFilter
+  user: UserNullableScalarRelationFilter
+  userId: StringNullableFilter
+}
+
+input EmployeeWhereUniqueInput {
+  AND: [EmployeeWhereInput!]
+  NOT: [EmployeeWhereInput!]
+  OR: [EmployeeWhereInput!]
+  code: String
+  createdAt: DateTimeFilter
+  department: DepartmentScalarRelationFilter
+  departmentId: StringFilter
+  email: String
+  hireDate: DateTimeFilter
+  id: String
+  manager: EmployeeNullableScalarRelationFilter
+  managerId: StringNullableFilter
+  name: StringFilter
+  phone: StringNullableFilter
+  position: StringFilter
+  reports: EmployeeListRelationFilter
+  status: EnumEmployeeStatusFilter
+  updatedAt: DateTimeFilter
+  user: UserNullableScalarRelationFilter
+  userId: StringNullableFilter
+}
+
+input EnumClubMemberStatusFilter {
+  equals: ClubMemberStatus
+  in: [ClubMemberStatus!]
+  not: NestedEnumClubMemberStatusFilter
+  notIn: [ClubMemberStatus!]
+}
+
+input EnumClubStatusFilter {
+  equals: ClubStatus
+  in: [ClubStatus!]
+  not: NestedEnumClubStatusFilter
+  notIn: [ClubStatus!]
+}
+
+input EnumCustomerStatusFilter {
+  equals: CustomerStatus
+  in: [CustomerStatus!]
+  not: NestedEnumCustomerStatusFilter
+  notIn: [CustomerStatus!]
+}
+
+input EnumEmployeeStatusFilter {
+  equals: EmployeeStatus
+  in: [EmployeeStatus!]
+  not: NestedEnumEmployeeStatusFilter
+  notIn: [EmployeeStatus!]
+}
+
+input EnumExpenseStatusFilter {
+  equals: ExpenseStatus
+  in: [ExpenseStatus!]
+  not: NestedEnumExpenseStatusFilter
+  notIn: [ExpenseStatus!]
+}
+
+input EnumFundContributionStatusFilter {
+  equals: FundContributionStatus
+  in: [FundContributionStatus!]
+  not: NestedEnumFundContributionStatusFilter
+  notIn: [FundContributionStatus!]
+}
+
+input EnumFundFlowFilter {
+  equals: FundFlow
+  in: [FundFlow!]
+  not: NestedEnumFundFlowFilter
+  notIn: [FundFlow!]
+}
+
+input EnumFundTransactionTypeFilter {
+  equals: FundTransactionType
+  in: [FundTransactionType!]
+  not: NestedEnumFundTransactionTypeFilter
+  notIn: [FundTransactionType!]
+}
+
+input EnumInvoiceStatusFilter {
+  equals: InvoiceStatus
+  in: [InvoiceStatus!]
+  not: NestedEnumInvoiceStatusFilter
+  notIn: [InvoiceStatus!]
+}
+
+type Expense {
+  _count: ExpenseCount!
+  amount: Float!
+  category: ExpenseCategory!
+  categoryId: String!
+  club: Club
+  clubId: String
+  createdAt: DateTime!
+  createdBy: User!
+  createdById: String!
+  date: DateTime!
+  deletedAt: DateTime
+  department: Department
+  departmentId: String
+  description: String
+  fund: ClubFund
+  fundId: String
+  fundTransactions: [FundTransaction!]
+  id: ID!
+  status: ExpenseStatus!
+  title: String!
+  updatedAt: DateTime!
+}
+
+type ExpenseAvgAggregate {
+  amount: Float
+}
+
+type ExpenseCategory {
+  _count: ExpenseCategoryCount!
   createdAt: DateTime!
   description: String
+  expenses: [Expense!]
   id: ID!
   name: String!
   updatedAt: DateTime!
 }
 
-type ExpenseEntity {
+type ExpenseCategoryCount {
+  expenses: Int!
+}
+
+type ExpenseCategoryCountAggregate {
+  _all: Int!
+  createdAt: Int!
+  description: Int!
+  id: Int!
+  name: Int!
+  updatedAt: Int!
+}
+
+input ExpenseCategoryCreateNestedOneWithoutExpensesInput {
+  connect: ExpenseCategoryWhereUniqueInput
+  connectOrCreate: ExpenseCategoryCreateOrConnectWithoutExpensesInput
+  create: ExpenseCategoryCreateWithoutExpensesInput
+}
+
+input ExpenseCategoryCreateOrConnectWithoutExpensesInput {
+  create: ExpenseCategoryCreateWithoutExpensesInput!
+  where: ExpenseCategoryWhereUniqueInput!
+}
+
+input ExpenseCategoryCreateWithoutExpensesInput {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String!
+  updatedAt: DateTime
+}
+
+type ExpenseCategoryMaxAggregate {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+type ExpenseCategoryMinAggregate {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input ExpenseCategoryScalarRelationFilter {
+  is: ExpenseCategoryWhereInput
+  isNot: ExpenseCategoryWhereInput
+}
+
+input ExpenseCategoryUncheckedCreateInput {
+  createdAt: DateTime
+  description: String
+  expenses: ExpenseUncheckedCreateNestedManyWithoutCategoryInput
+  id: String
+  name: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCategoryUncheckedUpdateInput {
+  createdAt: DateTime
+  description: String
+  expenses: ExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput {
+  connect: ExpenseCategoryWhereUniqueInput
+  connectOrCreate: ExpenseCategoryCreateOrConnectWithoutExpensesInput
+  create: ExpenseCategoryCreateWithoutExpensesInput
+  update: ExpenseCategoryUpdateToOneWithWhereWithoutExpensesInput
+  upsert: ExpenseCategoryUpsertWithoutExpensesInput
+}
+
+input ExpenseCategoryUpdateToOneWithWhereWithoutExpensesInput {
+  data: ExpenseCategoryUpdateWithoutExpensesInput!
+  where: ExpenseCategoryWhereInput
+}
+
+input ExpenseCategoryUpdateWithoutExpensesInput {
+  createdAt: DateTime
+  description: String
+  id: String
+  name: String
+  updatedAt: DateTime
+}
+
+input ExpenseCategoryUpsertWithoutExpensesInput {
+  create: ExpenseCategoryCreateWithoutExpensesInput!
+  update: ExpenseCategoryUpdateWithoutExpensesInput!
+  where: ExpenseCategoryWhereInput
+}
+
+input ExpenseCategoryWhereInput {
+  AND: [ExpenseCategoryWhereInput!]
+  NOT: [ExpenseCategoryWhereInput!]
+  OR: [ExpenseCategoryWhereInput!]
+  createdAt: DateTimeFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  id: StringFilter
+  name: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input ExpenseCategoryWhereUniqueInput {
+  AND: [ExpenseCategoryWhereInput!]
+  NOT: [ExpenseCategoryWhereInput!]
+  OR: [ExpenseCategoryWhereInput!]
+  createdAt: DateTimeFilter
+  description: StringNullableFilter
+  expenses: ExpenseListRelationFilter
+  id: String
+  name: String
+  updatedAt: DateTimeFilter
+}
+
+type ExpenseCount {
+  fundTransactions: Int!
+}
+
+type ExpenseCountAggregate {
+  _all: Int!
+  amount: Int!
+  categoryId: Int!
+  clubId: Int!
+  createdAt: Int!
+  createdById: Int!
+  date: Int!
+  deletedAt: Int!
+  departmentId: Int!
+  description: Int!
+  fundId: Int!
+  id: Int!
+  status: Int!
+  title: Int!
+  updatedAt: Int!
+}
+
+input ExpenseCreateManyCategoryInput {
   amount: Float!
-  category: ExpenseCategoryEntity!
-  categoryId: String!
-  club: ClubEntity
   clubId: String
-  createdAt: DateTime!
-  createdBy: UserEntity!
+  createdAt: DateTime
   createdById: String!
   date: DateTime!
-  department: DepartmentEntity
+  deletedAt: DateTime
   departmentId: String
   description: String
-  id: ID!
-  status: ExpenseStatus!
+  fundId: String
+  id: String
+  status: ExpenseStatus
   title: String!
-  updatedAt: DateTime!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateManyCategoryInputEnvelope {
+  data: [ExpenseCreateManyCategoryInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExpenseCreateManyClubInput {
+  amount: Float!
+  categoryId: String!
+  createdAt: DateTime
+  createdById: String!
+  date: DateTime!
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateManyClubInputEnvelope {
+  data: [ExpenseCreateManyClubInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExpenseCreateManyCreatedByInput {
+  amount: Float!
+  categoryId: String!
+  clubId: String
+  createdAt: DateTime
+  date: DateTime!
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateManyCreatedByInputEnvelope {
+  data: [ExpenseCreateManyCreatedByInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExpenseCreateManyDepartmentInput {
+  amount: Float!
+  categoryId: String!
+  clubId: String
+  createdAt: DateTime
+  createdById: String!
+  date: DateTime!
+  deletedAt: DateTime
+  description: String
+  fundId: String
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateManyDepartmentInputEnvelope {
+  data: [ExpenseCreateManyDepartmentInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExpenseCreateManyFundInput {
+  amount: Float!
+  categoryId: String!
+  clubId: String
+  createdAt: DateTime
+  createdById: String!
+  date: DateTime!
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateManyFundInputEnvelope {
+  data: [ExpenseCreateManyFundInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExpenseCreateNestedManyWithoutClubInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutClubInput!]
+  create: [ExpenseCreateWithoutClubInput!]
+  createMany: ExpenseCreateManyClubInputEnvelope
+}
+
+input ExpenseCreateNestedManyWithoutCreatedByInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutCreatedByInput!]
+  create: [ExpenseCreateWithoutCreatedByInput!]
+  createMany: ExpenseCreateManyCreatedByInputEnvelope
+}
+
+input ExpenseCreateNestedManyWithoutDepartmentInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutDepartmentInput!]
+  create: [ExpenseCreateWithoutDepartmentInput!]
+  createMany: ExpenseCreateManyDepartmentInputEnvelope
+}
+
+input ExpenseCreateNestedManyWithoutFundInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutFundInput!]
+  create: [ExpenseCreateWithoutFundInput!]
+  createMany: ExpenseCreateManyFundInputEnvelope
+}
+
+input ExpenseCreateNestedOneWithoutFundTransactionsInput {
+  connect: ExpenseWhereUniqueInput
+  connectOrCreate: ExpenseCreateOrConnectWithoutFundTransactionsInput
+  create: ExpenseCreateWithoutFundTransactionsInput
+}
+
+input ExpenseCreateOrConnectWithoutCategoryInput {
+  create: ExpenseCreateWithoutCategoryInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateOrConnectWithoutClubInput {
+  create: ExpenseCreateWithoutClubInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateOrConnectWithoutCreatedByInput {
+  create: ExpenseCreateWithoutCreatedByInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateOrConnectWithoutDepartmentInput {
+  create: ExpenseCreateWithoutDepartmentInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateOrConnectWithoutFundInput {
+  create: ExpenseCreateWithoutFundInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateOrConnectWithoutFundTransactionsInput {
+  create: ExpenseCreateWithoutFundTransactionsInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseCreateWithoutCategoryInput {
+  amount: Float!
+  club: ClubCreateNestedOneWithoutExpensesInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutExpensesInput!
+  date: DateTime!
+  deletedAt: DateTime
+  department: DepartmentCreateNestedOneWithoutExpensesInput
+  description: String
+  fund: ClubFundCreateNestedOneWithoutExpensesInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateWithoutClubInput {
+  amount: Float!
+  category: ExpenseCategoryCreateNestedOneWithoutExpensesInput!
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutExpensesInput!
+  date: DateTime!
+  deletedAt: DateTime
+  department: DepartmentCreateNestedOneWithoutExpensesInput
+  description: String
+  fund: ClubFundCreateNestedOneWithoutExpensesInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateWithoutCreatedByInput {
+  amount: Float!
+  category: ExpenseCategoryCreateNestedOneWithoutExpensesInput!
+  club: ClubCreateNestedOneWithoutExpensesInput
+  createdAt: DateTime
+  date: DateTime!
+  deletedAt: DateTime
+  department: DepartmentCreateNestedOneWithoutExpensesInput
+  description: String
+  fund: ClubFundCreateNestedOneWithoutExpensesInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateWithoutDepartmentInput {
+  amount: Float!
+  category: ExpenseCategoryCreateNestedOneWithoutExpensesInput!
+  club: ClubCreateNestedOneWithoutExpensesInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutExpensesInput!
+  date: DateTime!
+  deletedAt: DateTime
+  description: String
+  fund: ClubFundCreateNestedOneWithoutExpensesInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateWithoutFundInput {
+  amount: Float!
+  category: ExpenseCategoryCreateNestedOneWithoutExpensesInput!
+  club: ClubCreateNestedOneWithoutExpensesInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutExpensesInput!
+  date: DateTime!
+  deletedAt: DateTime
+  department: DepartmentCreateNestedOneWithoutExpensesInput
+  description: String
+  fundTransactions: FundTransactionCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseCreateWithoutFundTransactionsInput {
+  amount: Float!
+  category: ExpenseCategoryCreateNestedOneWithoutExpensesInput!
+  club: ClubCreateNestedOneWithoutExpensesInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutExpensesInput!
+  date: DateTime!
+  deletedAt: DateTime
+  department: DepartmentCreateNestedOneWithoutExpensesInput
+  description: String
+  fund: ClubFundCreateNestedOneWithoutExpensesInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
 }
 
 input ExpenseFilterInput {
@@ -236,6 +2955,71 @@ input ExpenseFilterInput {
   status: ExpenseStatus
 }
 
+input ExpenseListRelationFilter {
+  every: ExpenseWhereInput
+  none: ExpenseWhereInput
+  some: ExpenseWhereInput
+}
+
+type ExpenseMaxAggregate {
+  amount: Float
+  categoryId: String
+  clubId: String
+  createdAt: DateTime
+  createdById: String
+  date: DateTime
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+type ExpenseMinAggregate {
+  amount: Float
+  categoryId: String
+  clubId: String
+  createdAt: DateTime
+  createdById: String
+  date: DateTime
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseNullableScalarRelationFilter {
+  is: ExpenseWhereInput
+  isNot: ExpenseWhereInput
+}
+
+input ExpenseScalarWhereInput {
+  AND: [ExpenseScalarWhereInput!]
+  NOT: [ExpenseScalarWhereInput!]
+  OR: [ExpenseScalarWhereInput!]
+  amount: FloatFilter
+  categoryId: StringFilter
+  clubId: StringNullableFilter
+  createdAt: DateTimeFilter
+  createdById: StringFilter
+  date: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  departmentId: StringNullableFilter
+  description: StringNullableFilter
+  fundId: StringNullableFilter
+  id: StringFilter
+  status: EnumExpenseStatusFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
 enum ExpenseStatus {
   approved
   pending
@@ -243,7 +3027,1514 @@ enum ExpenseStatus {
   rejected
 }
 
-type InventoryItemEntity {
+type ExpenseSumAggregate {
+  amount: Float
+}
+
+input ExpenseUncheckedCreateInput {
+  amount: Float!
+  categoryId: String!
+  clubId: String
+  createdAt: DateTime
+  createdById: String!
+  date: DateTime!
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  fundTransactions: FundTransactionUncheckedCreateNestedManyWithoutExpenseInput
+  id: String
+  status: ExpenseStatus
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExpenseUncheckedCreateNestedManyWithoutCategoryInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutCategoryInput!]
+  create: [ExpenseCreateWithoutCategoryInput!]
+  createMany: ExpenseCreateManyCategoryInputEnvelope
+}
+
+input ExpenseUncheckedCreateNestedManyWithoutClubInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutClubInput!]
+  create: [ExpenseCreateWithoutClubInput!]
+  createMany: ExpenseCreateManyClubInputEnvelope
+}
+
+input ExpenseUncheckedCreateNestedManyWithoutDepartmentInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutDepartmentInput!]
+  create: [ExpenseCreateWithoutDepartmentInput!]
+  createMany: ExpenseCreateManyDepartmentInputEnvelope
+}
+
+input ExpenseUncheckedUpdateInput {
+  amount: Float
+  categoryId: String
+  clubId: String
+  createdAt: DateTime
+  createdById: String
+  date: DateTime
+  deletedAt: DateTime
+  departmentId: String
+  description: String
+  fundId: String
+  fundTransactions: FundTransactionUncheckedUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUncheckedUpdateManyWithoutCategoryNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutCategoryInput!]
+  create: [ExpenseCreateWithoutCategoryInput!]
+  createMany: ExpenseCreateManyCategoryInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutCategoryInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutCategoryInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutCategoryInput!]
+}
+
+input ExpenseUncheckedUpdateManyWithoutClubNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutClubInput!]
+  create: [ExpenseCreateWithoutClubInput!]
+  createMany: ExpenseCreateManyClubInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutClubInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutClubInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutClubInput!]
+}
+
+input ExpenseUncheckedUpdateManyWithoutDepartmentNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutDepartmentInput!]
+  create: [ExpenseCreateWithoutDepartmentInput!]
+  createMany: ExpenseCreateManyDepartmentInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutDepartmentInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutDepartmentInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input ExpenseUpdateManyMutationInput {
+  amount: Float
+  createdAt: DateTime
+  date: DateTime
+  deletedAt: DateTime
+  description: String
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateManyWithWhereWithoutCategoryInput {
+  data: ExpenseUpdateManyMutationInput!
+  where: ExpenseScalarWhereInput!
+}
+
+input ExpenseUpdateManyWithWhereWithoutClubInput {
+  data: ExpenseUpdateManyMutationInput!
+  where: ExpenseScalarWhereInput!
+}
+
+input ExpenseUpdateManyWithWhereWithoutCreatedByInput {
+  data: ExpenseUpdateManyMutationInput!
+  where: ExpenseScalarWhereInput!
+}
+
+input ExpenseUpdateManyWithWhereWithoutDepartmentInput {
+  data: ExpenseUpdateManyMutationInput!
+  where: ExpenseScalarWhereInput!
+}
+
+input ExpenseUpdateManyWithWhereWithoutFundInput {
+  data: ExpenseUpdateManyMutationInput!
+  where: ExpenseScalarWhereInput!
+}
+
+input ExpenseUpdateManyWithoutClubNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutClubInput!]
+  create: [ExpenseCreateWithoutClubInput!]
+  createMany: ExpenseCreateManyClubInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutClubInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutClubInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutClubInput!]
+}
+
+input ExpenseUpdateManyWithoutCreatedByNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutCreatedByInput!]
+  create: [ExpenseCreateWithoutCreatedByInput!]
+  createMany: ExpenseCreateManyCreatedByInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutCreatedByInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutCreatedByInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutCreatedByInput!]
+}
+
+input ExpenseUpdateManyWithoutDepartmentNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutDepartmentInput!]
+  create: [ExpenseCreateWithoutDepartmentInput!]
+  createMany: ExpenseCreateManyDepartmentInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutDepartmentInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutDepartmentInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutDepartmentInput!]
+}
+
+input ExpenseUpdateManyWithoutFundNestedInput {
+  connect: [ExpenseWhereUniqueInput!]
+  connectOrCreate: [ExpenseCreateOrConnectWithoutFundInput!]
+  create: [ExpenseCreateWithoutFundInput!]
+  createMany: ExpenseCreateManyFundInputEnvelope
+  delete: [ExpenseWhereUniqueInput!]
+  deleteMany: [ExpenseScalarWhereInput!]
+  disconnect: [ExpenseWhereUniqueInput!]
+  set: [ExpenseWhereUniqueInput!]
+  update: [ExpenseUpdateWithWhereUniqueWithoutFundInput!]
+  updateMany: [ExpenseUpdateManyWithWhereWithoutFundInput!]
+  upsert: [ExpenseUpsertWithWhereUniqueWithoutFundInput!]
+}
+
+input ExpenseUpdateOneWithoutFundTransactionsNestedInput {
+  connect: ExpenseWhereUniqueInput
+  connectOrCreate: ExpenseCreateOrConnectWithoutFundTransactionsInput
+  create: ExpenseCreateWithoutFundTransactionsInput
+  delete: ExpenseWhereInput
+  disconnect: ExpenseWhereInput
+  update: ExpenseUpdateToOneWithWhereWithoutFundTransactionsInput
+  upsert: ExpenseUpsertWithoutFundTransactionsInput
+}
+
+input ExpenseUpdateToOneWithWhereWithoutFundTransactionsInput {
+  data: ExpenseUpdateWithoutFundTransactionsInput!
+  where: ExpenseWhereInput
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutCategoryInput {
+  data: ExpenseUpdateWithoutCategoryInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutClubInput {
+  data: ExpenseUpdateWithoutClubInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutCreatedByInput {
+  data: ExpenseUpdateWithoutCreatedByInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutDepartmentInput {
+  data: ExpenseUpdateWithoutDepartmentInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpdateWithWhereUniqueWithoutFundInput {
+  data: ExpenseUpdateWithoutFundInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpdateWithoutCategoryInput {
+  amount: Float
+  club: ClubUpdateOneWithoutExpensesNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutExpensesNestedInput
+  date: DateTime
+  deletedAt: DateTime
+  department: DepartmentUpdateOneWithoutExpensesNestedInput
+  description: String
+  fund: ClubFundUpdateOneWithoutExpensesNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateWithoutClubInput {
+  amount: Float
+  category: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutExpensesNestedInput
+  date: DateTime
+  deletedAt: DateTime
+  department: DepartmentUpdateOneWithoutExpensesNestedInput
+  description: String
+  fund: ClubFundUpdateOneWithoutExpensesNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateWithoutCreatedByInput {
+  amount: Float
+  category: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
+  club: ClubUpdateOneWithoutExpensesNestedInput
+  createdAt: DateTime
+  date: DateTime
+  deletedAt: DateTime
+  department: DepartmentUpdateOneWithoutExpensesNestedInput
+  description: String
+  fund: ClubFundUpdateOneWithoutExpensesNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateWithoutDepartmentInput {
+  amount: Float
+  category: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
+  club: ClubUpdateOneWithoutExpensesNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutExpensesNestedInput
+  date: DateTime
+  deletedAt: DateTime
+  description: String
+  fund: ClubFundUpdateOneWithoutExpensesNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateWithoutFundInput {
+  amount: Float
+  category: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
+  club: ClubUpdateOneWithoutExpensesNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutExpensesNestedInput
+  date: DateTime
+  deletedAt: DateTime
+  department: DepartmentUpdateOneWithoutExpensesNestedInput
+  description: String
+  fundTransactions: FundTransactionUpdateManyWithoutExpenseNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpdateWithoutFundTransactionsInput {
+  amount: Float
+  category: ExpenseCategoryUpdateOneRequiredWithoutExpensesNestedInput
+  club: ClubUpdateOneWithoutExpensesNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutExpensesNestedInput
+  date: DateTime
+  deletedAt: DateTime
+  department: DepartmentUpdateOneWithoutExpensesNestedInput
+  description: String
+  fund: ClubFundUpdateOneWithoutExpensesNestedInput
+  id: String
+  status: ExpenseStatus
+  title: String
+  updatedAt: DateTime
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutCategoryInput {
+  create: ExpenseCreateWithoutCategoryInput!
+  update: ExpenseUpdateWithoutCategoryInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutClubInput {
+  create: ExpenseCreateWithoutClubInput!
+  update: ExpenseUpdateWithoutClubInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutCreatedByInput {
+  create: ExpenseCreateWithoutCreatedByInput!
+  update: ExpenseUpdateWithoutCreatedByInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutDepartmentInput {
+  create: ExpenseCreateWithoutDepartmentInput!
+  update: ExpenseUpdateWithoutDepartmentInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpsertWithWhereUniqueWithoutFundInput {
+  create: ExpenseCreateWithoutFundInput!
+  update: ExpenseUpdateWithoutFundInput!
+  where: ExpenseWhereUniqueInput!
+}
+
+input ExpenseUpsertWithoutFundTransactionsInput {
+  create: ExpenseCreateWithoutFundTransactionsInput!
+  update: ExpenseUpdateWithoutFundTransactionsInput!
+  where: ExpenseWhereInput
+}
+
+input ExpenseWhereInput {
+  AND: [ExpenseWhereInput!]
+  NOT: [ExpenseWhereInput!]
+  OR: [ExpenseWhereInput!]
+  amount: FloatFilter
+  category: ExpenseCategoryScalarRelationFilter
+  categoryId: StringFilter
+  club: ClubNullableScalarRelationFilter
+  clubId: StringNullableFilter
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  date: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  department: DepartmentNullableScalarRelationFilter
+  departmentId: StringNullableFilter
+  description: StringNullableFilter
+  fund: ClubFundNullableScalarRelationFilter
+  fundId: StringNullableFilter
+  fundTransactions: FundTransactionListRelationFilter
+  id: StringFilter
+  status: EnumExpenseStatusFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input ExpenseWhereUniqueInput {
+  AND: [ExpenseWhereInput!]
+  NOT: [ExpenseWhereInput!]
+  OR: [ExpenseWhereInput!]
+  amount: FloatFilter
+  category: ExpenseCategoryScalarRelationFilter
+  categoryId: StringFilter
+  club: ClubNullableScalarRelationFilter
+  clubId: StringNullableFilter
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  date: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  department: DepartmentNullableScalarRelationFilter
+  departmentId: StringNullableFilter
+  description: StringNullableFilter
+  fund: ClubFundNullableScalarRelationFilter
+  fundId: StringNullableFilter
+  fundTransactions: FundTransactionListRelationFilter
+  id: String
+  status: EnumExpenseStatusFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input FloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+type FundContribution {
+  _count: FundContributionCount!
+  amount: Float!
+  clubMember: ClubMember!
+  clubMemberId: String!
+  confirmedBy: String
+  confirmedByUser: User
+  createdAt: DateTime!
+  fund: ClubFund!
+  fundId: String!
+  id: ID!
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus!
+  transactions: [FundTransaction!]
+  updatedAt: DateTime!
+  year: Int
+}
+
+type FundContributionAvgAggregate {
+  amount: Float
+  month: Float
+  year: Float
+}
+
+type FundContributionCount {
+  transactions: Int!
+}
+
+type FundContributionCountAggregate {
+  _all: Int!
+  amount: Int!
+  clubMemberId: Int!
+  confirmedBy: Int!
+  createdAt: Int!
+  fundId: Int!
+  id: Int!
+  month: Int!
+  note: Int!
+  paidAt: Int!
+  status: Int!
+  updatedAt: Int!
+  year: Int!
+}
+
+input FundContributionCreateManyClubMemberInput {
+  amount: Float!
+  confirmedBy: String
+  createdAt: DateTime
+  fundId: String!
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateManyClubMemberInputEnvelope {
+  data: [FundContributionCreateManyClubMemberInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundContributionCreateManyConfirmedByUserInput {
+  amount: Float!
+  clubMemberId: String!
+  createdAt: DateTime
+  fundId: String!
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateManyConfirmedByUserInputEnvelope {
+  data: [FundContributionCreateManyConfirmedByUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundContributionCreateManyFundInput {
+  amount: Float!
+  clubMemberId: String!
+  confirmedBy: String
+  createdAt: DateTime
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateManyFundInputEnvelope {
+  data: [FundContributionCreateManyFundInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundContributionCreateNestedManyWithoutClubMemberInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutClubMemberInput!]
+  create: [FundContributionCreateWithoutClubMemberInput!]
+  createMany: FundContributionCreateManyClubMemberInputEnvelope
+}
+
+input FundContributionCreateNestedManyWithoutConfirmedByUserInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutConfirmedByUserInput!]
+  create: [FundContributionCreateWithoutConfirmedByUserInput!]
+  createMany: FundContributionCreateManyConfirmedByUserInputEnvelope
+}
+
+input FundContributionCreateNestedManyWithoutFundInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutFundInput!]
+  create: [FundContributionCreateWithoutFundInput!]
+  createMany: FundContributionCreateManyFundInputEnvelope
+}
+
+input FundContributionCreateNestedOneWithoutTransactionsInput {
+  connect: FundContributionWhereUniqueInput
+  connectOrCreate: FundContributionCreateOrConnectWithoutTransactionsInput
+  create: FundContributionCreateWithoutTransactionsInput
+}
+
+input FundContributionCreateOrConnectWithoutClubMemberInput {
+  create: FundContributionCreateWithoutClubMemberInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionCreateOrConnectWithoutConfirmedByUserInput {
+  create: FundContributionCreateWithoutConfirmedByUserInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionCreateOrConnectWithoutFundInput {
+  create: FundContributionCreateWithoutFundInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionCreateOrConnectWithoutTransactionsInput {
+  create: FundContributionCreateWithoutTransactionsInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionCreateWithoutClubMemberInput {
+  amount: Float!
+  confirmedByUser: UserCreateNestedOneWithoutConfirmedContributionsInput
+  createdAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutContributionsInput!
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  transactions: FundTransactionCreateNestedManyWithoutContributionInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateWithoutConfirmedByUserInput {
+  amount: Float!
+  clubMember: ClubMemberCreateNestedOneWithoutFundContributionsInput!
+  createdAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutContributionsInput!
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  transactions: FundTransactionCreateNestedManyWithoutContributionInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateWithoutFundInput {
+  amount: Float!
+  clubMember: ClubMemberCreateNestedOneWithoutFundContributionsInput!
+  confirmedByUser: UserCreateNestedOneWithoutConfirmedContributionsInput
+  createdAt: DateTime
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  transactions: FundTransactionCreateNestedManyWithoutContributionInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionCreateWithoutTransactionsInput {
+  amount: Float!
+  clubMember: ClubMemberCreateNestedOneWithoutFundContributionsInput!
+  confirmedByUser: UserCreateNestedOneWithoutConfirmedContributionsInput
+  createdAt: DateTime
+  fund: ClubFundCreateNestedOneWithoutContributionsInput!
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime!
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionFundIdClubMemberIdMonthYearCompoundUniqueInput {
+  clubMemberId: String!
+  fundId: String!
+  month: Int!
+  year: Int!
+}
+
+input FundContributionListRelationFilter {
+  every: FundContributionWhereInput
+  none: FundContributionWhereInput
+  some: FundContributionWhereInput
+}
+
+type FundContributionMaxAggregate {
+  amount: Float
+  clubMemberId: String
+  confirmedBy: String
+  createdAt: DateTime
+  fundId: String
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+type FundContributionMinAggregate {
+  amount: Float
+  clubMemberId: String
+  confirmedBy: String
+  createdAt: DateTime
+  fundId: String
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionNullableScalarRelationFilter {
+  is: FundContributionWhereInput
+  isNot: FundContributionWhereInput
+}
+
+input FundContributionScalarWhereInput {
+  AND: [FundContributionScalarWhereInput!]
+  NOT: [FundContributionScalarWhereInput!]
+  OR: [FundContributionScalarWhereInput!]
+  amount: FloatFilter
+  clubMemberId: StringFilter
+  confirmedBy: StringNullableFilter
+  createdAt: DateTimeFilter
+  fundId: StringFilter
+  id: StringFilter
+  month: IntNullableFilter
+  note: StringNullableFilter
+  paidAt: DateTimeFilter
+  status: EnumFundContributionStatusFilter
+  updatedAt: DateTimeFilter
+  year: IntNullableFilter
+}
+
+enum FundContributionStatus {
+  cancelled
+  confirmed
+  pending
+}
+
+type FundContributionSumAggregate {
+  amount: Float
+  month: Int
+  year: Int
+}
+
+input FundContributionUpdateManyMutationInput {
+  amount: Float
+  createdAt: DateTime
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionUpdateManyWithWhereWithoutClubMemberInput {
+  data: FundContributionUpdateManyMutationInput!
+  where: FundContributionScalarWhereInput!
+}
+
+input FundContributionUpdateManyWithWhereWithoutConfirmedByUserInput {
+  data: FundContributionUpdateManyMutationInput!
+  where: FundContributionScalarWhereInput!
+}
+
+input FundContributionUpdateManyWithWhereWithoutFundInput {
+  data: FundContributionUpdateManyMutationInput!
+  where: FundContributionScalarWhereInput!
+}
+
+input FundContributionUpdateManyWithoutClubMemberNestedInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutClubMemberInput!]
+  create: [FundContributionCreateWithoutClubMemberInput!]
+  createMany: FundContributionCreateManyClubMemberInputEnvelope
+  delete: [FundContributionWhereUniqueInput!]
+  deleteMany: [FundContributionScalarWhereInput!]
+  disconnect: [FundContributionWhereUniqueInput!]
+  set: [FundContributionWhereUniqueInput!]
+  update: [FundContributionUpdateWithWhereUniqueWithoutClubMemberInput!]
+  updateMany: [FundContributionUpdateManyWithWhereWithoutClubMemberInput!]
+  upsert: [FundContributionUpsertWithWhereUniqueWithoutClubMemberInput!]
+}
+
+input FundContributionUpdateManyWithoutConfirmedByUserNestedInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutConfirmedByUserInput!]
+  create: [FundContributionCreateWithoutConfirmedByUserInput!]
+  createMany: FundContributionCreateManyConfirmedByUserInputEnvelope
+  delete: [FundContributionWhereUniqueInput!]
+  deleteMany: [FundContributionScalarWhereInput!]
+  disconnect: [FundContributionWhereUniqueInput!]
+  set: [FundContributionWhereUniqueInput!]
+  update: [FundContributionUpdateWithWhereUniqueWithoutConfirmedByUserInput!]
+  updateMany: [FundContributionUpdateManyWithWhereWithoutConfirmedByUserInput!]
+  upsert: [FundContributionUpsertWithWhereUniqueWithoutConfirmedByUserInput!]
+}
+
+input FundContributionUpdateManyWithoutFundNestedInput {
+  connect: [FundContributionWhereUniqueInput!]
+  connectOrCreate: [FundContributionCreateOrConnectWithoutFundInput!]
+  create: [FundContributionCreateWithoutFundInput!]
+  createMany: FundContributionCreateManyFundInputEnvelope
+  delete: [FundContributionWhereUniqueInput!]
+  deleteMany: [FundContributionScalarWhereInput!]
+  disconnect: [FundContributionWhereUniqueInput!]
+  set: [FundContributionWhereUniqueInput!]
+  update: [FundContributionUpdateWithWhereUniqueWithoutFundInput!]
+  updateMany: [FundContributionUpdateManyWithWhereWithoutFundInput!]
+  upsert: [FundContributionUpsertWithWhereUniqueWithoutFundInput!]
+}
+
+input FundContributionUpdateOneWithoutTransactionsNestedInput {
+  connect: FundContributionWhereUniqueInput
+  connectOrCreate: FundContributionCreateOrConnectWithoutTransactionsInput
+  create: FundContributionCreateWithoutTransactionsInput
+  delete: FundContributionWhereInput
+  disconnect: FundContributionWhereInput
+  update: FundContributionUpdateToOneWithWhereWithoutTransactionsInput
+  upsert: FundContributionUpsertWithoutTransactionsInput
+}
+
+input FundContributionUpdateToOneWithWhereWithoutTransactionsInput {
+  data: FundContributionUpdateWithoutTransactionsInput!
+  where: FundContributionWhereInput
+}
+
+input FundContributionUpdateWithWhereUniqueWithoutClubMemberInput {
+  data: FundContributionUpdateWithoutClubMemberInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpdateWithWhereUniqueWithoutConfirmedByUserInput {
+  data: FundContributionUpdateWithoutConfirmedByUserInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpdateWithWhereUniqueWithoutFundInput {
+  data: FundContributionUpdateWithoutFundInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpdateWithoutClubMemberInput {
+  amount: Float
+  confirmedByUser: UserUpdateOneWithoutConfirmedContributionsNestedInput
+  createdAt: DateTime
+  fund: ClubFundUpdateOneRequiredWithoutContributionsNestedInput
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  transactions: FundTransactionUpdateManyWithoutContributionNestedInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionUpdateWithoutConfirmedByUserInput {
+  amount: Float
+  clubMember: ClubMemberUpdateOneRequiredWithoutFundContributionsNestedInput
+  createdAt: DateTime
+  fund: ClubFundUpdateOneRequiredWithoutContributionsNestedInput
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  transactions: FundTransactionUpdateManyWithoutContributionNestedInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionUpdateWithoutFundInput {
+  amount: Float
+  clubMember: ClubMemberUpdateOneRequiredWithoutFundContributionsNestedInput
+  confirmedByUser: UserUpdateOneWithoutConfirmedContributionsNestedInput
+  createdAt: DateTime
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  transactions: FundTransactionUpdateManyWithoutContributionNestedInput
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionUpdateWithoutTransactionsInput {
+  amount: Float
+  clubMember: ClubMemberUpdateOneRequiredWithoutFundContributionsNestedInput
+  confirmedByUser: UserUpdateOneWithoutConfirmedContributionsNestedInput
+  createdAt: DateTime
+  fund: ClubFundUpdateOneRequiredWithoutContributionsNestedInput
+  id: String
+  month: Int
+  note: String
+  paidAt: DateTime
+  status: FundContributionStatus
+  updatedAt: DateTime
+  year: Int
+}
+
+input FundContributionUpsertWithWhereUniqueWithoutClubMemberInput {
+  create: FundContributionCreateWithoutClubMemberInput!
+  update: FundContributionUpdateWithoutClubMemberInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpsertWithWhereUniqueWithoutConfirmedByUserInput {
+  create: FundContributionCreateWithoutConfirmedByUserInput!
+  update: FundContributionUpdateWithoutConfirmedByUserInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpsertWithWhereUniqueWithoutFundInput {
+  create: FundContributionCreateWithoutFundInput!
+  update: FundContributionUpdateWithoutFundInput!
+  where: FundContributionWhereUniqueInput!
+}
+
+input FundContributionUpsertWithoutTransactionsInput {
+  create: FundContributionCreateWithoutTransactionsInput!
+  update: FundContributionUpdateWithoutTransactionsInput!
+  where: FundContributionWhereInput
+}
+
+input FundContributionWhereInput {
+  AND: [FundContributionWhereInput!]
+  NOT: [FundContributionWhereInput!]
+  OR: [FundContributionWhereInput!]
+  amount: FloatFilter
+  clubMember: ClubMemberScalarRelationFilter
+  clubMemberId: StringFilter
+  confirmedBy: StringNullableFilter
+  confirmedByUser: UserNullableScalarRelationFilter
+  createdAt: DateTimeFilter
+  fund: ClubFundScalarRelationFilter
+  fundId: StringFilter
+  id: StringFilter
+  month: IntNullableFilter
+  note: StringNullableFilter
+  paidAt: DateTimeFilter
+  status: EnumFundContributionStatusFilter
+  transactions: FundTransactionListRelationFilter
+  updatedAt: DateTimeFilter
+  year: IntNullableFilter
+}
+
+input FundContributionWhereUniqueInput {
+  AND: [FundContributionWhereInput!]
+  NOT: [FundContributionWhereInput!]
+  OR: [FundContributionWhereInput!]
+  amount: FloatFilter
+  clubMember: ClubMemberScalarRelationFilter
+  clubMemberId: StringFilter
+  confirmedBy: StringNullableFilter
+  confirmedByUser: UserNullableScalarRelationFilter
+  createdAt: DateTimeFilter
+  fund: ClubFundScalarRelationFilter
+  fundId: StringFilter
+  fundId_clubMemberId_month_year: FundContributionFundIdClubMemberIdMonthYearCompoundUniqueInput
+  id: String
+  month: IntNullableFilter
+  note: StringNullableFilter
+  paidAt: DateTimeFilter
+  status: EnumFundContributionStatusFilter
+  transactions: FundTransactionListRelationFilter
+  updatedAt: DateTimeFilter
+  year: IntNullableFilter
+}
+
+enum FundFlow {
+  inflow
+  outflow
+}
+
+type FundTransaction {
+  amount: Float!
+  balanceAfter: Float!
+  contribution: FundContribution
+  createdAt: DateTime!
+  createdBy: User!
+  createdById: String!
+  expense: Expense
+  flow: FundFlow!
+  fund: ClubFund!
+  fundId: String!
+  id: ID!
+  note: String
+  refContribId: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+type FundTransactionAvgAggregate {
+  amount: Float
+  balanceAfter: Float
+}
+
+type FundTransactionCountAggregate {
+  _all: Int!
+  amount: Int!
+  balanceAfter: Int!
+  createdAt: Int!
+  createdById: Int!
+  flow: Int!
+  fundId: Int!
+  id: Int!
+  note: Int!
+  refContribId: Int!
+  refExpenseId: Int!
+  refTransactionId: Int!
+  type: Int!
+}
+
+input FundTransactionCreateManyContributionInput {
+  amount: Float!
+  balanceAfter: Float!
+  createdAt: DateTime
+  createdById: String!
+  flow: FundFlow!
+  fundId: String!
+  id: String
+  note: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateManyContributionInputEnvelope {
+  data: [FundTransactionCreateManyContributionInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundTransactionCreateManyCreatedByInput {
+  amount: Float!
+  balanceAfter: Float!
+  createdAt: DateTime
+  flow: FundFlow!
+  fundId: String!
+  id: String
+  note: String
+  refContribId: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateManyCreatedByInputEnvelope {
+  data: [FundTransactionCreateManyCreatedByInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundTransactionCreateManyExpenseInput {
+  amount: Float!
+  balanceAfter: Float!
+  createdAt: DateTime
+  createdById: String!
+  flow: FundFlow!
+  fundId: String!
+  id: String
+  note: String
+  refContribId: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateManyExpenseInputEnvelope {
+  data: [FundTransactionCreateManyExpenseInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundTransactionCreateManyFundInput {
+  amount: Float!
+  balanceAfter: Float!
+  createdAt: DateTime
+  createdById: String!
+  flow: FundFlow!
+  id: String
+  note: String
+  refContribId: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateManyFundInputEnvelope {
+  data: [FundTransactionCreateManyFundInput!]!
+  skipDuplicates: Boolean
+}
+
+input FundTransactionCreateNestedManyWithoutContributionInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutContributionInput!]
+  create: [FundTransactionCreateWithoutContributionInput!]
+  createMany: FundTransactionCreateManyContributionInputEnvelope
+}
+
+input FundTransactionCreateNestedManyWithoutCreatedByInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutCreatedByInput!]
+  create: [FundTransactionCreateWithoutCreatedByInput!]
+  createMany: FundTransactionCreateManyCreatedByInputEnvelope
+}
+
+input FundTransactionCreateNestedManyWithoutExpenseInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutExpenseInput!]
+  create: [FundTransactionCreateWithoutExpenseInput!]
+  createMany: FundTransactionCreateManyExpenseInputEnvelope
+}
+
+input FundTransactionCreateNestedManyWithoutFundInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutFundInput!]
+  create: [FundTransactionCreateWithoutFundInput!]
+  createMany: FundTransactionCreateManyFundInputEnvelope
+}
+
+input FundTransactionCreateOrConnectWithoutContributionInput {
+  create: FundTransactionCreateWithoutContributionInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionCreateOrConnectWithoutCreatedByInput {
+  create: FundTransactionCreateWithoutCreatedByInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionCreateOrConnectWithoutExpenseInput {
+  create: FundTransactionCreateWithoutExpenseInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionCreateOrConnectWithoutFundInput {
+  create: FundTransactionCreateWithoutFundInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionCreateWithoutContributionInput {
+  amount: Float!
+  balanceAfter: Float!
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutFundTransactionsInput!
+  expense: ExpenseCreateNestedOneWithoutFundTransactionsInput
+  flow: FundFlow!
+  fund: ClubFundCreateNestedOneWithoutTransactionsInput!
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateWithoutCreatedByInput {
+  amount: Float!
+  balanceAfter: Float!
+  contribution: FundContributionCreateNestedOneWithoutTransactionsInput
+  createdAt: DateTime
+  expense: ExpenseCreateNestedOneWithoutFundTransactionsInput
+  flow: FundFlow!
+  fund: ClubFundCreateNestedOneWithoutTransactionsInput!
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateWithoutExpenseInput {
+  amount: Float!
+  balanceAfter: Float!
+  contribution: FundContributionCreateNestedOneWithoutTransactionsInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutFundTransactionsInput!
+  flow: FundFlow!
+  fund: ClubFundCreateNestedOneWithoutTransactionsInput!
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionCreateWithoutFundInput {
+  amount: Float!
+  balanceAfter: Float!
+  contribution: FundContributionCreateNestedOneWithoutTransactionsInput
+  createdAt: DateTime
+  createdBy: UserCreateNestedOneWithoutFundTransactionsInput!
+  expense: ExpenseCreateNestedOneWithoutFundTransactionsInput
+  flow: FundFlow!
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType!
+}
+
+input FundTransactionListRelationFilter {
+  every: FundTransactionWhereInput
+  none: FundTransactionWhereInput
+  some: FundTransactionWhereInput
+}
+
+type FundTransactionMaxAggregate {
+  amount: Float
+  balanceAfter: Float
+  createdAt: DateTime
+  createdById: String
+  flow: FundFlow
+  fundId: String
+  id: String
+  note: String
+  refContribId: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+type FundTransactionMinAggregate {
+  amount: Float
+  balanceAfter: Float
+  createdAt: DateTime
+  createdById: String
+  flow: FundFlow
+  fundId: String
+  id: String
+  note: String
+  refContribId: String
+  refExpenseId: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionScalarWhereInput {
+  AND: [FundTransactionScalarWhereInput!]
+  NOT: [FundTransactionScalarWhereInput!]
+  OR: [FundTransactionScalarWhereInput!]
+  amount: FloatFilter
+  balanceAfter: FloatFilter
+  createdAt: DateTimeFilter
+  createdById: StringFilter
+  flow: EnumFundFlowFilter
+  fundId: StringFilter
+  id: StringFilter
+  note: StringNullableFilter
+  refContribId: StringNullableFilter
+  refExpenseId: StringNullableFilter
+  refTransactionId: StringNullableFilter
+  type: EnumFundTransactionTypeFilter
+}
+
+type FundTransactionSumAggregate {
+  amount: Float
+  balanceAfter: Float
+}
+
+enum FundTransactionType {
+  adjustment
+  contribution
+  expense
+  refund
+}
+
+input FundTransactionUncheckedCreateNestedManyWithoutExpenseInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutExpenseInput!]
+  create: [FundTransactionCreateWithoutExpenseInput!]
+  createMany: FundTransactionCreateManyExpenseInputEnvelope
+}
+
+input FundTransactionUncheckedUpdateManyWithoutExpenseNestedInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutExpenseInput!]
+  create: [FundTransactionCreateWithoutExpenseInput!]
+  createMany: FundTransactionCreateManyExpenseInputEnvelope
+  delete: [FundTransactionWhereUniqueInput!]
+  deleteMany: [FundTransactionScalarWhereInput!]
+  disconnect: [FundTransactionWhereUniqueInput!]
+  set: [FundTransactionWhereUniqueInput!]
+  update: [FundTransactionUpdateWithWhereUniqueWithoutExpenseInput!]
+  updateMany: [FundTransactionUpdateManyWithWhereWithoutExpenseInput!]
+  upsert: [FundTransactionUpsertWithWhereUniqueWithoutExpenseInput!]
+}
+
+input FundTransactionUpdateManyMutationInput {
+  amount: Float
+  balanceAfter: Float
+  createdAt: DateTime
+  flow: FundFlow
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionUpdateManyWithWhereWithoutContributionInput {
+  data: FundTransactionUpdateManyMutationInput!
+  where: FundTransactionScalarWhereInput!
+}
+
+input FundTransactionUpdateManyWithWhereWithoutCreatedByInput {
+  data: FundTransactionUpdateManyMutationInput!
+  where: FundTransactionScalarWhereInput!
+}
+
+input FundTransactionUpdateManyWithWhereWithoutExpenseInput {
+  data: FundTransactionUpdateManyMutationInput!
+  where: FundTransactionScalarWhereInput!
+}
+
+input FundTransactionUpdateManyWithWhereWithoutFundInput {
+  data: FundTransactionUpdateManyMutationInput!
+  where: FundTransactionScalarWhereInput!
+}
+
+input FundTransactionUpdateManyWithoutContributionNestedInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutContributionInput!]
+  create: [FundTransactionCreateWithoutContributionInput!]
+  createMany: FundTransactionCreateManyContributionInputEnvelope
+  delete: [FundTransactionWhereUniqueInput!]
+  deleteMany: [FundTransactionScalarWhereInput!]
+  disconnect: [FundTransactionWhereUniqueInput!]
+  set: [FundTransactionWhereUniqueInput!]
+  update: [FundTransactionUpdateWithWhereUniqueWithoutContributionInput!]
+  updateMany: [FundTransactionUpdateManyWithWhereWithoutContributionInput!]
+  upsert: [FundTransactionUpsertWithWhereUniqueWithoutContributionInput!]
+}
+
+input FundTransactionUpdateManyWithoutCreatedByNestedInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutCreatedByInput!]
+  create: [FundTransactionCreateWithoutCreatedByInput!]
+  createMany: FundTransactionCreateManyCreatedByInputEnvelope
+  delete: [FundTransactionWhereUniqueInput!]
+  deleteMany: [FundTransactionScalarWhereInput!]
+  disconnect: [FundTransactionWhereUniqueInput!]
+  set: [FundTransactionWhereUniqueInput!]
+  update: [FundTransactionUpdateWithWhereUniqueWithoutCreatedByInput!]
+  updateMany: [FundTransactionUpdateManyWithWhereWithoutCreatedByInput!]
+  upsert: [FundTransactionUpsertWithWhereUniqueWithoutCreatedByInput!]
+}
+
+input FundTransactionUpdateManyWithoutExpenseNestedInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutExpenseInput!]
+  create: [FundTransactionCreateWithoutExpenseInput!]
+  createMany: FundTransactionCreateManyExpenseInputEnvelope
+  delete: [FundTransactionWhereUniqueInput!]
+  deleteMany: [FundTransactionScalarWhereInput!]
+  disconnect: [FundTransactionWhereUniqueInput!]
+  set: [FundTransactionWhereUniqueInput!]
+  update: [FundTransactionUpdateWithWhereUniqueWithoutExpenseInput!]
+  updateMany: [FundTransactionUpdateManyWithWhereWithoutExpenseInput!]
+  upsert: [FundTransactionUpsertWithWhereUniqueWithoutExpenseInput!]
+}
+
+input FundTransactionUpdateManyWithoutFundNestedInput {
+  connect: [FundTransactionWhereUniqueInput!]
+  connectOrCreate: [FundTransactionCreateOrConnectWithoutFundInput!]
+  create: [FundTransactionCreateWithoutFundInput!]
+  createMany: FundTransactionCreateManyFundInputEnvelope
+  delete: [FundTransactionWhereUniqueInput!]
+  deleteMany: [FundTransactionScalarWhereInput!]
+  disconnect: [FundTransactionWhereUniqueInput!]
+  set: [FundTransactionWhereUniqueInput!]
+  update: [FundTransactionUpdateWithWhereUniqueWithoutFundInput!]
+  updateMany: [FundTransactionUpdateManyWithWhereWithoutFundInput!]
+  upsert: [FundTransactionUpsertWithWhereUniqueWithoutFundInput!]
+}
+
+input FundTransactionUpdateWithWhereUniqueWithoutContributionInput {
+  data: FundTransactionUpdateWithoutContributionInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpdateWithWhereUniqueWithoutCreatedByInput {
+  data: FundTransactionUpdateWithoutCreatedByInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpdateWithWhereUniqueWithoutExpenseInput {
+  data: FundTransactionUpdateWithoutExpenseInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpdateWithWhereUniqueWithoutFundInput {
+  data: FundTransactionUpdateWithoutFundInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpdateWithoutContributionInput {
+  amount: Float
+  balanceAfter: Float
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutFundTransactionsNestedInput
+  expense: ExpenseUpdateOneWithoutFundTransactionsNestedInput
+  flow: FundFlow
+  fund: ClubFundUpdateOneRequiredWithoutTransactionsNestedInput
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionUpdateWithoutCreatedByInput {
+  amount: Float
+  balanceAfter: Float
+  contribution: FundContributionUpdateOneWithoutTransactionsNestedInput
+  createdAt: DateTime
+  expense: ExpenseUpdateOneWithoutFundTransactionsNestedInput
+  flow: FundFlow
+  fund: ClubFundUpdateOneRequiredWithoutTransactionsNestedInput
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionUpdateWithoutExpenseInput {
+  amount: Float
+  balanceAfter: Float
+  contribution: FundContributionUpdateOneWithoutTransactionsNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutFundTransactionsNestedInput
+  flow: FundFlow
+  fund: ClubFundUpdateOneRequiredWithoutTransactionsNestedInput
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionUpdateWithoutFundInput {
+  amount: Float
+  balanceAfter: Float
+  contribution: FundContributionUpdateOneWithoutTransactionsNestedInput
+  createdAt: DateTime
+  createdBy: UserUpdateOneRequiredWithoutFundTransactionsNestedInput
+  expense: ExpenseUpdateOneWithoutFundTransactionsNestedInput
+  flow: FundFlow
+  id: String
+  note: String
+  refTransactionId: String
+  type: FundTransactionType
+}
+
+input FundTransactionUpsertWithWhereUniqueWithoutContributionInput {
+  create: FundTransactionCreateWithoutContributionInput!
+  update: FundTransactionUpdateWithoutContributionInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpsertWithWhereUniqueWithoutCreatedByInput {
+  create: FundTransactionCreateWithoutCreatedByInput!
+  update: FundTransactionUpdateWithoutCreatedByInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpsertWithWhereUniqueWithoutExpenseInput {
+  create: FundTransactionCreateWithoutExpenseInput!
+  update: FundTransactionUpdateWithoutExpenseInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionUpsertWithWhereUniqueWithoutFundInput {
+  create: FundTransactionCreateWithoutFundInput!
+  update: FundTransactionUpdateWithoutFundInput!
+  where: FundTransactionWhereUniqueInput!
+}
+
+input FundTransactionWhereInput {
+  AND: [FundTransactionWhereInput!]
+  NOT: [FundTransactionWhereInput!]
+  OR: [FundTransactionWhereInput!]
+  amount: FloatFilter
+  balanceAfter: FloatFilter
+  contribution: FundContributionNullableScalarRelationFilter
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  expense: ExpenseNullableScalarRelationFilter
+  flow: EnumFundFlowFilter
+  fund: ClubFundScalarRelationFilter
+  fundId: StringFilter
+  id: StringFilter
+  note: StringNullableFilter
+  refContribId: StringNullableFilter
+  refExpenseId: StringNullableFilter
+  refTransactionId: StringNullableFilter
+  type: EnumFundTransactionTypeFilter
+}
+
+input FundTransactionWhereUniqueInput {
+  AND: [FundTransactionWhereInput!]
+  NOT: [FundTransactionWhereInput!]
+  OR: [FundTransactionWhereInput!]
+  amount: FloatFilter
+  balanceAfter: FloatFilter
+  contribution: FundContributionNullableScalarRelationFilter
+  createdAt: DateTimeFilter
+  createdBy: UserScalarRelationFilter
+  createdById: StringFilter
+  expense: ExpenseNullableScalarRelationFilter
+  flow: EnumFundFlowFilter
+  fund: ClubFundScalarRelationFilter
+  fundId: StringFilter
+  id: String
+  note: StringNullableFilter
+  refContribId: StringNullableFilter
+  refExpenseId: StringNullableFilter
+  refTransactionId: StringNullableFilter
+  type: EnumFundTransactionTypeFilter
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+type InventoryItem {
   category: String
   createdAt: DateTime!
   id: ID!
@@ -257,6 +4548,55 @@ type InventoryItemEntity {
   updatedAt: DateTime!
 }
 
+type InventoryItemAvgAggregate {
+  minStock: Float
+  price: Float
+  stock: Float
+}
+
+type InventoryItemCountAggregate {
+  _all: Int!
+  category: Int!
+  createdAt: Int!
+  id: Int!
+  minStock: Int!
+  name: Int!
+  price: Int!
+  sku: Int!
+  status: Int!
+  stock: Int!
+  unit: Int!
+  updatedAt: Int!
+}
+
+type InventoryItemMaxAggregate {
+  category: String
+  createdAt: DateTime
+  id: String
+  minStock: Int
+  name: String
+  price: Float
+  sku: String
+  status: InventoryItemStatus
+  stock: Int
+  unit: String
+  updatedAt: DateTime
+}
+
+type InventoryItemMinAggregate {
+  category: String
+  createdAt: DateTime
+  id: String
+  minStock: Int
+  name: String
+  price: Float
+  sku: String
+  status: InventoryItemStatus
+  stock: Int
+  unit: String
+  updatedAt: DateTime
+}
+
 enum InventoryItemStatus {
   available
   discontinued
@@ -264,11 +4604,45 @@ enum InventoryItemStatus {
   out_of_stock
 }
 
-type InvoiceEntity {
+type InventoryItemSumAggregate {
+  minStock: Int
+  price: Float
+  stock: Int
+}
+
+input InventoryItemUncheckedCreateInput {
+  category: String
+  createdAt: DateTime
+  id: String
+  minStock: Int
+  name: String!
+  price: Float
+  sku: String!
+  status: InventoryItemStatus
+  stock: Int
+  unit: String
+  updatedAt: DateTime
+}
+
+input InventoryItemUncheckedUpdateInput {
+  category: String
+  createdAt: DateTime
+  id: String
+  minStock: Int
+  name: String
+  price: Float
+  sku: String
+  status: InventoryItemStatus
+  stock: Int
+  unit: String
+  updatedAt: DateTime
+}
+
+type Invoice {
   amount: Float!
   code: String!
   createdAt: DateTime!
-  customer: CustomerEntity
+  customer: Customer
   customerId: String
   dueDate: DateTime
   id: ID!
@@ -279,12 +4653,274 @@ type InvoiceEntity {
   updatedAt: DateTime!
 }
 
+type InvoiceAvgAggregate {
+  amount: Float
+  tax: Float
+  total: Float
+}
+
+type InvoiceCountAggregate {
+  _all: Int!
+  amount: Int!
+  code: Int!
+  createdAt: Int!
+  customerId: Int!
+  dueDate: Int!
+  id: Int!
+  issuedAt: Int!
+  status: Int!
+  tax: Int!
+  total: Int!
+  updatedAt: Int!
+}
+
+input InvoiceCreateManyCustomerInput {
+  amount: Float!
+  code: String!
+  createdAt: DateTime
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float!
+  updatedAt: DateTime
+}
+
+input InvoiceCreateManyCustomerInputEnvelope {
+  data: [InvoiceCreateManyCustomerInput!]!
+  skipDuplicates: Boolean
+}
+
+input InvoiceCreateNestedManyWithoutCustomerInput {
+  connect: [InvoiceWhereUniqueInput!]
+  connectOrCreate: [InvoiceCreateOrConnectWithoutCustomerInput!]
+  create: [InvoiceCreateWithoutCustomerInput!]
+  createMany: InvoiceCreateManyCustomerInputEnvelope
+}
+
+input InvoiceCreateOrConnectWithoutCustomerInput {
+  create: InvoiceCreateWithoutCustomerInput!
+  where: InvoiceWhereUniqueInput!
+}
+
+input InvoiceCreateWithoutCustomerInput {
+  amount: Float!
+  code: String!
+  createdAt: DateTime
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float!
+  updatedAt: DateTime
+}
+
+input InvoiceListRelationFilter {
+  every: InvoiceWhereInput
+  none: InvoiceWhereInput
+  some: InvoiceWhereInput
+}
+
+type InvoiceMaxAggregate {
+  amount: Float
+  code: String
+  createdAt: DateTime
+  customerId: String
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+  updatedAt: DateTime
+}
+
+type InvoiceMinAggregate {
+  amount: Float
+  code: String
+  createdAt: DateTime
+  customerId: String
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+  updatedAt: DateTime
+}
+
+input InvoiceScalarWhereInput {
+  AND: [InvoiceScalarWhereInput!]
+  NOT: [InvoiceScalarWhereInput!]
+  OR: [InvoiceScalarWhereInput!]
+  amount: FloatFilter
+  code: StringFilter
+  createdAt: DateTimeFilter
+  customerId: StringNullableFilter
+  dueDate: DateTimeNullableFilter
+  id: StringFilter
+  issuedAt: DateTimeNullableFilter
+  status: EnumInvoiceStatusFilter
+  tax: FloatFilter
+  total: FloatFilter
+  updatedAt: DateTimeFilter
+}
+
 enum InvoiceStatus {
   cancelled
   draft
   overdue
   paid
   pending
+}
+
+type InvoiceSumAggregate {
+  amount: Float
+  tax: Float
+  total: Float
+}
+
+input InvoiceUncheckedCreateInput {
+  amount: Float!
+  code: String!
+  createdAt: DateTime
+  customerId: String
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float!
+  updatedAt: DateTime
+}
+
+input InvoiceUncheckedCreateNestedManyWithoutCustomerInput {
+  connect: [InvoiceWhereUniqueInput!]
+  connectOrCreate: [InvoiceCreateOrConnectWithoutCustomerInput!]
+  create: [InvoiceCreateWithoutCustomerInput!]
+  createMany: InvoiceCreateManyCustomerInputEnvelope
+}
+
+input InvoiceUncheckedUpdateInput {
+  amount: Float
+  code: String
+  createdAt: DateTime
+  customerId: String
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+  updatedAt: DateTime
+}
+
+input InvoiceUncheckedUpdateManyWithoutCustomerNestedInput {
+  connect: [InvoiceWhereUniqueInput!]
+  connectOrCreate: [InvoiceCreateOrConnectWithoutCustomerInput!]
+  create: [InvoiceCreateWithoutCustomerInput!]
+  createMany: InvoiceCreateManyCustomerInputEnvelope
+  delete: [InvoiceWhereUniqueInput!]
+  deleteMany: [InvoiceScalarWhereInput!]
+  disconnect: [InvoiceWhereUniqueInput!]
+  set: [InvoiceWhereUniqueInput!]
+  update: [InvoiceUpdateWithWhereUniqueWithoutCustomerInput!]
+  updateMany: [InvoiceUpdateManyWithWhereWithoutCustomerInput!]
+  upsert: [InvoiceUpsertWithWhereUniqueWithoutCustomerInput!]
+}
+
+input InvoiceUpdateManyMutationInput {
+  amount: Float
+  code: String
+  createdAt: DateTime
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+  updatedAt: DateTime
+}
+
+input InvoiceUpdateManyWithWhereWithoutCustomerInput {
+  data: InvoiceUpdateManyMutationInput!
+  where: InvoiceScalarWhereInput!
+}
+
+input InvoiceUpdateManyWithoutCustomerNestedInput {
+  connect: [InvoiceWhereUniqueInput!]
+  connectOrCreate: [InvoiceCreateOrConnectWithoutCustomerInput!]
+  create: [InvoiceCreateWithoutCustomerInput!]
+  createMany: InvoiceCreateManyCustomerInputEnvelope
+  delete: [InvoiceWhereUniqueInput!]
+  deleteMany: [InvoiceScalarWhereInput!]
+  disconnect: [InvoiceWhereUniqueInput!]
+  set: [InvoiceWhereUniqueInput!]
+  update: [InvoiceUpdateWithWhereUniqueWithoutCustomerInput!]
+  updateMany: [InvoiceUpdateManyWithWhereWithoutCustomerInput!]
+  upsert: [InvoiceUpsertWithWhereUniqueWithoutCustomerInput!]
+}
+
+input InvoiceUpdateWithWhereUniqueWithoutCustomerInput {
+  data: InvoiceUpdateWithoutCustomerInput!
+  where: InvoiceWhereUniqueInput!
+}
+
+input InvoiceUpdateWithoutCustomerInput {
+  amount: Float
+  code: String
+  createdAt: DateTime
+  dueDate: DateTime
+  id: String
+  issuedAt: DateTime
+  status: InvoiceStatus
+  tax: Float
+  total: Float
+  updatedAt: DateTime
+}
+
+input InvoiceUpsertWithWhereUniqueWithoutCustomerInput {
+  create: InvoiceCreateWithoutCustomerInput!
+  update: InvoiceUpdateWithoutCustomerInput!
+  where: InvoiceWhereUniqueInput!
+}
+
+input InvoiceWhereInput {
+  AND: [InvoiceWhereInput!]
+  NOT: [InvoiceWhereInput!]
+  OR: [InvoiceWhereInput!]
+  amount: FloatFilter
+  code: StringFilter
+  createdAt: DateTimeFilter
+  customer: CustomerNullableScalarRelationFilter
+  customerId: StringNullableFilter
+  dueDate: DateTimeNullableFilter
+  id: StringFilter
+  issuedAt: DateTimeNullableFilter
+  status: EnumInvoiceStatusFilter
+  tax: FloatFilter
+  total: FloatFilter
+  updatedAt: DateTimeFilter
+}
+
+input InvoiceWhereUniqueInput {
+  AND: [InvoiceWhereInput!]
+  NOT: [InvoiceWhereInput!]
+  OR: [InvoiceWhereInput!]
+  amount: FloatFilter
+  code: String
+  createdAt: DateTimeFilter
+  customer: CustomerNullableScalarRelationFilter
+  customerId: StringNullableFilter
+  dueDate: DateTimeNullableFilter
+  id: String
+  issuedAt: DateTimeNullableFilter
+  status: EnumInvoiceStatusFilter
+  tax: FloatFilter
+  total: FloatFilter
+  updatedAt: DateTimeFilter
 }
 
 """
@@ -298,15 +4934,15 @@ input LoginInput {
 }
 
 type Mutation {
-  addClubMember(input: AddClubMemberInput!): ClubMemberEntity!
-  createClub(input: CreateClubInput!): ClubEntity!
-  createCustomer(input: CreateCustomerInput!): CustomerEntity!
-  createDepartment(input: CreateDepartmentInput!): DepartmentEntity!
-  createEmployee(input: CreateEmployeeInput!): EmployeeEntity!
-  createExpense(input: CreateExpenseInput!): ExpenseEntity!
-  createExpenseCategory(input: CreateExpenseCategoryInput!): ExpenseCategoryEntity!
-  createInventoryItem(input: CreateInventoryItemInput!): InventoryItemEntity!
-  createInvoice(input: CreateInvoiceInput!): InvoiceEntity!
+  addClubMember(input: AddClubMemberInput!): ClubMember!
+  createClub(input: ClubUncheckedCreateInput!): Club!
+  createCustomer(input: CustomerUncheckedCreateInput!): Customer!
+  createDepartment(input: DepartmentUncheckedCreateInput!): Department!
+  createEmployee(input: EmployeeUncheckedCreateInput!): Employee!
+  createExpense(input: ExpenseUncheckedCreateInput!): Expense!
+  createExpenseCategory(input: ExpenseCategoryUncheckedCreateInput!): ExpenseCategory!
+  createInventoryItem(input: InventoryItemUncheckedCreateInput!): InventoryItem!
+  createInvoice(input: InvoiceUncheckedCreateInput!): Invoice!
   deleteClub(id: String!): Boolean!
   deleteCustomer(id: String!): Boolean!
   deleteDepartment(id: String!): Boolean!
@@ -319,18 +4955,158 @@ type Mutation {
   loginWithOAuth(email: String!, name: String!): AuthPayload!
   register(input: RegisterInput!): AuthPayload!
   removeClubMember(memberId: String!): Boolean!
-  updateClub(id: String!, input: UpdateClubInput!): ClubEntity!
-  updateCustomer(id: String!, input: UpdateCustomerInput!): CustomerEntity!
-  updateDepartment(id: String!, input: UpdateDepartmentInput!): DepartmentEntity!
-  updateEmployee(id: String!, input: UpdateEmployeeInput!): EmployeeEntity!
-  updateExpense(id: String!, input: UpdateExpenseInput!): ExpenseEntity!
-  updateExpenseCategory(id: String!, input: UpdateExpenseCategoryInput!): ExpenseCategoryEntity!
-  updateInventoryItem(id: String!, input: UpdateInventoryItemInput!): InventoryItemEntity!
-  updateInvoice(id: String!, input: UpdateInvoiceInput!): InvoiceEntity!
+  updateClub(id: String!, input: ClubUncheckedUpdateInput!): Club!
+  updateCustomer(id: String!, input: CustomerUncheckedUpdateInput!): Customer!
+  updateDepartment(id: String!, input: DepartmentUncheckedUpdateInput!): Department!
+  updateEmployee(id: String!, input: EmployeeUncheckedUpdateInput!): Employee!
+  updateExpense(id: String!, input: ExpenseUncheckedUpdateInput!): Expense!
+  updateExpenseCategory(id: String!, input: ExpenseCategoryUncheckedUpdateInput!): ExpenseCategory!
+  updateInventoryItem(id: String!, input: InventoryItemUncheckedUpdateInput!): InventoryItem!
+  updateInvoice(id: String!, input: InvoiceUncheckedUpdateInput!): Invoice!
+}
+
+input NestedBoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input NestedDateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
+input NestedEnumClubMemberStatusFilter {
+  equals: ClubMemberStatus
+  in: [ClubMemberStatus!]
+  not: NestedEnumClubMemberStatusFilter
+  notIn: [ClubMemberStatus!]
+}
+
+input NestedEnumClubStatusFilter {
+  equals: ClubStatus
+  in: [ClubStatus!]
+  not: NestedEnumClubStatusFilter
+  notIn: [ClubStatus!]
+}
+
+input NestedEnumCustomerStatusFilter {
+  equals: CustomerStatus
+  in: [CustomerStatus!]
+  not: NestedEnumCustomerStatusFilter
+  notIn: [CustomerStatus!]
+}
+
+input NestedEnumEmployeeStatusFilter {
+  equals: EmployeeStatus
+  in: [EmployeeStatus!]
+  not: NestedEnumEmployeeStatusFilter
+  notIn: [EmployeeStatus!]
+}
+
+input NestedEnumExpenseStatusFilter {
+  equals: ExpenseStatus
+  in: [ExpenseStatus!]
+  not: NestedEnumExpenseStatusFilter
+  notIn: [ExpenseStatus!]
+}
+
+input NestedEnumFundContributionStatusFilter {
+  equals: FundContributionStatus
+  in: [FundContributionStatus!]
+  not: NestedEnumFundContributionStatusFilter
+  notIn: [FundContributionStatus!]
+}
+
+input NestedEnumFundFlowFilter {
+  equals: FundFlow
+  in: [FundFlow!]
+  not: NestedEnumFundFlowFilter
+  notIn: [FundFlow!]
+}
+
+input NestedEnumFundTransactionTypeFilter {
+  equals: FundTransactionType
+  in: [FundTransactionType!]
+  not: NestedEnumFundTransactionTypeFilter
+  notIn: [FundTransactionType!]
+}
+
+input NestedEnumInvoiceStatusFilter {
+  equals: InvoiceStatus
+  in: [InvoiceStatus!]
+  not: NestedEnumInvoiceStatusFilter
+  notIn: [InvoiceStatus!]
+}
+
+input NestedFloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+input NestedStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NestedStringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
 }
 
 type PaginatedClub {
-  items: [ClubEntity!]!
+  items: [Club!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -338,7 +5114,7 @@ type PaginatedClub {
 }
 
 type PaginatedCustomer {
-  items: [CustomerEntity!]!
+  items: [Customer!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -346,7 +5122,7 @@ type PaginatedCustomer {
 }
 
 type PaginatedDepartment {
-  items: [DepartmentEntity!]!
+  items: [Department!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -354,7 +5130,7 @@ type PaginatedDepartment {
 }
 
 type PaginatedEmployee {
-  items: [EmployeeEntity!]!
+  items: [Employee!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -362,7 +5138,7 @@ type PaginatedEmployee {
 }
 
 type PaginatedExpense {
-  items: [ExpenseEntity!]!
+  items: [Expense!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -370,7 +5146,7 @@ type PaginatedExpense {
 }
 
 type PaginatedInventoryItem {
-  items: [InventoryItemEntity!]!
+  items: [InventoryItem!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -378,7 +5154,7 @@ type PaginatedInventoryItem {
 }
 
 type PaginatedInvoice {
-  items: [InvoiceEntity!]!
+  items: [Invoice!]!
   limit: Int!
   page: Int!
   total: Int!
@@ -391,23 +5167,28 @@ input PaginationInput {
 }
 
 type Query {
-  candidateUsers: [UserEntity!]!
-  club(id: String!): ClubEntity!
+  candidateUsers: [User!]!
+  club(id: String!): Club!
   clubs(pagination: PaginationInput): PaginatedClub!
-  customer(id: String!): CustomerEntity!
+  customer(id: String!): Customer!
   customers(pagination: PaginationInput): PaginatedCustomer!
-  department(id: String!): DepartmentEntity!
+  department(id: String!): Department!
   departments(pagination: PaginationInput): PaginatedDepartment!
-  employee(id: String!): EmployeeEntity!
+  employee(id: String!): Employee!
   employees(pagination: PaginationInput): PaginatedEmployee!
-  expense(id: String!): ExpenseEntity!
-  expenseCategories: [ExpenseCategoryEntity!]!
+  expense(id: String!): Expense!
+  expenseCategories: [ExpenseCategory!]!
   expenses(filter: ExpenseFilterInput, pagination: PaginationInput): PaginatedExpense!
-  inventoryItem(id: String!): InventoryItemEntity!
+  inventoryItem(id: String!): InventoryItem!
   inventoryItems(pagination: PaginationInput): PaginatedInventoryItem!
-  invoice(id: String!): InvoiceEntity!
+  invoice(id: String!): Invoice!
   invoices(pagination: PaginationInput): PaginatedInvoice!
   myAbilities: JSON!
+}
+
+enum QueryMode {
+  default
+  insensitive
 }
 
 input RegisterInput {
@@ -416,85 +5197,906 @@ input RegisterInput {
   password: String!
 }
 
-input UpdateClubInput {
-  description: String
-  foundedAt: DateTime
+type Role {
+  _count: RoleCount!
+  id: ID!
+  label: String!
+  name: String!
+  permissions: [RolePermission!]
+  users: [UserRole!]
+}
+
+type RoleCount {
+  permissions: Int!
+  users: Int!
+}
+
+type RoleCountAggregate {
+  _all: Int!
+  id: Int!
+  label: Int!
+  name: Int!
+}
+
+input RoleCreateNestedOneWithoutUsersInput {
+  connect: RoleWhereUniqueInput
+  connectOrCreate: RoleCreateOrConnectWithoutUsersInput
+  create: RoleCreateWithoutUsersInput
+}
+
+input RoleCreateOrConnectWithoutUsersInput {
+  create: RoleCreateWithoutUsersInput!
+  where: RoleWhereUniqueInput!
+}
+
+input RoleCreateWithoutUsersInput {
+  id: String
+  label: String!
+  name: String!
+  permissions: RolePermissionCreateNestedManyWithoutRoleInput
+}
+
+type RoleMaxAggregate {
+  id: String
+  label: String
   name: String
-  sport: String
-  status: ClubStatus
 }
 
-input UpdateCustomerInput {
-  company: String
-  email: String
-  name: String
-  ownerId: String
-  phone: String
-  status: CustomerStatus
-}
-
-input UpdateDepartmentInput {
-  name: String
-  parentId: String
-}
-
-input UpdateEmployeeInput {
-  code: String
-  departmentId: String
-  email: String
-  hireDate: DateTime
-  managerId: String
-  name: String
-  phone: String
-  position: String
-  status: EmployeeStatus
-  userId: String
-}
-
-input UpdateExpenseCategoryInput {
-  description: String
+type RoleMinAggregate {
+  id: String
+  label: String
   name: String
 }
 
-input UpdateExpenseInput {
-  amount: Float
-  categoryId: String
-  clubId: String
-  date: DateTime
-  departmentId: String
-  description: String
-  status: ExpenseStatus
-  title: String
+type RolePermission {
+  permission: String!
+  role: Role!
+  roleId: String!
 }
 
-input UpdateInventoryItemInput {
-  category: String
-  minStock: Int
+type RolePermissionCountAggregate {
+  _all: Int!
+  permission: Int!
+  roleId: Int!
+}
+
+input RolePermissionCreateManyRoleInput {
+  permission: String!
+}
+
+input RolePermissionCreateManyRoleInputEnvelope {
+  data: [RolePermissionCreateManyRoleInput!]!
+  skipDuplicates: Boolean
+}
+
+input RolePermissionCreateNestedManyWithoutRoleInput {
+  connect: [RolePermissionWhereUniqueInput!]
+  connectOrCreate: [RolePermissionCreateOrConnectWithoutRoleInput!]
+  create: [RolePermissionCreateWithoutRoleInput!]
+  createMany: RolePermissionCreateManyRoleInputEnvelope
+}
+
+input RolePermissionCreateOrConnectWithoutRoleInput {
+  create: RolePermissionCreateWithoutRoleInput!
+  where: RolePermissionWhereUniqueInput!
+}
+
+input RolePermissionCreateWithoutRoleInput {
+  permission: String!
+}
+
+input RolePermissionListRelationFilter {
+  every: RolePermissionWhereInput
+  none: RolePermissionWhereInput
+  some: RolePermissionWhereInput
+}
+
+type RolePermissionMaxAggregate {
+  permission: String
+  roleId: String
+}
+
+type RolePermissionMinAggregate {
+  permission: String
+  roleId: String
+}
+
+input RolePermissionRoleIdPermissionCompoundUniqueInput {
+  permission: String!
+  roleId: String!
+}
+
+input RolePermissionScalarWhereInput {
+  AND: [RolePermissionScalarWhereInput!]
+  NOT: [RolePermissionScalarWhereInput!]
+  OR: [RolePermissionScalarWhereInput!]
+  permission: StringFilter
+  roleId: StringFilter
+}
+
+input RolePermissionUpdateManyMutationInput {
+  permission: String
+}
+
+input RolePermissionUpdateManyWithWhereWithoutRoleInput {
+  data: RolePermissionUpdateManyMutationInput!
+  where: RolePermissionScalarWhereInput!
+}
+
+input RolePermissionUpdateManyWithoutRoleNestedInput {
+  connect: [RolePermissionWhereUniqueInput!]
+  connectOrCreate: [RolePermissionCreateOrConnectWithoutRoleInput!]
+  create: [RolePermissionCreateWithoutRoleInput!]
+  createMany: RolePermissionCreateManyRoleInputEnvelope
+  delete: [RolePermissionWhereUniqueInput!]
+  deleteMany: [RolePermissionScalarWhereInput!]
+  disconnect: [RolePermissionWhereUniqueInput!]
+  set: [RolePermissionWhereUniqueInput!]
+  update: [RolePermissionUpdateWithWhereUniqueWithoutRoleInput!]
+  updateMany: [RolePermissionUpdateManyWithWhereWithoutRoleInput!]
+  upsert: [RolePermissionUpsertWithWhereUniqueWithoutRoleInput!]
+}
+
+input RolePermissionUpdateWithWhereUniqueWithoutRoleInput {
+  data: RolePermissionUpdateWithoutRoleInput!
+  where: RolePermissionWhereUniqueInput!
+}
+
+input RolePermissionUpdateWithoutRoleInput {
+  permission: String
+}
+
+input RolePermissionUpsertWithWhereUniqueWithoutRoleInput {
+  create: RolePermissionCreateWithoutRoleInput!
+  update: RolePermissionUpdateWithoutRoleInput!
+  where: RolePermissionWhereUniqueInput!
+}
+
+input RolePermissionWhereInput {
+  AND: [RolePermissionWhereInput!]
+  NOT: [RolePermissionWhereInput!]
+  OR: [RolePermissionWhereInput!]
+  permission: StringFilter
+  role: RoleScalarRelationFilter
+  roleId: StringFilter
+}
+
+input RolePermissionWhereUniqueInput {
+  AND: [RolePermissionWhereInput!]
+  NOT: [RolePermissionWhereInput!]
+  OR: [RolePermissionWhereInput!]
+  permission: StringFilter
+  role: RoleScalarRelationFilter
+  roleId: StringFilter
+  roleId_permission: RolePermissionRoleIdPermissionCompoundUniqueInput
+}
+
+input RoleScalarRelationFilter {
+  is: RoleWhereInput
+  isNot: RoleWhereInput
+}
+
+input RoleUpdateOneRequiredWithoutUsersNestedInput {
+  connect: RoleWhereUniqueInput
+  connectOrCreate: RoleCreateOrConnectWithoutUsersInput
+  create: RoleCreateWithoutUsersInput
+  update: RoleUpdateToOneWithWhereWithoutUsersInput
+  upsert: RoleUpsertWithoutUsersInput
+}
+
+input RoleUpdateToOneWithWhereWithoutUsersInput {
+  data: RoleUpdateWithoutUsersInput!
+  where: RoleWhereInput
+}
+
+input RoleUpdateWithoutUsersInput {
+  id: String
+  label: String
   name: String
-  price: Float
-  sku: String
-  status: InventoryItemStatus
-  stock: Int
-  unit: String
+  permissions: RolePermissionUpdateManyWithoutRoleNestedInput
 }
 
-input UpdateInvoiceInput {
-  amount: Float
-  code: String
-  customerId: String
-  dueDate: DateTime
-  issuedAt: DateTime
-  status: InvoiceStatus
-  tax: Float
-  total: Float
+input RoleUpsertWithoutUsersInput {
+  create: RoleCreateWithoutUsersInput!
+  update: RoleUpdateWithoutUsersInput!
+  where: RoleWhereInput
 }
 
-type UserEntity {
+input RoleWhereInput {
+  AND: [RoleWhereInput!]
+  NOT: [RoleWhereInput!]
+  OR: [RoleWhereInput!]
+  id: StringFilter
+  label: StringFilter
+  name: StringFilter
+  permissions: RolePermissionListRelationFilter
+  users: UserRoleListRelationFilter
+}
+
+input RoleWhereUniqueInput {
+  AND: [RoleWhereInput!]
+  NOT: [RoleWhereInput!]
+  OR: [RoleWhereInput!]
+  id: String
+  label: StringFilter
+  name: String
+  permissions: RolePermissionListRelationFilter
+  users: UserRoleListRelationFilter
+}
+
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  mode: QueryMode
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+type User {
+  _count: UserCount!
   avatar: String
+  clubMemberships: [ClubMember!]
+  confirmedContributions: [FundContribution!]
   createdAt: DateTime!
+  deletedAt: DateTime
   email: String!
+  employees: [Employee!]
+  expenses: [Expense!]
+  fundTransactions: [FundTransaction!]
   id: ID!
   isActive: Boolean!
   name: String!
+  ownedClubs: [Club!]
+  ownedCustomers: [Customer!]
+  roles: [UserRole!]
   updatedAt: DateTime!
+}
+
+type UserCount {
+  clubMemberships: Int!
+  confirmedContributions: Int!
+  employees: Int!
+  expenses: Int!
+  fundTransactions: Int!
+  ownedClubs: Int!
+  ownedCustomers: Int!
+  roles: Int!
+}
+
+type UserCountAggregate {
+  _all: Int!
+  avatar: Int!
+  createdAt: Int!
+  deletedAt: Int!
+  email: Int!
+  id: Int!
+  isActive: Int!
+  name: Int!
+  updatedAt: Int!
+}
+
+input UserCreateNestedOneWithoutClubMembershipsInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutClubMembershipsInput
+  create: UserCreateWithoutClubMembershipsInput
+}
+
+input UserCreateNestedOneWithoutConfirmedContributionsInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutConfirmedContributionsInput
+  create: UserCreateWithoutConfirmedContributionsInput
+}
+
+input UserCreateNestedOneWithoutEmployeesInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutEmployeesInput
+  create: UserCreateWithoutEmployeesInput
+}
+
+input UserCreateNestedOneWithoutExpensesInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutExpensesInput
+  create: UserCreateWithoutExpensesInput
+}
+
+input UserCreateNestedOneWithoutFundTransactionsInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutFundTransactionsInput
+  create: UserCreateWithoutFundTransactionsInput
+}
+
+input UserCreateNestedOneWithoutOwnedClubsInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutOwnedClubsInput
+  create: UserCreateWithoutOwnedClubsInput
+}
+
+input UserCreateOrConnectWithoutClubMembershipsInput {
+  create: UserCreateWithoutClubMembershipsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutConfirmedContributionsInput {
+  create: UserCreateWithoutConfirmedContributionsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutEmployeesInput {
+  create: UserCreateWithoutEmployeesInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutExpensesInput {
+  create: UserCreateWithoutExpensesInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutFundTransactionsInput {
+  create: UserCreateWithoutFundTransactionsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutOwnedClubsInput {
+  create: UserCreateWithoutOwnedClubsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateWithoutClubMembershipsInput {
+  avatar: String
+  confirmedContributions: FundContributionCreateNestedManyWithoutConfirmedByUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  employees: EmployeeCreateNestedManyWithoutUserInput
+  expenses: ExpenseCreateNestedManyWithoutCreatedByInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedClubs: ClubCreateNestedManyWithoutCreatedByInput
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutConfirmedContributionsInput {
+  avatar: String
+  clubMemberships: ClubMemberCreateNestedManyWithoutUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  employees: EmployeeCreateNestedManyWithoutUserInput
+  expenses: ExpenseCreateNestedManyWithoutCreatedByInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedClubs: ClubCreateNestedManyWithoutCreatedByInput
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutEmployeesInput {
+  avatar: String
+  clubMemberships: ClubMemberCreateNestedManyWithoutUserInput
+  confirmedContributions: FundContributionCreateNestedManyWithoutConfirmedByUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  expenses: ExpenseCreateNestedManyWithoutCreatedByInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedClubs: ClubCreateNestedManyWithoutCreatedByInput
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutExpensesInput {
+  avatar: String
+  clubMemberships: ClubMemberCreateNestedManyWithoutUserInput
+  confirmedContributions: FundContributionCreateNestedManyWithoutConfirmedByUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  employees: EmployeeCreateNestedManyWithoutUserInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedClubs: ClubCreateNestedManyWithoutCreatedByInput
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutFundTransactionsInput {
+  avatar: String
+  clubMemberships: ClubMemberCreateNestedManyWithoutUserInput
+  confirmedContributions: FundContributionCreateNestedManyWithoutConfirmedByUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  employees: EmployeeCreateNestedManyWithoutUserInput
+  expenses: ExpenseCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedClubs: ClubCreateNestedManyWithoutCreatedByInput
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+input UserCreateWithoutOwnedClubsInput {
+  avatar: String
+  clubMemberships: ClubMemberCreateNestedManyWithoutUserInput
+  confirmedContributions: FundContributionCreateNestedManyWithoutConfirmedByUserInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String!
+  employees: EmployeeCreateNestedManyWithoutUserInput
+  expenses: ExpenseCreateNestedManyWithoutCreatedByInput
+  fundTransactions: FundTransactionCreateNestedManyWithoutCreatedByInput
+  id: String
+  isActive: Boolean
+  name: String!
+  ownedCustomers: CustomerCreateNestedManyWithoutOwnerInput
+  roles: UserRoleCreateNestedManyWithoutUserInput
+  updatedAt: DateTime
+}
+
+type UserMaxAggregate {
+  avatar: String
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  id: String
+  isActive: Boolean
+  name: String
+  updatedAt: DateTime
+}
+
+type UserMinAggregate {
+  avatar: String
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  id: String
+  isActive: Boolean
+  name: String
+  updatedAt: DateTime
+}
+
+input UserNullableScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+type UserRole {
+  role: Role!
+  roleId: String!
+  user: User!
+  userId: String!
+}
+
+type UserRoleCountAggregate {
+  _all: Int!
+  roleId: Int!
+  userId: Int!
+}
+
+input UserRoleCreateManyUserInput {
+  roleId: String!
+}
+
+input UserRoleCreateManyUserInputEnvelope {
+  data: [UserRoleCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input UserRoleCreateNestedManyWithoutUserInput {
+  connect: [UserRoleWhereUniqueInput!]
+  connectOrCreate: [UserRoleCreateOrConnectWithoutUserInput!]
+  create: [UserRoleCreateWithoutUserInput!]
+  createMany: UserRoleCreateManyUserInputEnvelope
+}
+
+input UserRoleCreateOrConnectWithoutUserInput {
+  create: UserRoleCreateWithoutUserInput!
+  where: UserRoleWhereUniqueInput!
+}
+
+input UserRoleCreateWithoutUserInput {
+  role: RoleCreateNestedOneWithoutUsersInput!
+}
+
+input UserRoleListRelationFilter {
+  every: UserRoleWhereInput
+  none: UserRoleWhereInput
+  some: UserRoleWhereInput
+}
+
+type UserRoleMaxAggregate {
+  roleId: String
+  userId: String
+}
+
+type UserRoleMinAggregate {
+  roleId: String
+  userId: String
+}
+
+input UserRoleScalarWhereInput {
+  AND: [UserRoleScalarWhereInput!]
+  NOT: [UserRoleScalarWhereInput!]
+  OR: [UserRoleScalarWhereInput!]
+  roleId: StringFilter
+  userId: StringFilter
+}
+
+input UserRoleUncheckedUpdateManyWithoutUserInput {
+  roleId: String
+}
+
+input UserRoleUpdateManyWithWhereWithoutUserInput {
+  data: UserRoleUncheckedUpdateManyWithoutUserInput!
+  where: UserRoleScalarWhereInput!
+}
+
+input UserRoleUpdateManyWithoutUserNestedInput {
+  connect: [UserRoleWhereUniqueInput!]
+  connectOrCreate: [UserRoleCreateOrConnectWithoutUserInput!]
+  create: [UserRoleCreateWithoutUserInput!]
+  createMany: UserRoleCreateManyUserInputEnvelope
+  delete: [UserRoleWhereUniqueInput!]
+  deleteMany: [UserRoleScalarWhereInput!]
+  disconnect: [UserRoleWhereUniqueInput!]
+  set: [UserRoleWhereUniqueInput!]
+  update: [UserRoleUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [UserRoleUpdateManyWithWhereWithoutUserInput!]
+  upsert: [UserRoleUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input UserRoleUpdateWithWhereUniqueWithoutUserInput {
+  data: UserRoleUpdateWithoutUserInput!
+  where: UserRoleWhereUniqueInput!
+}
+
+input UserRoleUpdateWithoutUserInput {
+  role: RoleUpdateOneRequiredWithoutUsersNestedInput
+}
+
+input UserRoleUpsertWithWhereUniqueWithoutUserInput {
+  create: UserRoleCreateWithoutUserInput!
+  update: UserRoleUpdateWithoutUserInput!
+  where: UserRoleWhereUniqueInput!
+}
+
+input UserRoleUserIdRoleIdCompoundUniqueInput {
+  roleId: String!
+  userId: String!
+}
+
+input UserRoleWhereInput {
+  AND: [UserRoleWhereInput!]
+  NOT: [UserRoleWhereInput!]
+  OR: [UserRoleWhereInput!]
+  role: RoleScalarRelationFilter
+  roleId: StringFilter
+  user: UserScalarRelationFilter
+  userId: StringFilter
+}
+
+input UserRoleWhereUniqueInput {
+  AND: [UserRoleWhereInput!]
+  NOT: [UserRoleWhereInput!]
+  OR: [UserRoleWhereInput!]
+  role: RoleScalarRelationFilter
+  roleId: StringFilter
+  user: UserScalarRelationFilter
+  userId: StringFilter
+  userId_roleId: UserRoleUserIdRoleIdCompoundUniqueInput
+}
+
+input UserScalarRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input UserUpdateOneRequiredWithoutExpensesNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutExpensesInput
+  create: UserCreateWithoutExpensesInput
+  update: UserUpdateToOneWithWhereWithoutExpensesInput
+  upsert: UserUpsertWithoutExpensesInput
+}
+
+input UserUpdateOneRequiredWithoutFundTransactionsNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutFundTransactionsInput
+  create: UserCreateWithoutFundTransactionsInput
+  update: UserUpdateToOneWithWhereWithoutFundTransactionsInput
+  upsert: UserUpsertWithoutFundTransactionsInput
+}
+
+input UserUpdateOneRequiredWithoutOwnedClubsNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutOwnedClubsInput
+  create: UserCreateWithoutOwnedClubsInput
+  update: UserUpdateToOneWithWhereWithoutOwnedClubsInput
+  upsert: UserUpsertWithoutOwnedClubsInput
+}
+
+input UserUpdateOneWithoutClubMembershipsNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutClubMembershipsInput
+  create: UserCreateWithoutClubMembershipsInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutClubMembershipsInput
+  upsert: UserUpsertWithoutClubMembershipsInput
+}
+
+input UserUpdateOneWithoutConfirmedContributionsNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutConfirmedContributionsInput
+  create: UserCreateWithoutConfirmedContributionsInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutConfirmedContributionsInput
+  upsert: UserUpsertWithoutConfirmedContributionsInput
+}
+
+input UserUpdateOneWithoutEmployeesNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutEmployeesInput
+  create: UserCreateWithoutEmployeesInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutEmployeesInput
+  upsert: UserUpsertWithoutEmployeesInput
+}
+
+input UserUpdateToOneWithWhereWithoutClubMembershipsInput {
+  data: UserUpdateWithoutClubMembershipsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutConfirmedContributionsInput {
+  data: UserUpdateWithoutConfirmedContributionsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutEmployeesInput {
+  data: UserUpdateWithoutEmployeesInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutExpensesInput {
+  data: UserUpdateWithoutExpensesInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutFundTransactionsInput {
+  data: UserUpdateWithoutFundTransactionsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutOwnedClubsInput {
+  data: UserUpdateWithoutOwnedClubsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateWithoutClubMembershipsInput {
+  avatar: String
+  confirmedContributions: FundContributionUpdateManyWithoutConfirmedByUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  employees: EmployeeUpdateManyWithoutUserNestedInput
+  expenses: ExpenseUpdateManyWithoutCreatedByNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedClubs: ClubUpdateManyWithoutCreatedByNestedInput
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutConfirmedContributionsInput {
+  avatar: String
+  clubMemberships: ClubMemberUpdateManyWithoutUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  employees: EmployeeUpdateManyWithoutUserNestedInput
+  expenses: ExpenseUpdateManyWithoutCreatedByNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedClubs: ClubUpdateManyWithoutCreatedByNestedInput
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutEmployeesInput {
+  avatar: String
+  clubMemberships: ClubMemberUpdateManyWithoutUserNestedInput
+  confirmedContributions: FundContributionUpdateManyWithoutConfirmedByUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  expenses: ExpenseUpdateManyWithoutCreatedByNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedClubs: ClubUpdateManyWithoutCreatedByNestedInput
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutExpensesInput {
+  avatar: String
+  clubMemberships: ClubMemberUpdateManyWithoutUserNestedInput
+  confirmedContributions: FundContributionUpdateManyWithoutConfirmedByUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  employees: EmployeeUpdateManyWithoutUserNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedClubs: ClubUpdateManyWithoutCreatedByNestedInput
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutFundTransactionsInput {
+  avatar: String
+  clubMemberships: ClubMemberUpdateManyWithoutUserNestedInput
+  confirmedContributions: FundContributionUpdateManyWithoutConfirmedByUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  employees: EmployeeUpdateManyWithoutUserNestedInput
+  expenses: ExpenseUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedClubs: ClubUpdateManyWithoutCreatedByNestedInput
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpdateWithoutOwnedClubsInput {
+  avatar: String
+  clubMemberships: ClubMemberUpdateManyWithoutUserNestedInput
+  confirmedContributions: FundContributionUpdateManyWithoutConfirmedByUserNestedInput
+  createdAt: DateTime
+  deletedAt: DateTime
+  email: String
+  employees: EmployeeUpdateManyWithoutUserNestedInput
+  expenses: ExpenseUpdateManyWithoutCreatedByNestedInput
+  fundTransactions: FundTransactionUpdateManyWithoutCreatedByNestedInput
+  id: String
+  isActive: Boolean
+  name: String
+  ownedCustomers: CustomerUpdateManyWithoutOwnerNestedInput
+  roles: UserRoleUpdateManyWithoutUserNestedInput
+  updatedAt: DateTime
+}
+
+input UserUpsertWithoutClubMembershipsInput {
+  create: UserCreateWithoutClubMembershipsInput!
+  update: UserUpdateWithoutClubMembershipsInput!
+  where: UserWhereInput
+}
+
+input UserUpsertWithoutConfirmedContributionsInput {
+  create: UserCreateWithoutConfirmedContributionsInput!
+  update: UserUpdateWithoutConfirmedContributionsInput!
+  where: UserWhereInput
+}
+
+input UserUpsertWithoutEmployeesInput {
+  create: UserCreateWithoutEmployeesInput!
+  update: UserUpdateWithoutEmployeesInput!
+  where: UserWhereInput
+}
+
+input UserUpsertWithoutExpensesInput {
+  create: UserCreateWithoutExpensesInput!
+  update: UserUpdateWithoutExpensesInput!
+  where: UserWhereInput
+}
+
+input UserUpsertWithoutFundTransactionsInput {
+  create: UserCreateWithoutFundTransactionsInput!
+  update: UserUpdateWithoutFundTransactionsInput!
+  where: UserWhereInput
+}
+
+input UserUpsertWithoutOwnedClubsInput {
+  create: UserCreateWithoutOwnedClubsInput!
+  update: UserUpdateWithoutOwnedClubsInput!
+  where: UserWhereInput
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  avatar: StringNullableFilter
+  clubMemberships: ClubMemberListRelationFilter
+  confirmedContributions: FundContributionListRelationFilter
+  createdAt: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  email: StringFilter
+  employees: EmployeeListRelationFilter
+  expenses: ExpenseListRelationFilter
+  fundTransactions: FundTransactionListRelationFilter
+  id: StringFilter
+  isActive: BoolFilter
+  name: StringFilter
+  ownedClubs: ClubListRelationFilter
+  ownedCustomers: CustomerListRelationFilter
+  roles: UserRoleListRelationFilter
+  updatedAt: DateTimeFilter
+}
+
+input UserWhereUniqueInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  avatar: StringNullableFilter
+  clubMemberships: ClubMemberListRelationFilter
+  confirmedContributions: FundContributionListRelationFilter
+  createdAt: DateTimeFilter
+  deletedAt: DateTimeNullableFilter
+  email: String
+  employees: EmployeeListRelationFilter
+  expenses: ExpenseListRelationFilter
+  fundTransactions: FundTransactionListRelationFilter
+  id: String
+  isActive: BoolFilter
+  name: StringFilter
+  ownedClubs: ClubListRelationFilter
+  ownedCustomers: CustomerListRelationFilter
+  roles: UserRoleListRelationFilter
+  updatedAt: DateTimeFilter
 }

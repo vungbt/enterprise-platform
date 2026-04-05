@@ -1,4 +1,5 @@
 import { gqlFetch } from '@enterprise/api-client/gql';
+import { serverGqlFetch } from '@enterprise/api-client/server-gql';
 import {
   AddClubMemberDocument,
   type AddClubMemberMutationVariables,
@@ -11,8 +12,6 @@ import {
   type GetClubsQuery,
   GetMemberCandidateUsersDocument,
   type GetMemberCandidateUsersQuery,
-  RegisterMemberUserDocument,
-  type RegisterMemberUserMutationVariables,
   RemoveClubMemberDocument,
   UpdateClubDocument,
   type UpdateClubMutationVariables,
@@ -20,16 +19,15 @@ import {
 
 /** Derived directly from the GraphQL query — no manual type definition. */
 export type Club = GetClubsQuery['clubs']['items'][number];
-export type ClubMember = GetClubMembersQuery['club']['members'][number];
+export type ClubMember = NonNullable<GetClubMembersQuery['club']['members']>[number];
 export type MemberCandidateUser = GetMemberCandidateUsersQuery['candidateUsers'][number];
 
 export type CreateClubInput = CreateClubMutationVariables['input'];
 export type UpdateClubInput = UpdateClubMutationVariables['input'];
 export type AddClubMemberInput = AddClubMemberMutationVariables['input'];
-export type RegisterMemberUserInput = RegisterMemberUserMutationVariables['input'];
 
 export async function getClubsApi(token?: string): Promise<Club[]> {
-  const data = await gqlFetch(GetClubsDocument, {}, token);
+  const data = await serverGqlFetch(GetClubsDocument, {}, token);
   return data.clubs.items;
 }
 
@@ -40,10 +38,10 @@ export async function getClubMembersApi(
   club: Pick<Club, 'id' | 'name'>;
   members: ClubMember[];
 }> {
-  const data = await gqlFetch(GetClubMembersDocument, { id: clubId }, token);
+  const data = await serverGqlFetch(GetClubMembersDocument, { id: clubId }, token);
   return {
     club: { id: data.club.id, name: data.club.name },
-    members: data.club.members,
+    members: data.club.members ?? [],
   };
 }
 
@@ -80,14 +78,6 @@ export async function removeClubMemberApi(memberId: string, token?: string): Pro
 }
 
 export async function getMemberCandidateUsersApi(token?: string): Promise<MemberCandidateUser[]> {
-  const data = await gqlFetch(GetMemberCandidateUsersDocument, {}, token);
+  const data = await serverGqlFetch(GetMemberCandidateUsersDocument, {}, token);
   return data.candidateUsers;
-}
-
-export async function registerMemberUserApi(
-  input: RegisterMemberUserInput,
-  token?: string,
-): Promise<{ id: string; name: string; email: string }> {
-  const data = await gqlFetch(RegisterMemberUserDocument, { input }, token);
-  return data.register.user;
 }

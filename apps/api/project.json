@@ -12,10 +12,10 @@
         "parallel": false,
         "envFile": "apps/api/.env",
         "commands": [
-          "pnpm exec prisma generate --schema apps/api/prisma/schema.prisma",
+          "pnpm exec prisma generate --schema apps/api/src/prisma/schema.prisma",
           "pnpm exec tsc --project apps/api/tsconfig.app.json",
           "pnpm exec tsc-alias -p apps/api/tsconfig.app.json",
-          "mkdir -p dist/apps/api/prisma && cp apps/api/prisma/schema.prisma dist/apps/api/prisma/schema.prisma"
+          "mkdir -p dist/apps/api/prisma && cp apps/api/src/prisma/schema.prisma dist/apps/api/prisma/schema.prisma"
         ]
       }
     },
@@ -23,7 +23,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{workspaceRoot}",
-        "command": "pnpm exec tsx --env-file apps/api/.env --tsconfig apps/api/tsconfig.app.json apps/api/src/main.ts"
+        "command": "SWC_NODE_PROJECT=apps/api/tsconfig.app.json pnpm exec dotenv -e apps/api/.env -- node --require @swc-node/register apps/api/src/main.ts"
       }
     },
     "start": {

@@ -1,6 +1,9 @@
 import './globals.css';
+import { setApiClientConfig } from '@enterprise/api-client/config';
 import type { ReactNode } from 'react';
 import { Providers } from './providers';
+
+setApiClientConfig({ loginPath: '/auth/login' });
 
 export const metadata = {
   title: 'Enterprise Platform',

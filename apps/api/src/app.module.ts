@@ -4,7 +4,6 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ThrottlerModule } from '@nestjs/throttler';
-import '@api/prisma/graphql-enums.bootstrap';
 import { AuthModule } from '@api/modules/auth/auth.module';
 import { CrmModule } from '@api/modules/crm/crm.module';
 import { DepartmentModule } from '@api/modules/department/department.module';

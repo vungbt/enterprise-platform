@@ -5,6 +5,20 @@ const GRAPHQL_URL = process.env.BACKEND_URL
   ? `${process.env.BACKEND_URL}/graphql`
   : 'http://localhost:4000/graphql';
 
+const AUTH_ERROR_MESSAGES = [
+  'invalid or expired token',
+  'unauthorized',
+  'jwt expired',
+  'not authenticated',
+];
+
+export class AuthError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthError';
+  }
+}
+
 export async function gqlFetch<TResult, TVariables>(
   document: TypedDocumentNode<TResult, TVariables>,
   variables?: TVariables,
@@ -21,7 +35,15 @@ export async function gqlFetch<TResult, TVariables>(
   });
 
   const json = (await res.json()) as { data?: TResult; errors?: { message: string }[] };
-  if (json.errors?.length) throw new Error(json.errors[0].message);
+
+  if (json.errors?.length) {
+    const msg = json.errors[0].message;
+    if (AUTH_ERROR_MESSAGES.some((m) => msg.toLowerCase().includes(m))) {
+      throw new AuthError(msg);
+    }
+    throw new Error(msg);
+  }
+
   if (!json.data) throw new Error('No data returned from GraphQL');
   return json.data;
 }

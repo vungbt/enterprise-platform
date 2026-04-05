@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
@@ -29,4 +29,10 @@ async function bootstrap() {
   await app.listen(port);
 }
 
-bootstrap();
+bootstrap()
+  .then(() => {
+    Logger.log(`App is running on port: http://localhost:${process.env.PORT}/graphql`);
+  })
+  .catch((err) => {
+    console.error(err);
+  });

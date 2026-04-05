@@ -108,8 +108,9 @@ export class SportsClubsResolver {
 @Resolver(() => ClubMember)
 @UseGuards(JwtAuthGuard, CaslAbilityGuard)
 export class ClubMemberResolver {
-  @ResolveField(() => User)
+  @ResolveField(() => User, { nullable: true })
   user(@Parent() member: ClubMember, @Context('loaders') loaders: DataLoaders) {
+    if (!member.userId) return null;
     return loaders.user.load(member.userId);
   }
 
